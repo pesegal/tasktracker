@@ -13,6 +13,7 @@
 """
 import uuid
 from kivy.uix.button import Button
+from kivy.graphics import Rectangle
 
 
 # Todo: Create the basic task widget that contains task title information.
@@ -27,20 +28,25 @@ class Task(Button):
         super(Task, self).__init__(**kwargs)
         self.uuid = uuid.uuid1()
 
-        self.x_off = None
-        self.y_off = None
+        self.x_off = self.x
+        self.y_off = self.y
 
     def on_touch_down(self, touch):
         if self.collide_point(*touch.pos):
             self.state = 'down'
             self.x_off = touch.x - self.x
             self.y_off = touch.y - self.y
-            print("Touching Item: %s" % self.uuid.hex)
+            touch.grab(self)
+            self.parent.add_task()
+
+    def on_touch_up(self, touch):
+        if touch.grab_current is self:
+            print("Ungrabbing: %s" % self.uuid.hex )
+            touch.ungrab(self)
 
     def on_touch_move(self, touch):
-        if self.collide_point(*touch.pos):
+        if self.collide_point(*touch.pos) and touch.grab_current is self:
             self.pos = (touch.x - self.x_off, touch.y - self.y_off)
-
 
 
 

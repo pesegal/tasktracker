@@ -7,7 +7,7 @@ from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.uix.boxlayout import BoxLayout
 from kivy.lang import Builder
-from src.taskcontainer import TaskContainer
+from src.taskcontainer import TaskScrollContainer
 
 Builder.load_file('./src/taskcontainer.kv')
 Builder.load_file('./src/task.kv')
@@ -24,7 +24,7 @@ class TaskListViewHalf(BoxLayout):
 class TaskListViewSingle(BoxLayout):
     pass
 
-
+# Todo: Each TaskScrollContainer should be a named widget so when redrawing it saves the internal context
 class TaskListViewController(Widget):
     def __init__(self, **kwargs):
         super(TaskListViewController, self).__init__(**kwargs)
@@ -36,7 +36,6 @@ class TaskListViewController(Widget):
         self.current_display = self.sing_view
 
     def screen_resize(self, *args):
-
         def swap_display(display):
             self.remove_widget(self.current_display)
             self.current_display = display

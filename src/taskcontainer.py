@@ -11,20 +11,28 @@ from kivy.uix.button import Button
 from src.task import Task
 
 
-class TaskContainer(ScrollView):
+class TaskScrollContainer(ScrollView):
     def __init__(self, **kwargs):
-        super(TaskContainer, self).__init__(**kwargs)
+        super(TaskScrollContainer, self).__init__(**kwargs)
 
         # Test to add something to display information!
+        self.task_list = TaskList()
 
-        items = GridLayout(cols=1, spacing=1, size_hint_y=None)
-        items.bind(minimum_height=items.setter('height'))
+        self.add_widget(self.task_list)
+
+
+class TaskList(GridLayout):
+    def __init__(self, **kwargs):
+        super(TaskList, self).__init__(**kwargs)
+        self.cols = 1
+        self.spacing = 1
+        self.size_hint_y = None
+        self.bind(minimum_height=self.setter('height'))
+
         for i in range(5):
             task = Task(text=str(i))
-            items.add_widget(task)
+            self.add_widget(task)
 
-
-
-        self.add_widget(items)
-
+    def add_task(self):
+        self.add_widget(Task(text="This is a test"))
 
