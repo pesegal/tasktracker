@@ -11,7 +11,6 @@ This includes a timer to help keep focus and statistical tracking to see how muc
 + Build out stats tracking functionality
 
 
-
 ### Potential Future Features
 + Ability to categorize tasks into groups (epics) that will will provide statistical summary of tasks contained within.
 + Graphs and other Visualizations that can provide interesting insights where your time is spent.

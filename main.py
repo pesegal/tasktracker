@@ -10,6 +10,7 @@ from kivy.lang import Builder
 from src.taskcontainer import TaskContainer
 
 Builder.load_file('./src/taskcontainer.kv')
+Builder.load_file('./src/task.kv')
 
 
 class TaskListViewFull(BoxLayout):

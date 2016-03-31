@@ -1,0 +1,48 @@
+"""
+    The task widget class contains all the graphical behavior of a task.
+
+    Statistical tracking todo:
+        Date time stamp when created.
+        Date time stamp when modified.
+        Total time worked on task.
+        Number of sessions worked on task.
+        Number of pomo's spent on task. << display this as a number of check boxes.
+        Number of short breaks spent on task.
+        Number of long breaks spent on task.
+
+"""
+import uuid
+from kivy.uix.button import Button
+
+
+# Todo: Create the basic task widget that contains task title information.
+# Todo: Task widget should be able to be clicked and opens up a editing screen.
+# Todo: Task widget should be able to be categorized in larger project groupings.
+# Todo: Categorized tasks should have a colorized marker on their graphical representation that shows grouping.
+# Todo: Task widget should track statistical information based on user interaction.
+
+
+class Task(Button):
+    def __init__(self, **kwargs):
+        super(Task, self).__init__(**kwargs)
+        self.uuid = uuid.uuid1()
+
+        self.x_off = None
+        self.y_off = None
+
+    def on_touch_down(self, touch):
+        if self.collide_point(*touch.pos):
+            self.state = 'down'
+            self.x_off = touch.x - self.x
+            self.y_off = touch.y - self.y
+            print("Touching Item: %s" % self.uuid.hex)
+
+    def on_touch_move(self, touch):
+        if self.collide_point(*touch.pos):
+            self.pos = (touch.x - self.x_off, touch.y - self.y_off)
+
+
+
+
+
+

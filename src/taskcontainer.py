@@ -8,6 +8,7 @@
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.button import Button
+from src.task import Task
 
 
 class TaskContainer(ScrollView):
@@ -18,9 +19,11 @@ class TaskContainer(ScrollView):
 
         items = GridLayout(cols=1, spacing=1, size_hint_y=None)
         items.bind(minimum_height=items.setter('height'))
-        for i in range(30):
-            btn = Button(text=str(i), size_hint_y=None, height=60)
-            items.add_widget(btn)
+        for i in range(5):
+            task = Task(text=str(i))
+            items.add_widget(task)
+
+
 
         self.add_widget(items)
 
