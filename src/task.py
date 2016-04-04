@@ -37,16 +37,18 @@ class Task(Button):
             self.x_off = touch.x - self.x
             self.y_off = touch.y - self.y
             touch.grab(self)
-            self.parent.add_task()
 
     def on_touch_up(self, touch):
         if touch.grab_current is self:
             print("Ungrabbing: %s" % self.uuid.hex )
+            self.state = 'normal'
             touch.ungrab(self)
 
     def on_touch_move(self, touch):
         if self.collide_point(*touch.pos) and touch.grab_current is self:
             self.pos = (touch.x - self.x_off, touch.y - self.y_off)
+            self.parent.switch_positions(self)
+
 
 
 
