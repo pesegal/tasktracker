@@ -33,6 +33,7 @@ class TaskListViewController(Widget):
         self.half_view = TaskListViewHalf()
         self.sing_view = TaskListViewSingle()
 
+
         self.current_display = self.sing_view
 
     def screen_resize(self, *args):
@@ -48,6 +49,22 @@ class TaskListViewController(Widget):
             swap_display(self.half_view)
         elif args[1][0] > 960:
             swap_display(self.full_view)
+
+    def click_drag_reposition(self, task):
+        print('ADDING TASK')
+        task_pos = task.x
+        print(task_pos)
+        task.parent.remove_widget(task)
+        self.add_widget(task)
+        print(task.pos)
+        #task.pos = task_pos
+
+    def check_children(self, touch_pos):
+        # TODO Will need to add a check in case it's not a scroll view.
+        for child in self.children:
+            for c in child.children:
+                if c.collide_point(*touch_pos):
+                    return c.task_list
 
 
 class TaskApp(App):
