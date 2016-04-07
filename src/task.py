@@ -53,7 +53,6 @@ class Task(Button):
             self.parent.remove_widget(self)
             widget_list.add_widget(self)
 
-
             touch.ungrab(self)
 
     def on_touch_move(self, touch):

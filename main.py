@@ -4,7 +4,7 @@
 
 """
 from kivy.app import App
-from kivy.uix.widget import Widget
+from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.lang import Builder
 from src.taskcontainer import TaskScrollContainer
@@ -13,42 +13,44 @@ Builder.load_file('./src/taskcontainer.kv')
 Builder.load_file('./src/task.kv')
 
 
-class TaskListViewFull(BoxLayout):
-    pass
+class TaskListView(BoxLayout):
+    """
+       This class dynamically displays different scroll views based on how many
+        widgets are supplied during construction this is used in conjunction with
+        the task list view controller to provide changing views with window resize.
+    """
+    def __init__(self, widget, **kwargs):
+        super(TaskListView, self).__init__(**kwargs)
+        self.add_widget(widget)
+
+    def view_change(self, widgets):
+        child_list = tuple(self.children)
+        for child in child_list:
+            self.remove_widget(child)
+
+        for widget in widgets:
+            self.add_widget(widget)
 
 
-class TaskListViewHalf(BoxLayout):
-    pass
 
-
-class TaskListViewSingle(BoxLayout):
-    pass
-
-# Todo: Each TaskScrollContainer should be a named widget so when redrawing it saves the internal context
-class TaskListViewController(Widget):
+class TaskListViewController(FloatLayout):
     def __init__(self, **kwargs):
         super(TaskListViewController, self).__init__(**kwargs)
         self.bind(size=self.screen_resize)
-        self.full_view = TaskListViewFull()
-        self.half_view = TaskListViewHalf()
-        self.sing_view = TaskListViewSingle()
+        self.today_list = TaskScrollContainer()
+        self.tomorrow_list = TaskScrollContainer()
+        self.future_list = TaskScrollContainer()
 
-
-        self.current_display = self.sing_view
+        self.current_display = TaskListView(self.today_list)
+        self.add_widget(self.current_display)
 
     def screen_resize(self, *args):
-        def swap_display(display):
-            self.remove_widget(self.current_display)
-            self.current_display = display
-            self.add_widget(self.current_display)
-            self.current_display.size = self.size
-
         if args[1][0] < 640:
-            swap_display(self.sing_view)
+            self.current_display.view_change([self.today_list])
         elif 640 < args[1][0] < 960:
-            swap_display(self.half_view)
+            self.current_display.view_change([self.today_list, self.tomorrow_list])
         elif args[1][0] > 960:
-            swap_display(self.full_view)
+            self.current_display.view_change([self.today_list, self.tomorrow_list, self.future_list])
 
     def click_drag_reposition(self, task):
         print('ADDING TASK')
@@ -65,7 +67,6 @@ class TaskListViewController(Widget):
             for c in child.children:
                 if c.collide_point(*touch_pos):
                     return c.task_list
-
 
 class TaskApp(App):
     def build(self):
