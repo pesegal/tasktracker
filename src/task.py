@@ -38,26 +38,29 @@ class Task(Button):
             self.x_off = touch.x - self.x
             self.y_off = touch.y - self.y
 
-            print(self.get_root_window())
-
-            tvc.click_drag_reposition(self)
+            global_pos = self.to_window(touch.x, touch.y)
+            global_pos = global_pos[0] - self.x_off, global_pos[1] - self.y_off
+            tvc.click_drag_reposition(self, tuple(self.size), global_pos)
             touch.grab(self)
 
     def on_touch_up(self, touch):
         if touch.grab_current is self:
             print("Ungrabbing: %s" % self.uuid.hex )
+            print(self.pos)
             self.state = 'normal'
 
             # Todo: Look into improving the positioning in the list!
             widget_list = self.parent.check_children(touch.pos)
             self.parent.remove_widget(self)
+            self.size_hint_x = 1
             widget_list.add_widget(self)
 
             touch.ungrab(self)
 
     def on_touch_move(self, touch):
-        if self.collide_point(*touch.pos) and touch.grab_current is self:
+        if touch.grab_current is self:
             self.pos = (touch.x - self.x_off, touch.y - self.y_off)
+            #print(touch.pos)
 
             # self.parent.switch_positions(self)
 

@@ -4,7 +4,7 @@
 
 """
 from kivy.app import App
-from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.lang import Builder
 from src.taskcontainer import TaskScrollContainer
@@ -32,8 +32,7 @@ class TaskListView(BoxLayout):
             self.add_widget(widget)
 
 
-
-class TaskListViewController(FloatLayout):
+class TaskListViewController(RelativeLayout):
     def __init__(self, **kwargs):
         super(TaskListViewController, self).__init__(**kwargs)
         self.bind(size=self.screen_resize)
@@ -44,6 +43,8 @@ class TaskListViewController(FloatLayout):
         self.current_display = TaskListView(self.today_list)
         self.add_widget(self.current_display)
 
+        self.current_touch_pos = None
+
     def screen_resize(self, *args):
         if args[1][0] < 640:
             self.current_display.view_change([self.today_list])
@@ -52,12 +53,15 @@ class TaskListViewController(FloatLayout):
         elif args[1][0] > 960:
             self.current_display.view_change([self.today_list, self.tomorrow_list, self.future_list])
 
-    def click_drag_reposition(self, task):
+    def click_drag_reposition(self, task, size, position):
+
         print('ADDING TASK')
-        task_pos = task.x
-        print(task_pos)
+
         task.parent.remove_widget(task)
         self.add_widget(task)
+        task.pos = position
+        task.size_hint_x = None
+        task.size = size
         print(task.pos)
         #task.pos = task_pos
 
