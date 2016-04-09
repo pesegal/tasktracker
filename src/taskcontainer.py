@@ -30,18 +30,22 @@ class TaskList(GridLayout):
 
         for i in range(5):
             task = Task(text=str(i))
+            task.text = str(task.uid)
             self.add_widget(task)
 
     def add_task(self):
         self.add_widget(Task(text="This is a test"))
 
-    def switch_positions(self, task):
-        wid_to_switch = None
-        for child in self.children:
-            print(child)
-            if child.collide_widget(task) and child is not task:  # task collides with itself.
-                print('FOUND!!!!')
-                wid_to_switch = child
+
+    # TODO: look into removeing this function
+    def switch_positions(self, task, wid_to_switch = None):
+
+        if wid_to_switch is None:
+            for child in self.children:
+                print(child)
+                if child.collide_widget(task) and child is not task:  # task collides with itself.
+                    print('FOUND!!!!')
+                    wid_to_switch = child
 
         print(wid_to_switch)
 
@@ -52,6 +56,7 @@ class TaskList(GridLayout):
             self.children[wid_index], self.children[task_index] = self.children[task_index], self.children[wid_index]
         else:
             print("No collision detected")
+
 
 
 

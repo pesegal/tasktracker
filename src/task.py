@@ -27,33 +27,42 @@ class Task(Button):
     def __init__(self, **kwargs):
         super(Task, self).__init__(**kwargs)
         self.uuid = uuid.uuid1()
+        self.last_parent = None
 
         self.x_off = self.x
         self.y_off = self.y
 
     def on_touch_down(self, touch):
         if self.collide_point(*touch.pos):
-            tvc = self.parent.parent.parent.parent
+            tvc = self.parent.parent.parent.parent  # TODO: Look into finding a better way to get tvc widget.
             self.state = 'down'
             self.x_off = touch.x - self.x
             self.y_off = touch.y - self.y
 
+            self.last_parent = self.parent  # Used to handle if mouse is outside window boundaries
+
             global_pos = self.to_window(touch.x, touch.y)
-            global_pos = global_pos[0] - self.x_off, global_pos[1] - self.y_off
+            global_pos = global_pos[0] - self.x_off, global_pos[1] - self.y_off  # Offset Global POS
             tvc.click_drag_reposition(self, tuple(self.size), global_pos)
             touch.grab(self)
 
     def on_touch_up(self, touch):
         if touch.grab_current is self:
-            print("Ungrabbing: %s" % self.uuid.hex )
-            print(self.pos)
             self.state = 'normal'
+            col_data = self.parent.check_children(touch.pos)
 
-            # Todo: Look into improving the positioning in the list!
-            widget_list = self.parent.check_children(touch.pos)
             self.parent.remove_widget(self)
             self.size_hint_x = 1
-            widget_list.add_widget(self)
+            if col_data[0] is not None:
+                self.last_parent = col_data[0]
+
+            self.last_parent.add_widget(self)
+            if col_data[1]:
+                self.parent.switch_positions(self, col_data[1])
+            else:
+                pass
+
+
 
             touch.ungrab(self)
 

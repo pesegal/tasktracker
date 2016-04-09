@@ -4,7 +4,7 @@
 
 """
 from kivy.app import App
-from kivy.uix.relativelayout import RelativeLayout
+from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.lang import Builder
 from src.taskcontainer import TaskScrollContainer
@@ -32,7 +32,7 @@ class TaskListView(BoxLayout):
             self.add_widget(widget)
 
 
-class TaskListViewController(RelativeLayout):
+class TaskListViewController(FloatLayout):
     def __init__(self, **kwargs):
         super(TaskListViewController, self).__init__(**kwargs)
         self.bind(size=self.screen_resize)
@@ -54,23 +54,34 @@ class TaskListViewController(RelativeLayout):
             self.current_display.view_change([self.today_list, self.tomorrow_list, self.future_list])
 
     def click_drag_reposition(self, task, size, position):
-
-        print('ADDING TASK')
-
         task.parent.remove_widget(task)
         self.add_widget(task)
         task.pos = position
         task.size_hint_x = None
         task.size = size
-        print(task.pos)
-        #task.pos = task_pos
 
     def check_children(self, touch_pos):
+        """
+        This function returns the task list widget and the task widget the touch position releases on.
+        :param touch_pos:
+        :return: TaskList Widget, Task Object
+        """
         # TODO Will need to add a check in case it's not a scroll view.
+        t_list = None
+        task = None
+
         for child in self.children:
+            if not child.collide_point(*touch_pos):
+                continue
             for c in child.children:
                 if c.collide_point(*touch_pos):
-                    return c.task_list
+                    t_list = c.task_list
+            if not t_list:
+                continue
+            for tasks in t_list.children:
+                if tasks.collide_point(*tasks.to_widget(*touch_pos)):
+                    task = tasks
+        return t_list, task
 
 class TaskApp(App):
     def build(self):
