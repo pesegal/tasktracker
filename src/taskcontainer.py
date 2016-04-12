@@ -7,8 +7,11 @@
 
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.gridlayout import GridLayout
-from kivy.uix.button import Button
+from kivy.lang import Builder
 from src.task import Task
+
+Builder.load_file('./src/taskcontainer.kv')
+
 
 
 class TaskScrollContainer(ScrollView):

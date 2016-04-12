@@ -13,7 +13,9 @@
 """
 import uuid
 from kivy.uix.button import Button
-from kivy.graphics import Rectangle
+from kivy.lang import Builder
+
+Builder.load_file('./src/task.kv')
 
 
 # Todo: Create the basic task widget that contains task title information.
