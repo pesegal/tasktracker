@@ -14,4 +14,10 @@ class MenuBar(BoxLayout):
     def __init__(self, **kwargs):
         super(MenuBar, self).__init__(**kwargs)
 
+    def create_new_task(self):
+        self.parent.main_screen.today_list.task_list.add_task()
+
+
+
+
 

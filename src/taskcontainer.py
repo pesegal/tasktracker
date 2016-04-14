@@ -37,7 +37,7 @@ class TaskList(GridLayout):
             self.add_widget(task)
 
     def add_task(self):
-        self.add_widget(Task(text="This is a test"))
+        self.add_widget(Task(text="Created"))
 
 
 
