@@ -1,4 +1,5 @@
 <MenuBar>:
+    id: menubar
     orientation: 'horizontal'
     size_hint_y: None
     padding: 0
@@ -11,6 +12,11 @@
         on_press: root.create_new_task()
 
     Button:
+        text: 'Tasks'
+        on_press: root.switch_screens('tasks', 'right')
     Button:
+        text: 'Timer'
+        on_press: root.switch_screens('timer', 'up')
     Button:
-        text: "MENU BAR"
+        text: "Stats"
+        on_press: root.switch_screens('stats', 'left')

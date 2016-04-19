@@ -13,7 +13,6 @@ from src.task import Task
 Builder.load_file('./src/taskcontainer.kv')
 
 
-
 class TaskScrollContainer(ScrollView):
     def __init__(self, **kwargs):
         super(TaskScrollContainer, self).__init__(**kwargs)

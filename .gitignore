@@ -2,7 +2,7 @@
 
 # User Defined
 *.ods
-
+*.odg
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

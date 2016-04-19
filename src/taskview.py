@@ -1,6 +1,8 @@
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.boxlayout import BoxLayout
 from src.taskcontainer import TaskScrollContainer
+from kivy.uix.screenmanager import Screen
+
 from kivy.lang import Builder
 
 Builder.load_file('./src/taskview.kv')
@@ -25,9 +27,9 @@ class TaskListView(BoxLayout):
             self.add_widget(widget)
 
 
-class TaskListViewController(FloatLayout):
+class TaskListScreen(Screen):
     def __init__(self, **kwargs):
-        super(TaskListViewController, self).__init__(**kwargs)
+        super(TaskListScreen, self).__init__(**kwargs)
         self.bind(size=self.screen_resize)
         self.today_list = TaskScrollContainer()
         self.tomorrow_list = TaskScrollContainer()

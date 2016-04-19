@@ -15,7 +15,11 @@ class MenuBar(BoxLayout):
         super(MenuBar, self).__init__(**kwargs)
 
     def create_new_task(self):
-        self.parent.main_screen.today_list.task_list.add_task()
+        self.parent.screen_controller.tasks.today_list.task_list.add_task()
+
+    def switch_screens(self, name, direction):
+        self.parent.screen_controller.transition.direction = direction
+        self.parent.screen_controller.current = name
 
 
 
