@@ -2,7 +2,59 @@
     size_hint: 1, 1
     scroll_timeout: 20 # Use this to adjust how long it takes for the touch event to be sent to the children
 
+<TaskCreationScreen>:
+    title: 'Add New Task'
+    size_hint: None, None
+    size: app.root.width/1.1, app.root.height/1.1
+    auto_dismiss: False
+    GridLayout:
+        cols: 1
+        padding: 3
+        TextInput:
+            id: task_title
+            multiline: False
+            size_hint_y: None
+            height: 30
+            text: 'Task Title'
+            # Do styling here
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint_y: None
+            height: 40
+            padding: 0, 3
+
+            TaskListSelectionButton:
+                text: 'Today'
+                state: 'down'
+            TaskListSelectionButton:
+                text: 'Tomorrow'
+            TaskListSelectionButton:
+                text: 'Future'
+
+        #Dropdown:
+        # TODO: Add Project Selection drop down plus add button
+        # TODO: Add the Project/Grouping Creation Screen
+
+        TextInput:
+            id: task_notes
+            text: '//Notes'
+
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint_y: None
+            height: 50
+            padding: 0, 3
+
+            # TODO: Make it so that the task creation and cancel buttons close the popup and function correctly.
+            Button:
+                text: 'Cancel'
+                on_press: root.dismiss()
+            Button:
+                text: 'Create'
 
 
 
-
+<TaskListSelectionButton@ToggleButton>:
+    size_hint_x: .33
+    height: 40
+    group:'task_list_selection'

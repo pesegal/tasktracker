@@ -6,6 +6,7 @@ from src.menubar import MenuBar
 
 Builder.load_file('./src/screencontroller.kv')
 
+
 class ScreenController(ScreenManager):
     def __init__(self, **kwargs):
         super(ScreenController, self).__init__(**kwargs)

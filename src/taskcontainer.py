@@ -7,10 +7,15 @@
 
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.gridlayout import GridLayout
+from kivy.uix.popup import Popup
 from kivy.lang import Builder
 from src.task import Task
 
 Builder.load_file('./src/taskcontainer.kv')
+
+
+class TaskCreationScreen(Popup):
+    pass  #: TODO: Add Task creation functionality
 
 
 class TaskScrollContainer(ScrollView):
