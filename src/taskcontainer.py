@@ -7,6 +7,7 @@
 
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.gridlayout import GridLayout
+from kivy.properties import StringProperty, NumericProperty, ObjectProperty
 from kivy.uix.popup import Popup
 from kivy.lang import Builder
 from src.task import Task
@@ -14,8 +15,28 @@ from src.task import Task
 Builder.load_file('./src/taskcontainer.kv')
 
 
-class TaskCreationScreen(Popup):
-    pass  #: TODO: Add Task creation functionality
+class TaskScreen(Popup):
+    pass
+
+
+class TaskCreationScreen(TaskScreen):
+    task_name = ObjectProperty(None)
+    list_selection = NumericProperty(0)
+    # TODO: project = ObjectProperty()
+    notes = ObjectProperty(None)
+
+    def __init__(self, **kwargs):
+        super(TaskCreationScreen, self).__init__(**kwargs)
+
+    def create_task(self):
+        t_list = self.parent.children[1].screen_controller.tasks
+        if self.list_selection == 0:
+            t_list.today_list.task_list.add_widget(Task(text=self.task_name.text))
+        elif self.list_selection == 1:
+            t_list.tomorrow_list.task_list.add_widget(Task(text=self.task_name.text))
+        elif self.list_selection == 2:
+            t_list.future_list.task_list.add_widget(Task(text=self.task_name.text))
+        self.dismiss()
 
 
 class TaskScrollContainer(ScrollView):

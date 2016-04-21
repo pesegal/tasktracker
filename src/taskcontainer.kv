@@ -2,11 +2,19 @@
     size_hint: 1, 1
     scroll_timeout: 20 # Use this to adjust how long it takes for the touch event to be sent to the children
 
-<TaskCreationScreen>:
-    title: 'Add New Task'
+<TaskScreen>:
+    title: 'Task Screen'
     size_hint: None, None
     size: app.root.width/1.1, app.root.height/1.1
     auto_dismiss: False
+
+<TaskCreationScreen>:  # TODO: Break out into more object oriented versions when doing task edit screen as well.
+    title: 'Add New Task'
+
+    #Properties
+    task_name: task_title
+    notes: task_notes
+
     GridLayout:
         cols: 1
         padding: 3
@@ -15,29 +23,29 @@
             multiline: False
             size_hint_y: None
             height: 30
-            text: 'Task Title'
+            hint_text: 'Task Title'
             # Do styling here
         BoxLayout:
             orientation: 'horizontal'
             size_hint_y: None
             height: 40
             padding: 0, 3
-
             TaskListSelectionButton:
                 text: 'Today'
                 state: 'down'
+                on_press: root.list_selection = 0
             TaskListSelectionButton:
                 text: 'Tomorrow'
+                on_press: root.list_selection = 1
             TaskListSelectionButton:
                 text: 'Future'
-
+                on_press: root.list_selection = 2
         #Dropdown:
         # TODO: Add Project Selection drop down plus add button
         # TODO: Add the Project/Grouping Creation Screen
-
         TextInput:
             id: task_notes
-            text: '//Notes'
+            hint_text: '//Notes'
 
         BoxLayout:
             orientation: 'horizontal'
@@ -51,8 +59,7 @@
                 on_press: root.dismiss()
             Button:
                 text: 'Create'
-
-
+                on_press: root.create_task()
 
 <TaskListSelectionButton@ToggleButton>:
     size_hint_x: .33
