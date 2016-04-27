@@ -9,10 +9,17 @@ from kivy.uix.scrollview import ScrollView
 from kivy.uix.gridlayout import GridLayout
 from kivy.properties import StringProperty, NumericProperty, ObjectProperty
 from kivy.uix.popup import Popup
+from kivy.uix.spinner import Spinner
 from kivy.lang import Builder
 from src.task import Task
 
 Builder.load_file('./src/taskcontainer.kv')
+
+class ProjectSelector(Spinner):
+    def __init__(self, **kwargs):
+        super(ProjectSelector, self).__init__(**kwargs)
+        self.text = 'No Project Selected'
+        self.values = ['Project 1', 'Project 2', 'Project 3','Project 1', 'Project 2', 'Project 3','Project 1', 'Project 2', 'Project 3','Project 1', 'Project 2', 'Project 3']
 
 
 class TaskScreen(Popup):

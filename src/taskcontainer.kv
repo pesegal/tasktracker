@@ -1,3 +1,5 @@
+
+
 <TaskScrollContainer>:
     size_hint: 1, 1
     scroll_timeout: 20 # Use this to adjust how long it takes for the touch event to be sent to the children
@@ -18,6 +20,7 @@
     GridLayout:
         cols: 1
         padding: 3
+
         TextInput:
             id: task_title
             multiline: False
@@ -25,6 +28,7 @@
             height: 30
             hint_text: 'Task Title'
             # Do styling here
+
         BoxLayout:
             orientation: 'horizontal'
             size_hint_y: None
@@ -40,9 +44,23 @@
             TaskListSelectionButton:
                 text: 'Future'
                 on_press: root.list_selection = 2
-        #Dropdown:
-        # TODO: Add Project Selection drop down plus add button
-        # TODO: Add the Project/Grouping Creation Screen
+
+        BoxLayout: # This is the layout for the project selection screen!
+            orientation: 'horizontal'
+            size_hint_y: None
+            height: 31
+            padding: 0, 2, 0, 2
+            ProjectSelector:
+                size_hint_x: .9
+                size_hint_y: None
+                height: 30
+            Button:
+                id: new_project
+                text: '+'
+                size_hint_x: .1
+                size_hint_y: None
+                height: 30
+
         TextInput:
             id: task_notes
             hint_text: '//Notes'
@@ -53,7 +71,6 @@
             height: 50
             padding: 0, 3
 
-            # TODO: Make it so that the task creation and cancel buttons close the popup and function correctly.
             Button:
                 text: 'Cancel'
                 on_press: root.dismiss()
@@ -65,3 +82,5 @@
     size_hint_x: .33
     height: 40
     group:'task_list_selection'
+
+
