@@ -1,7 +1,8 @@
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.boxlayout import BoxLayout
 from src.taskcontainer import TaskScrollContainer
-from kivy.uix.screenmanager import Screen
+from kivy.uix.screenmanager import Screen, ScreenManager
+
 
 from kivy.lang import Builder
 
@@ -30,7 +31,6 @@ class TaskListView(BoxLayout):
 class TaskListScreen(Screen):
     def __init__(self, **kwargs):
         super(TaskListScreen, self).__init__(**kwargs)
-        self.bind(size=self.screen_resize)
         self.today_list = TaskScrollContainer()
         self.tomorrow_list = TaskScrollContainer()
         self.future_list = TaskScrollContainer()
@@ -45,7 +45,7 @@ class TaskListScreen(Screen):
             self.current_display.view_change([self.today_list])
         elif 640 < args[1][0] < 960:
             self.current_display.view_change([self.today_list, self.tomorrow_list])
-        elif args[1][0] > 960:
+        elif 960 < args[1][0]:
             self.current_display.view_change([self.today_list, self.tomorrow_list, self.future_list])
 
     def click_drag_reposition(self, task, size, position):

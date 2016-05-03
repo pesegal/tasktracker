@@ -18,6 +18,9 @@ class MenuBar(BoxLayout):
     def create_new_task(self, *args):
         TaskCreationScreen().open()
 
+    def print_stuff(self, *args):
+        print('test:', self.get_root_window().children)
+
     def switch_screens(self, name, direction):
         self.parent.screen_controller.transition.direction = direction
         self.parent.screen_controller.current = name
