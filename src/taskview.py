@@ -19,21 +19,30 @@ class TaskListView(FloatLayout):
         self.add_widget(widget)
 
     def swap_single_widget(self, current_widget, new_widget, direction='right'):
-        dur = .5
-        type = 'in_out_quad'
+        dur = .3
+        animation_type = 'in_out_quad'
         print("ANIMATING")
         self.add_widget(new_widget)
-        new_widget.pos = (self.right, self.y)
 
         if direction is 'right':
-            wid_out = Animation(pos=(-current_widget.width, current_widget.y), duration=dur, t=type)
-            wid_in = Animation(pos=(self.x, self.y), duration=dur, t=type)
+            new_widget.pos = (self.right, self.y)
+            wid_out = Animation(pos=(-current_widget.width, current_widget.y), duration=dur, t=animation_type)
+            wid_in = Animation(pos=(self.x, self.y), duration=dur, t=animation_type)
 
             wid_out.start(current_widget)
             wid_in.start(new_widget)
+            wid_out.on_complete(self.remove_widget(current_widget))
 
+        if direction is 'left':
+            new_widget.pos = (-self.right, self.y)
+            wid_out = Animation(pos=(current_widget.width, current_widget.y), duration=dur, t=animation_type)
+            wid_in = Animation(pos=(self.x, self.y), duration=dur, t=animation_type)
 
+            wid_out.start(current_widget)
+            wid_in.start(new_widget)
+            wid_out.on_complete(self.remove_widget(current_widget))
 
+            # TODO: FIGURE OUT HOW TO GET THE WIDGETS TO REMOVE AFTER THE ANIMATION IS COMPLETED
 
     def view_change(self, widgets):
         child_list = tuple(self.children)
@@ -57,8 +66,11 @@ class TaskListScreen(Screen):
 
         self.current_touch_pos = None
 
-    def ani_test(self):
-        self.current_display.swap_single_widget(self.today_list, self.tomorrow_list)
+    def ani_test(self, select):
+        if select is 'right':
+            self.current_display.swap_single_widget(self.today_list, self.tomorrow_list, select)
+        else:
+            self.current_display.swap_single_widget(self.tomorrow_list, self.today_list, select)
 
     def screen_resize(self, *args):
         if args[1][0] < 640:

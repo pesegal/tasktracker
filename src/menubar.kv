@@ -5,12 +5,15 @@
     padding: 0
     height: 30
 
+    # Need to adjust this file for dynamic screen resizing.
+
+    Button:
+        text: '<<'
+        on_press: root.parent.screen_controller.tasks.ani_test('left')
     Button:
         id: new_task_button
-
         text: "New Task"
         on_press: root.create_new_task(*args)
-
     Button:
         text: 'Tasks'
         on_press: root.switch_screens('tasks', 'right')
@@ -21,5 +24,5 @@
         text: 'Stats'
         on_press: root.switch_screens('stats', 'left')
     Button:
-        text: 'Debug Test'
-        on_press: root.parent.screen_controller.tasks.ani_test()
+        text: '>>'
+        on_press: root.parent.screen_controller.tasks.ani_test('right')
