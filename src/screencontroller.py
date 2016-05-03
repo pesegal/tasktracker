@@ -12,7 +12,6 @@ class ScreenController(ScreenManager):
     def __init__(self, **kwargs):
         super(ScreenController, self).__init__(**kwargs)
 
-
         self.tasks = TaskListScreen(name='tasks')
         self.timer = TimerScreen(name='timer')
         self.stats = StatsScreen(name='stats')

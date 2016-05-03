@@ -1,15 +1,14 @@
 from kivy.uix.floatlayout import FloatLayout
-from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.widget import Widget
 from src.taskcontainer import TaskScrollContainer
 from kivy.uix.screenmanager import Screen, ScreenManager
-
-
+from kivy.animation import Animation
 from kivy.lang import Builder
 
 Builder.load_file('./src/taskview.kv')
 
 
-class TaskListView(BoxLayout):
+class TaskListView(FloatLayout):
     """
        This class dynamically displays different scroll views based on how many
         widgets are supplied during construction this is used in conjunction with
@@ -18,6 +17,23 @@ class TaskListView(BoxLayout):
     def __init__(self, widget, **kwargs):
         super(TaskListView, self).__init__(**kwargs)
         self.add_widget(widget)
+
+    def swap_single_widget(self, current_widget, new_widget, direction='right'):
+        dur = .5
+        type = 'in_out_quad'
+        print("ANIMATING")
+        self.add_widget(new_widget)
+        new_widget.pos = (self.right, self.y)
+
+        if direction is 'right':
+            wid_out = Animation(pos=(-current_widget.width, current_widget.y), duration=dur, t=type)
+            wid_in = Animation(pos=(self.x, self.y), duration=dur, t=type)
+
+            wid_out.start(current_widget)
+            wid_in.start(new_widget)
+
+
+
 
     def view_change(self, widgets):
         child_list = tuple(self.children)
@@ -34,11 +50,15 @@ class TaskListScreen(Screen):
         self.today_list = TaskScrollContainer()
         self.tomorrow_list = TaskScrollContainer()
         self.future_list = TaskScrollContainer()
+        self.archived = TaskScrollContainer()
 
         self.current_display = TaskListView(self.today_list)
         self.add_widget(self.current_display)
 
         self.current_touch_pos = None
+
+    def ani_test(self):
+        self.current_display.swap_single_widget(self.today_list, self.tomorrow_list)
 
     def screen_resize(self, *args):
         if args[1][0] < 640:

@@ -17,3 +17,7 @@ This includes a timer to help keep focus and statistical tracking to see how muc
 + Ability to log-in and store data in the cloud.
 + Configurable Settings
 + ect...
+
+
+### Bug List
++ Fix Multi Touch Task repositioning.
