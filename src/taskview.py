@@ -4,18 +4,18 @@ from src.taskcontainer import TaskScrollContainer
 from kivy.uix.screenmanager import Screen, ScreenManager
 from kivy.animation import Animation
 from kivy.lang import Builder
+from src.broadcast import BroadcastMixin
 
 Builder.load_file('./src/taskview.kv')
 
 
-class TaskListView(FloatLayout):
+class TaskListView(FloatLayout, BroadcastMixin):
     """
         This class dynamically displays different scroll views based on how many
         widgets are supplied during construction this is used in conjunction with
         the task list view controller to provide changing views with window resize.
 
         This class also contains all the scrolling animation coding.
-
     """
     def __init__(self, widget, **kwargs):
         super(TaskListView, self).__init__(**kwargs)
@@ -25,6 +25,7 @@ class TaskListView(FloatLayout):
         dur = .2
         animation_type = 'out_expo'
         print("ANIMATING")
+        print(self.width_state)
         self.add_widget(new_widget)
 
         if direction is 'right':
@@ -47,6 +48,9 @@ class TaskListView(FloatLayout):
         print('Animation complete removing : %s' % widget.uid)
         self.remove_widget(widget)
 
+    def width_state_change(self, **kwargs):
+        print(self, 'State changed:: ', kwargs['width_state'])
+
     # TODO: BUILD OUT THE ANIMATION AND DISPLAY FOR ALL SCREEN SIZES
 
     def view_change(self, widgets):
@@ -57,12 +61,11 @@ class TaskListView(FloatLayout):
             self.add_widget(widget)
 
 
-class TaskListScreen(Screen):
-    '''
-        This is the task screen that contains refrences to all the list objects. And contains the logic for
+class TaskListScreen(Screen, BroadcastMixin):
+    """
+        This is the task screen that contains references to all the list objects. And contains the logic for
         changing the task list view.
-    '''
-
+    """
     def __init__(self, **kwargs):
         super(TaskListScreen, self).__init__(**kwargs)
         self.today_list = TaskScrollContainer()
@@ -79,6 +82,9 @@ class TaskListScreen(Screen):
 
         self.current_touch_pos = None
 
+    def width_state_change(self, **kwargs):
+        print('Task List Screen', kwargs['width_state'])
+
     def ani_test(self, select):
         if select is 'right' and self.lists_pos < len(self.lists) - 1:
             self.current_display.swap_single_widget(self.lists[self.lists_pos],
@@ -88,8 +94,6 @@ class TaskListScreen(Screen):
             self.current_display.swap_single_widget(self.lists[self.lists_pos],
                                                     self.lists[self.lists_pos - 1], select)
             self.lists_pos -= 1
-
-        print(self.lists_pos)
 
     def screen_resize(self, *args):
         if args[1][0] < 640:

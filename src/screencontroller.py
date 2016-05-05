@@ -4,11 +4,13 @@ from kivy.properties import NumericProperty
 from src.taskview import TaskListScreen
 from kivy.lang import Builder
 from src.menubar import MenuBar
+from src.broadcast import BroadcastMixin
+
 
 Builder.load_file('./src/screencontroller.kv')
 
 
-class ScreenController(ScreenManager):
+class ScreenController(ScreenManager, BroadcastMixin):
     def __init__(self, **kwargs):
         super(ScreenController, self).__init__(**kwargs)
 
@@ -20,7 +22,6 @@ class ScreenController(ScreenManager):
         self.add_widget(self.timer)
         self.add_widget(self.stats)
 
-
 # TODO: Break this out into their own modules eventually.
 
 class TimerScreen(Screen):
@@ -31,7 +32,7 @@ class StatsScreen(Screen):
     pass
 
 
-class ScreenMenuAndDisplay(BoxLayout):
+class ScreenMenuAndDisplay(BoxLayout, BroadcastMixin):
     screen_size = NumericProperty(0)
 
     def __init__(self, **kwargs):
@@ -42,23 +43,30 @@ class ScreenMenuAndDisplay(BoxLayout):
         self.screen_controller = ScreenController()
         self.menu_bar = MenuBar()
 
-        self.bind(screen_size=self.print_change)
+        # This is where you transmit
+        self.bind(screen_size=self.broadcast_window_resize)
 
         self.add_widget(self.menu_bar)
         self.add_widget(self.screen_controller)
 
     def screen_state(self, *args):
-        if args[1][0] < 640:
+        if args[1][0] < 360:  # Small width screens where text needs to be icons
             self.screen_size = 0
-        elif 640 < args[1][0] < 960:
+        elif 360 < args[1][0] < 640:  # Single list
             self.screen_size = 1
-        elif 960 < args[1][0] < 1280:
+        elif 640 < args[1][0] < 960:
             self.screen_size = 2
-        elif 1280 < args[1][0]:
+        elif 960 < args[1][0] < 1280:
             self.screen_size = 3
+        elif 1280 < args[1][0]:
+            self.screen_size = 4
 
-    def print_change(self, *args):
+    def broadcast_window_resize(self, *args):
         print(self.screen_size, "ARGS: ", args)
+        self.broadcast_child('width_state_change', width_state=self.screen_size)
+
+
+
 
 
 
