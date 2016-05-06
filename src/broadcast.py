@@ -15,7 +15,7 @@ class BroadcastMixin:
                 child.broadcast_child(function, **kwargs)
 
 
-
+        # todo: Add to parent broadcast! Use this for disabling buttons until animation is done!
 
 
 

@@ -62,7 +62,7 @@ class ScreenMenuAndDisplay(BoxLayout, BroadcastMixin):
             self.screen_size = 4
 
     def broadcast_window_resize(self, *args):
-        print(self.screen_size, "ARGS: ", args)
+        # print(self.screen_size, "ARGS: ", args)
         self.broadcast_child('width_state_change', width_state=self.screen_size)
 
 
