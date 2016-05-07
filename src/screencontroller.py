@@ -39,7 +39,7 @@ class ScreenMenuAndDisplay(BoxLayout, BroadcastMixin):
         super(ScreenMenuAndDisplay, self).__init__(**kwargs)
         self.orientation = 'vertical'
         # This will list all the different sub-screens
-        self.bind(size=self.screen_state)
+        self.bind(size=self.screen_width_state)
         self.screen_controller = ScreenController()
         self.menu_bar = MenuBar()
 
@@ -49,7 +49,7 @@ class ScreenMenuAndDisplay(BoxLayout, BroadcastMixin):
         self.add_widget(self.menu_bar)
         self.add_widget(self.screen_controller)
 
-    def screen_state(self, *args):
+    def screen_width_state(self, *args):
         if args[1][0] < 360:  # Small width screens where text needs to be icons
             self.screen_size = 0
         elif 360 < args[1][0] < 640:  # Single list
@@ -64,6 +64,7 @@ class ScreenMenuAndDisplay(BoxLayout, BroadcastMixin):
     def broadcast_window_resize(self, *args):
         # print(self.screen_size, "ARGS: ", args)
         self.broadcast_child('width_state_change', width_state=self.screen_size)
+
 
 
 

@@ -25,6 +25,15 @@ class MenuBar(BoxLayout):
         self.parent.screen_controller.transition.direction = direction
         self.parent.screen_controller.current = name
 
+    def switch_lists(self, direction):
+            self.parent.broadcast_child('slide_task_lists', direction=direction)
+
+
+
+
+
+
+
 
 
 

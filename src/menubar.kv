@@ -9,7 +9,7 @@
 
     Button:
         text: '<<'
-        on_press: root.parent.screen_controller.tasks.ani_test('left')
+        on_press: root.switch_lists('left')
     Button:
         id: new_task_button
         text: "New Task"
@@ -25,4 +25,4 @@
         on_press: root.switch_screens('stats', 'left')
     Button:
         text: '>>'
-        on_press: root.parent.screen_controller.tasks.ani_test('right')
+        on_press: root.switch_lists('right')

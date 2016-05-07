@@ -25,8 +25,10 @@ class TaskListView(FloatLayout, BroadcastMixin):
     def swap_single_widget(self, new_widget, direction='right'):
         dur = .2
         animation_type = 'out_expo'
-        print("ANIMATING")
         new_widget.size_hint_x = self.width_hint
+        if new_widget in self.children:
+            self.remove_widget(new_widget)
+
 
         if direction is 'right':
             new_widget.x = self.width
@@ -37,44 +39,52 @@ class TaskListView(FloatLayout, BroadcastMixin):
             widget_list = []
 
             for child in reversed(self.children):
+                print('List appended:', child.name, ' Index of:', self.children.index(child))
+
                 widget_list.append(child)
                 animation_list.append(Animation(pos=(child.x - widget_width, child.y),
                                                 duration=dur, t=animation_type))
             animation_list[0].bind(on_complete=self.animation_list_remover)
             for i, animation in enumerate(animation_list):
-                print(animation, widget_list[i])
                 widget_list[i].pos_hint = {}
                 animation.start(widget_list[i])
 
         if direction is 'left':
-            new_widget.x = self.x - self.width
-            self.add_widget(new_widget, 0)
+            new_widget.x = self.x - (self.width * self.width_hint)
 
+            print('Adding: ', new_widget.name)
+
+            self.add_widget(new_widget, index=len(self.children))
+
+            print('Widget added at index :', self.children.index(new_widget), new_widget.pos)
             widget_width = self.width * self.width_hint
+            print(widget_width)
             animation_list = []
             widget_list = []
 
             for child in self.children:
+                print('List appended:', child.name, ' Index of:', self.children.index(child))
+
                 widget_list.append(child)
                 animation_list.append(Animation(pos=(child.x + widget_width, child.y),
                                                 duration=dur, t=animation_type))
-            animation_list[-1].bind(on_complete=self.animation_list_remover)
+            animation_list[0].bind(on_complete=self.animation_list_remover)
+            print(animation_list[-1])
             for i, animation in enumerate(animation_list):
-                print(animation, widget_list[i])
                 widget_list[i].pos_hint = {}
                 animation.start(widget_list[i])
 
     def animation_list_remover(self, animation, widget):
-        print('Animation complete removing : %s' % widget.uid)
+        print('Animation complete removing : %s' % widget.name)
         self.remove_widget(widget)
         i = 0   # This resets childrens position hints.
         for child in reversed(self.children):
             child.pos_hint = {'x': i / len(self.children)}
+            i += 1
+        self.broadcast_parent('_animation_complete')
 
     def view_change(self, widgets):
-        child_list = tuple(self.children)
-        for child in child_list:
-            self.remove_widget(child)
+        self.clear_widgets()
         i = 0
         self.width_hint = 1 / len(widgets)
         for widget in widgets:
@@ -91,10 +101,10 @@ class TaskListScreen(Screen, BroadcastMixin):
     """
     def __init__(self, **kwargs):
         super(TaskListScreen, self).__init__(**kwargs)
-        self.today_list = TaskScrollContainer()
-        self.tomorrow_list = TaskScrollContainer()
-        self.future_list = TaskScrollContainer()
-        self.archived = TaskScrollContainer()
+        self.today_list = TaskScrollContainer(name='today')
+        self.tomorrow_list = TaskScrollContainer(name='tomorrow')
+        self.future_list = TaskScrollContainer(name='future')
+        self.archived = TaskScrollContainer(name='archived')
 
         # current size of screen
         self.width_state = 0
@@ -104,12 +114,14 @@ class TaskListScreen(Screen, BroadcastMixin):
 
         # used in list swapping
         self.lists = [self.today_list, self.tomorrow_list, self.future_list, self.archived]
+        self.list_slide_queue = []
+        self.animating = False
         self.lists_pos = 0
-
 
         self.current_touch_pos = None
 
     def width_state_change(self, **kwargs):
+        # This function changes the display based on the width_state of the screen
         state = kwargs['width_state']
         self.width_state = state
         if state == 0 or state == 1:
@@ -121,15 +133,55 @@ class TaskListScreen(Screen, BroadcastMixin):
         elif state == 4:
             self.current_display.view_change([self.today_list, self.tomorrow_list,
                                               self.future_list, self.archived])
+        self.lists_pos = 0
 
-    def ani_test(self, select):
+    def slide_task_lists(self, **kwargs):
+        self.list_slide_queue.append(kwargs['direction'])
+        print(self.list_slide_queue)
+
+        if not self.animating:
+            self._slide_lists()
+
+    def _animation_complete(self):
+        self.animating = False
+        if self.list_slide_queue:
+            self._slide_lists()
+
+    def _slide_lists(self):
+        self.animating = True
+        direction = self.list_slide_queue.pop()
+        print(direction)
+
+        list_length = len(self.lists) - 1
         if self.width_state == 0 or self.width_state == 1:
-            if select is 'right' and self.lists_pos < len(self.lists) - 1:
-                self.current_display.swap_single_widget(self.lists[self.lists_pos + 1], select)
+            if direction is 'right' and self.lists_pos < list_length:
+                self.current_display.swap_single_widget(self.lists[self.lists_pos + 1], direction)
                 self.lists_pos += 1
-            elif select is 'left' and self.lists_pos > 0:
-                self.current_display.swap_single_widget(self.lists[self.lists_pos - 1], select)
+            elif direction is 'left' and self.lists_pos > 0:
+                self.current_display.swap_single_widget(self.lists[self.lists_pos - 1], direction)
                 self.lists_pos -= 1
+            else:
+                self.animating = False
+        elif self.width_state == 2:
+            if direction is 'right' and self.lists_pos + 1 < list_length:
+                self.current_display.swap_single_widget(self.lists[self.lists_pos + 2], direction)
+                self.lists_pos += 1
+            elif direction is 'left' and self.lists_pos > 0:
+                self.current_display.swap_single_widget(self.lists[self.lists_pos - 1], direction)
+                self.lists_pos -= 1
+            else:
+                self.animating = False
+        elif self.width_state == 3:
+            if direction is 'right' and self.lists_pos + 2 < list_length:
+                self.current_display.swap_single_widget(self.lists[self.lists_pos + 3], direction)
+                self.lists_pos += 1
+            elif direction is 'left' and self.lists_pos > 0:
+                self.current_display.swap_single_widget(self.lists[self.lists_pos - 1], direction)
+                self.lists_pos -= 1
+            else:
+                self.animating = False
+        else:
+            self.animating = False
 
     def click_drag_reposition(self, task, size, position):
         task.parent.remove_widget(task)
