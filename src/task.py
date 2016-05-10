@@ -30,9 +30,7 @@ class Task(Button):
         super(Task, self).__init__(**kwargs)
         self.uuid = uuid.uuid1()
         self.last_parent = None
-
-
-
+        self.comment = None
         self.x_off = self.x
         self.y_off = self.y
 
@@ -67,7 +65,6 @@ class Task(Button):
         if touch.grab_current is self:
             self.pos = (touch.x - self.x_off, touch.y - self.y_off)
             #print(touch.pos)
-
             # self.parent.switch_positions(self)
 
 

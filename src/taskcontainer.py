@@ -15,6 +15,7 @@ from src.task import Task
 
 Builder.load_file('./src/taskcontainer.kv')
 
+
 class ProjectSelector(Spinner):
     def __init__(self, **kwargs):
         super(ProjectSelector, self).__init__(**kwargs)

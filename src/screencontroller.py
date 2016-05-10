@@ -6,9 +6,7 @@ from kivy.lang import Builder
 from src.menubar import MenuBar
 from src.broadcast import BroadcastMixin
 
-
 Builder.load_file('./src/screencontroller.kv')
-
 
 class ScreenController(ScreenManager, BroadcastMixin):
     def __init__(self, **kwargs):

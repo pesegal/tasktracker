@@ -29,7 +29,6 @@ class TaskListView(FloatLayout, BroadcastMixin):
         if new_widget in self.children:
             self.remove_widget(new_widget)
 
-
         if direction is 'right':
             new_widget.x = self.width
             self.add_widget(new_widget)
@@ -39,43 +38,33 @@ class TaskListView(FloatLayout, BroadcastMixin):
             widget_list = []
 
             for child in reversed(self.children):
-                print('List appended:', child.name, ' Index of:', self.children.index(child))
-
                 widget_list.append(child)
                 animation_list.append(Animation(pos=(child.x - widget_width, child.y),
                                                 duration=dur, t=animation_type))
             animation_list[0].bind(on_complete=self.animation_list_remover)
+
             for i, animation in enumerate(animation_list):
                 widget_list[i].pos_hint = {}
                 animation.start(widget_list[i])
 
         if direction is 'left':
             new_widget.x = self.x - (self.width * self.width_hint)
-
-            print('Adding: ', new_widget.name)
-
             self.add_widget(new_widget, index=len(self.children))
-
-            print('Widget added at index :', self.children.index(new_widget), new_widget.pos)
             widget_width = self.width * self.width_hint
-            print(widget_width)
             animation_list = []
             widget_list = []
 
             for child in self.children:
-                print('List appended:', child.name, ' Index of:', self.children.index(child))
-
                 widget_list.append(child)
                 animation_list.append(Animation(pos=(child.x + widget_width, child.y),
                                                 duration=dur, t=animation_type))
             animation_list[0].bind(on_complete=self.animation_list_remover)
-            print(animation_list[-1])
+
             for i, animation in enumerate(animation_list):
                 widget_list[i].pos_hint = {}
                 animation.start(widget_list[i])
 
     def animation_list_remover(self, animation, widget):
-        print('Animation complete removing : %s' % widget.name)
         self.remove_widget(widget)
         i = 0   # This resets childrens position hints.
         for child in reversed(self.children):
@@ -128,6 +117,7 @@ class TaskListScreen(Screen, BroadcastMixin):
             self.current_display.view_change([self.today_list])
         elif state == 2:
             self.current_display.view_change([self.today_list, self.tomorrow_list])
+            self.current_display.view_change([self.today_list, self.tomorrow_list])
         elif state == 3:
             self.current_display.view_change([self.today_list, self.tomorrow_list, self.future_list])
         elif state == 4:
@@ -137,8 +127,6 @@ class TaskListScreen(Screen, BroadcastMixin):
 
     def slide_task_lists(self, **kwargs):
         self.list_slide_queue.append(kwargs['direction'])
-        print(self.list_slide_queue)
-
         if not self.animating:
             self._slide_lists()
 
@@ -150,8 +138,6 @@ class TaskListScreen(Screen, BroadcastMixin):
     def _slide_lists(self):
         self.animating = True
         direction = self.list_slide_queue.pop()
-        print(direction)
-
         list_length = len(self.lists) - 1
         if self.width_state == 0 or self.width_state == 1:
             if direction is 'right' and self.lists_pos < list_length:
