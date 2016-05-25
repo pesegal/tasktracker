@@ -2,8 +2,14 @@
     This file contains the code that models the database layout. Test database setup will be done in SQLite
 """
 
+import os
 import sqlite3
 from sqlite3 import OperationalError
+
+RESET_DATABASE = True
+
+if RESET_DATABASE:
+    os.remove('tt_dev.db')
 
 
 def execute_scripts_from_file(filename):
