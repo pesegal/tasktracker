@@ -33,5 +33,4 @@ execute_scripts_from_file('tt_schema.sql')
 
 
 db.commit()
-
 db.close()
