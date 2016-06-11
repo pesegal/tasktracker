@@ -26,11 +26,14 @@ Builder.load_file('./src/task.kv')
 
 
 class Task(Button):
-    def __init__(self, **kwargs):
+    def __init__(self, id, name, notes, project=0, **kwargs):
         super(Task, self).__init__(**kwargs)
-        self.uuid = uuid.uuid1()
+        self.uuid = id
+        self.text = name
+        self.notes = notes
+        self.project_id = project
         self.last_parent = None
-        self.comment = None
+        self.current_project = None
         self.x_off = self.x
         self.y_off = self.y
 

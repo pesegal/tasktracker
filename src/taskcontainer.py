@@ -12,6 +12,7 @@ from kivy.uix.popup import Popup
 from kivy.uix.spinner import Spinner
 from kivy.lang import Builder
 from src.task import Task
+from src.db_interface import db
 
 Builder.load_file('./src/taskcontainer.kv')
 
@@ -30,20 +31,20 @@ class TaskScreen(Popup):
 class TaskCreationScreen(TaskScreen):
     task_name = ObjectProperty(None)
     list_selection = NumericProperty(0)
-    # TODO: project = ObjectProperty()
+    project_selection = NumericProperty(0)
     notes = ObjectProperty(None)
+
+    # TODO: Get new task creation record to SQL
 
     def __init__(self, **kwargs):
         super(TaskCreationScreen, self).__init__(**kwargs)
 
     def create_task(self):
         t_list = self.parent.children[1].screen_controller.tasks
-        if self.list_selection == 0:
-            t_list.today_list.task_list.add_widget(Task(text=self.task_name.text))
-        elif self.list_selection == 1:
-            t_list.tomorrow_list.task_list.add_widget(Task(text=self.task_name.text))
-        elif self.list_selection == 2:
-            t_list.future_list.task_list.add_widget(Task(text=self.task_name.text))
+        print(self.task_name.text, self.list_selection, self.project_selection, self.notes.text)
+        task_id = db.add_new_task(self.task_name.text, self.notes.text, self.list_selection, self.project_selection)
+        task = Task(task_id, self.task_name.text, self.notes.text)
+        t_list.add_task_to_list(task, self.list_selection)
         self.dismiss()
 
 
@@ -57,7 +58,6 @@ class TaskScrollContainer(ScrollView):
         self.add_widget(self.task_list)
 
 
-
 class TaskList(GridLayout):
     def __init__(self, name, **kwargs):
         super(TaskList, self).__init__(**kwargs)
@@ -65,14 +65,6 @@ class TaskList(GridLayout):
         self.spacing = 1
         self.size_hint_y = None
         self.bind(minimum_height=self.setter('height'))
-
-        for i in range(5):
-            task = Task(text=str(i))
-            task.text = str(task.uid) + ' ' + name
-            self.add_widget(task)
-
-    def add_task(self):
-        self.add_widget(Task(text="Created"))
 
 
 

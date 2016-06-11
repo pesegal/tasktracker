@@ -1,10 +1,11 @@
 from kivy.uix.floatlayout import FloatLayout
-from kivy.uix.boxlayout import BoxLayout
 from src.taskcontainer import TaskScrollContainer
-from kivy.uix.screenmanager import Screen, ScreenManager
+from kivy.uix.screenmanager import Screen
 from kivy.animation import Animation
 from kivy.lang import Builder
 from src.broadcast import BroadcastMixin
+from src.db_interface import db
+from src.task import Task
 
 Builder.load_file('./src/taskview.kv')
 
@@ -108,6 +109,25 @@ class TaskListScreen(Screen, BroadcastMixin):
         self.lists_pos = 0
 
         self.current_touch_pos = None
+
+        # loading tasks from database
+        self.load_tasks_on_startup()
+
+    def load_tasks_on_startup(self):
+        # TODO need to store list position index so loading still works!
+        task_records = db.load_all_tasks()
+        for record in task_records:
+            self.add_task_to_list(Task(record[0], record[5], record[6], record[3]), record[4]-1)
+
+    def add_task_to_list(self, task, list_id):
+        if list_id == 0:
+            self.today_list.task_list.add_widget(task)
+        elif list_id == 1:
+            self.tomorrow_list.task_list.add_widget(task)
+        elif list_id == 2:
+            self.future_list.task_list.add_widget(task)
+        elif list_id == 3:
+            self.archived.task_list.add_widget(task)
 
     def width_state_change(self, **kwargs):
         # This function changes the display based on the width_state of the screen
