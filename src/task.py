@@ -14,6 +14,7 @@
 import uuid
 from kivy.uix.button import Button
 from kivy.lang import Builder
+from src.db_interface import db
 
 Builder.load_file('./src/task.kv')
 
@@ -58,6 +59,7 @@ class Task(Button):
             col_data = self.parent.check_children(touch.pos)
             self.parent.remove_widget(self)
             self.size_hint_x = 1
+            last_list = self.last_parent
             if col_data[0] is not None:  # If it is None then task was released outside of a TaskList..
                 self.last_parent = col_data[0]
             if col_data[1]:
@@ -65,6 +67,8 @@ class Task(Button):
                 self.last_parent.add_widget(self, index=in_index+1)
             else:
                 self.last_parent.add_widget(self)
+            db.task_switch(self.uuid, self.last_parent.list_id)
+            last_list.update_list_positions()  # Writes new indexs to database from list that task left
             self.last_parent.update_list_positions()  # writes new task indexes to the database
             touch.ungrab(self)
 

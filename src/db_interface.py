@@ -54,8 +54,12 @@ class Database:
     def update_task(self, task):
         pass
 
-    def task_switch(self, task):
-        pass
+    def task_switch(self, task_id, list_id):
+        list_id += 1
+        self.cursor.execute('INSERT INTO column_history(creation_date, task_id, column_id) VALUES (?,?,?)',
+                            (datetime.now(), task_id, list_id))
+        self.cursor.execute('UPDATE tasks SET list_id = ? WHERE id = ?', (list_id, task_id))
+        self.connection.commit()
 
     def task_action(self, task):
         pass

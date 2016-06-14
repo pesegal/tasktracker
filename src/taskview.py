@@ -91,10 +91,10 @@ class TaskListScreen(Screen, BroadcastMixin):
     """
     def __init__(self, **kwargs):
         super(TaskListScreen, self).__init__(**kwargs)
-        self.today_list = TaskScrollContainer(name='today')
-        self.tomorrow_list = TaskScrollContainer(name='tomorrow')
-        self.future_list = TaskScrollContainer(name='future')
-        self.archived = TaskScrollContainer(name='archived')
+        self.today_list = TaskScrollContainer(list_id=0, name='today')
+        self.tomorrow_list = TaskScrollContainer(list_id=1, name='tomorrow')
+        self.future_list = TaskScrollContainer(list_id=2, name='future')
+        self.archived = TaskScrollContainer(list_id=3, name='archived')
 
         # current size of screen
         self.width_state = 0
@@ -117,9 +117,6 @@ class TaskListScreen(Screen, BroadcastMixin):
         loaded_tasks = db.load_all_tasks()
         for record in loaded_tasks:
             self.add_task_to_list(Task(record[0], record[6], record[7], record[3]), record[4] - 1)
-
-
-
 
     def add_task_to_list(self, task, list_id):
         list_index = self.get_list_length(list_id)  # Adds to the top instead of the bottom.

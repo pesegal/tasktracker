@@ -51,18 +51,20 @@ class TaskCreationScreen(TaskScreen):
 
 
 class TaskScrollContainer(ScrollView):
-    def __init__(self, name='none', **kwargs):
+    def __init__(self, list_id, name='none', **kwargs):
         super(TaskScrollContainer, self).__init__(**kwargs)
 
         # Test to add something to display information!
+        self.list_id = list_id
         self.name = name
-        self.task_list = TaskList(self.name)
+        self.task_list = TaskList(self.list_id)
         self.add_widget(self.task_list)
 
 
 class TaskList(GridLayout):
-    def __init__(self, name, **kwargs):
+    def __init__(self, list_id, **kwargs):
         super(TaskList, self).__init__(**kwargs)
+        self.list_id = list_id
         self.cols = 1
         self.spacing = 1
         self.size_hint_y = None
