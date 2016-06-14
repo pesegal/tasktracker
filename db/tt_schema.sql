@@ -7,6 +7,7 @@ CREATE TABLE tasks (
     deletion_date DATETIME,
     project_id INTEGER,
     list_id INTEGER,
+    list_pos INTEGER,
     name TEXT,
     notes TEXT,
     FOREIGN KEY(project_id) REFERENCES projects(id),

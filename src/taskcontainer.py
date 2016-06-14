@@ -41,9 +41,11 @@ class TaskCreationScreen(TaskScreen):
 
     def create_task(self):
         t_list = self.parent.children[1].screen_controller.tasks
-        print(self.task_name.text, self.list_selection, self.project_selection, self.notes.text)
-        task_id = db.add_new_task(self.task_name.text, self.notes.text, self.list_selection, self.project_selection)
-        task = Task(task_id, self.task_name.text, self.notes.text)
+        new_task_index = t_list.get_list_length(self.list_selection)
+        print(self.list_selection, self.project_selection)
+        task_id = db.add_new_task(self.task_name.text, self.notes.text, self.list_selection,
+                                  new_task_index, self.project_selection)
+        task = Task(1, self.task_name.text, self.notes.text)
         t_list.add_task_to_list(task, self.list_selection)
         self.dismiss()
 
@@ -65,6 +67,12 @@ class TaskList(GridLayout):
         self.spacing = 1
         self.size_hint_y = None
         self.bind(minimum_height=self.setter('height'))
+
+    def update_list_positions(self):
+        for index, child in enumerate(self.children):
+            db.update_task_list_index(index, child.uuid)
+
+
 
 
 

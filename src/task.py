@@ -32,8 +32,10 @@ class Task(Button):
         self.text = name
         self.notes = notes
         self.project_id = project
+        # Used For Click Drag Movement
         self.last_parent = None
-        self.current_project = None
+        self.last_index = None
+
         self.x_off = self.x
         self.y_off = self.y
 
@@ -43,6 +45,7 @@ class Task(Button):
             self.state = 'down'
             self.x_off = touch.x - self.x
             self.y_off = touch.y - self.y
+            self.last_index = self.parent.children.index(self)
             self.last_parent = self.parent  # Used to handle if mouse is outside window boundaries
             global_pos = self.to_window(touch.x, touch.y)
             global_pos = global_pos[0] - self.x_off, global_pos[1] - self.y_off  # Offset Global POS
@@ -55,13 +58,14 @@ class Task(Button):
             col_data = self.parent.check_children(touch.pos)
             self.parent.remove_widget(self)
             self.size_hint_x = 1
-            if col_data[0] is not None:
+            if col_data[0] is not None:  # If it is None then task was released outside of a TaskList..
                 self.last_parent = col_data[0]
             if col_data[1]:
                 in_index = col_data[1].parent.children.index(col_data[1])
                 self.last_parent.add_widget(self, index=in_index+1)
             else:
                 self.last_parent.add_widget(self)
+            self.last_parent.update_list_positions()  # writes new task indexes to the database
             touch.ungrab(self)
 
     def on_touch_move(self, touch):

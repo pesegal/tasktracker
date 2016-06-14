@@ -114,20 +114,33 @@ class TaskListScreen(Screen, BroadcastMixin):
         self.load_tasks_on_startup()
 
     def load_tasks_on_startup(self):
-        # TODO need to store list position index so loading still works!
-        task_records = db.load_all_tasks()
-        for record in task_records:
-            self.add_task_to_list(Task(record[0], record[5], record[6], record[3]), record[4]-1)
+        loaded_tasks = db.load_all_tasks()
+        for record in loaded_tasks:
+            self.add_task_to_list(Task(record[0], record[6], record[7], record[3]), record[4] - 1)
+
+
+
 
     def add_task_to_list(self, task, list_id):
+        list_index = self.get_list_length(list_id)  # Adds to the top instead of the bottom.
         if list_id == 0:
-            self.today_list.task_list.add_widget(task)
+            self.today_list.task_list.add_widget(task, index=list_index)
         elif list_id == 1:
-            self.tomorrow_list.task_list.add_widget(task)
+            self.tomorrow_list.task_list.add_widget(task, index=list_index)
         elif list_id == 2:
-            self.future_list.task_list.add_widget(task)
+            self.future_list.task_list.add_widget(task, index=list_index)
         elif list_id == 3:
-            self.archived.task_list.add_widget(task)
+            self.archived.task_list.add_widget(task, index=list_index)
+
+    def get_list_length(self, list_id):
+        if list_id == 0:
+            return len(self.today_list.task_list.children)
+        elif list_id == 1:
+            return len(self.tomorrow_list.task_list.children)
+        elif list_id == 2:
+            return len(self.future_list.task_list.children)
+        elif list_id == 3:
+            return len(self.archived.task_list.children)
 
     def width_state_change(self, **kwargs):
         # This function changes the display based on the width_state of the screen

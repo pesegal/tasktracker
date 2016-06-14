@@ -55,6 +55,7 @@ action_types = (
 for data in action_types:
     cursor.execute("INSERT INTO action_type(creation_date, action_description) VALUES (?,?)", (datetime.now(), data))
 
+cursor.execute("INSERT INTO projects(id, creation_date, name) VALUES (?,?,?)", (0, datetime.now(), 'None'))
 
 db.commit()
 db.close()

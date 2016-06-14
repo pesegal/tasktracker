@@ -23,21 +23,22 @@ class Database:
             raise PermissionError("File not readable.", self.path)
 
         self.open_connection()
+        self.cursor.execute('PRAGMA foreign_keys = ON')
 
     def open_connection(self):
         self.connection = sqlite3.connect(self.path)
         self.cursor = self.connection.cursor()
 
     def load_all_tasks(self):
-        self.cursor.execute("SELECT * FROM tasks")
+        self.cursor.execute("SELECT * FROM tasks ORDER BY list_id, list_pos ASC;")
         return self.cursor.fetchall()
 
-    def add_new_task(self, task_name, task_notes, list_id, project_id=0):
+    def add_new_task(self, task_name, task_notes, list_id, list_pos, project_id=0):
         now = datetime.now()
         list_id += 1
         # Insert the task record
-        self.cursor.execute('INSERT INTO tasks(creation_date, project_id, list_id, name, notes) VALUES (?,?,?,?,?)',
-                            (now, project_id, list_id, task_name, task_notes))
+        self.cursor.execute('INSERT INTO tasks(creation_date, project_id, list_id, list_pos, name, notes)' +
+                            ' VALUES (?,?,?,?,?,?)', (now, project_id, list_id, list_pos, task_name, task_notes))
         task_id = self.cursor.lastrowid
         # Insert the column history record
         self.cursor.execute('INSERT INTO column_history(creation_date, task_id, column_id) VALUES (?,?,?)',
@@ -46,6 +47,9 @@ class Database:
         self.connection.commit()
         return task_id
 
+    def update_task_list_index(self, index, task_id):
+        self.cursor.execute('UPDATE tasks SET list_pos = ? WHERE id = ?', (index, task_id))
+        self.connection.commit()
 
     def update_task(self, task):
         pass
