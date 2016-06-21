@@ -19,7 +19,6 @@ from src.db_interface import db
 Builder.load_file('./src/task.kv')
 
 
-# Todo: Create the basic task widget that contains task title information.
 # Todo: Task widget should be able to be clicked and opens up a editing screen.
 # Todo: Task widget should be able to be categorized in larger project groupings.
 # Todo: Categorized tasks should have a colorized marker on their graphical representation that shows grouping.
@@ -41,6 +40,11 @@ class Task(Button):
         self.y_off = self.y
 
     def on_touch_down(self, touch):
+        # TODO: Figure out how right click works!
+        # TODO: Figure out how time based clicking works.
+        # TODO: Figure out a better way to trigger click drag rearrangements
+
+
         if self.collide_point(*touch.pos):
             tvc = self.parent.parent.parent.parent  # TODO: Look into finding a better way to get tvc widget.
             self.state = 'down'

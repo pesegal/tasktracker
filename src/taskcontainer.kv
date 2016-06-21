@@ -1,5 +1,3 @@
-
-
 <TaskScrollContainer>:
     size_hint: 1, 1
     scroll_timeout: 20 # Use this to adjust how long it takes for the touch event to be sent to the children
@@ -77,6 +75,78 @@
             Button:
                 text: 'Create'
                 on_press: root.create_task()
+
+<TaskEditScreen>:
+    title: 'Edit Task'
+
+    #Properties
+    task_name: task_title
+    notes: task_notes
+
+    GridLayout:
+        cols: 1
+        padding: 3
+
+        TextInput:
+            id: task_title
+            multiline: False
+            size_hint_y: None
+            height: 30
+            hint_text: 'Task Title'
+            # Do styling here
+
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint_y: None
+            height: 40
+            padding: 0, 3
+            TaskListSelectionButton:
+                text: 'Today'
+                state: 'down'
+                on_press: root.list_selection = 0
+            TaskListSelectionButton:
+                text: 'Tomorrow'
+                on_press: root.list_selection = 1
+            TaskListSelectionButton:
+                text: 'Future'
+                on_press: root.list_selection = 2
+            TaskListSelectionButton:
+                text: 'Archive'
+                on_press: root.list_selection = 3
+
+        BoxLayout: # This is the layout for the project selection screen!
+            orientation: 'horizontal'
+            size_hint_y: None
+            height: 31
+            padding: 0, 2, 0, 2
+            ProjectSelector:
+                size_hint_x: .9
+                size_hint_y: None
+                height: 30
+            Button:
+                id: new_project
+                text: '+'
+                size_hint_x: .1
+                size_hint_y: None
+                height: 30
+
+        TextInput:
+            id: task_notes
+            hint_text: '//Notes'
+
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint_y: None
+            height: 50
+            padding: 0, 3
+
+            Button:
+                text: 'Cancel'
+                on_press: root.dismiss()
+            Button:
+                text: 'Update'
+                on_press: root.update_task()
+
 
 <TaskListSelectionButton@ToggleButton>:
     size_hint_x: .33

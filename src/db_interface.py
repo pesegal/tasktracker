@@ -33,6 +33,10 @@ class Database:
         self.cursor.execute("SELECT * FROM tasks ORDER BY list_id, list_pos ASC;")
         return self.cursor.fetchall()
 
+    def load_task_data(self, task_id):
+        self.cursor.execute('SELECT * FROM tasks WHERE id = ?', (task_id,))
+        return self.cursor.fetchone()
+
     def add_new_task(self, task_name, task_notes, list_id, list_pos, project_id=0):
         now = datetime.now()
         list_id += 1

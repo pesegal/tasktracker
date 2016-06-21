@@ -21,21 +21,17 @@ class ProjectSelector(Spinner):
     def __init__(self, **kwargs):
         super(ProjectSelector, self).__init__(**kwargs)
         self.text = 'No Project Selected'
-        self.values = ['Project 1', 'Project 2', 'Project 3','Project 1', 'Project 2', 'Project 3','Project 1', 'Project 2', 'Project 3','Project 1', 'Project 2', 'Project 3']
+        self.values = ['Project 1', 'Project 2', 'Project 3', 'Project 1', 'Project 2', 'Project 3','Project 1', 'Project 2', 'Project 3','Project 1', 'Project 2', 'Project 3']
 
 
 class TaskScreen(Popup):
-    pass
-
-
-class TaskCreationScreen(TaskScreen):
     task_name = ObjectProperty(None)
     list_selection = NumericProperty(0)
     project_selection = NumericProperty(0)
     notes = ObjectProperty(None)
 
-    # TODO: Get new task creation record to SQL
 
+class TaskCreationScreen(TaskScreen):
     def __init__(self, **kwargs):
         super(TaskCreationScreen, self).__init__(**kwargs)
 
@@ -48,6 +44,19 @@ class TaskCreationScreen(TaskScreen):
         task = Task(1, self.task_name.text, self.notes.text)
         t_list.add_task_to_list(task, self.list_selection)
         self.dismiss()
+
+
+class TaskEditScreen(TaskScreen): # Need to figure out how to open the task screen!
+    def __init__(self, task, **kwargs):
+        super(TaskEditScreen, self).__init__(**kwargs)
+        self.load_task_data(task.uuid)
+
+    def load_task_data(self, task_id):
+        task_data = db.load_task_data(task_id)
+        print(task_data)
+
+    def update_task(self):
+        pass
 
 
 class TaskScrollContainer(ScrollView):
