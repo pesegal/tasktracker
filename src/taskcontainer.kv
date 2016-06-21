@@ -8,7 +8,7 @@
     size: app.root.width/1.1, app.root.height/1.1
     auto_dismiss: False
 
-<TaskCreationScreen>:  # TODO: Break out into more object oriented versions when doing task edit screen as well.
+<TaskCreationScreen>:
     title: 'Add New Task'
 
     #Properties
@@ -19,13 +19,8 @@
         cols: 1
         padding: 3
 
-        TextInput:
+        TaskTitle:
             id: task_title
-            multiline: False
-            size_hint_y: None
-            height: 30
-            hint_text: 'Task Title'
-            # Do styling here
 
         BoxLayout:
             orientation: 'horizontal'
@@ -43,21 +38,7 @@
                 text: 'Future'
                 on_press: root.list_selection = 2
 
-        BoxLayout: # This is the layout for the project selection screen!
-            orientation: 'horizontal'
-            size_hint_y: None
-            height: 31
-            padding: 0, 2, 0, 2
-            ProjectSelector:
-                size_hint_x: .9
-                size_hint_y: None
-                height: 30
-            Button:
-                id: new_project
-                text: '+'
-                size_hint_x: .1
-                size_hint_y: None
-                height: 30
+        ProjectSelectionScreen:
 
         TextInput:
             id: task_notes
@@ -87,13 +68,8 @@
         cols: 1
         padding: 3
 
-        TextInput:
+        TaskTitle:
             id: task_title
-            multiline: False
-            size_hint_y: None
-            height: 30
-            hint_text: 'Task Title'
-            # Do styling here
 
         BoxLayout:
             orientation: 'horizontal'
@@ -114,21 +90,7 @@
                 text: 'Archive'
                 on_press: root.list_selection = 3
 
-        BoxLayout: # This is the layout for the project selection screen!
-            orientation: 'horizontal'
-            size_hint_y: None
-            height: 31
-            padding: 0, 2, 0, 2
-            ProjectSelector:
-                size_hint_x: .9
-                size_hint_y: None
-                height: 30
-            Button:
-                id: new_project
-                text: '+'
-                size_hint_x: .1
-                size_hint_y: None
-                height: 30
+        ProjectSelectionScreen:
 
         TextInput:
             id: task_notes
@@ -153,4 +115,27 @@
     height: 40
     group:'task_list_selection'
 
+<TaskTitle@TextInput>:
+    multiline: False
+    size_hint_y: None
+    height: 30
+    hint_text: 'Task Title'
+    # Do styling here
+
+<ProjectSelectionScreen@BoxLayout>:
+    # Layout information for the project selection section!
+    orientation: 'horizontal'
+    size_hint_y: None
+    height: 31
+    padding: 0, 2, 0, 2
+    ProjectSelector:
+        size_hint_x: .9
+        size_hint_y: None
+        height: 30
+    Button:
+        id: new_project
+        text: '+'
+        size_hint_x: .1
+        size_hint_y: None
+        height: 30
 
