@@ -11,12 +11,10 @@
         Number of long breaks spent on task.
 
 """
-import uuid
-from kivy.uix.button import Button
 from kivy.lang import Builder
-from src.db_interface import db
+from kivy.uix.button import Button
 
-Builder.load_file('./src/task.kv')
+from tasktracker.database.db_interface import db
 
 
 # Todo: Task widget should be able to be clicked and opens up a editing screen.

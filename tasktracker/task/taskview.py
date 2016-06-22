@@ -1,13 +1,12 @@
-from kivy.uix.floatlayout import FloatLayout
-from src.taskcontainer import TaskScrollContainer
-from kivy.uix.screenmanager import Screen
 from kivy.animation import Animation
 from kivy.lang import Builder
-from src.broadcast import BroadcastMixin
-from src.db_interface import db
-from src.task import Task
+from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.screenmanager import Screen
+from tasktracker.task.taskcontainer import TaskScrollContainer
 
-Builder.load_file('./src/taskview.kv')
+from tasktracker.broadcast import BroadcastMixin
+from tasktracker.database.db_interface import db
+from tasktracker.task.task import Task
 
 
 class TaskListView(FloatLayout, BroadcastMixin):

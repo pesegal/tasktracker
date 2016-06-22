@@ -1,14 +1,11 @@
+from kivy.lang import Builder
+from kivy.properties import NumericProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.screenmanager import ScreenManager, Screen
-from kivy.properties import NumericProperty
-from src.taskview import TaskListScreen
-from kivy.lang import Builder
-from src.menubar import MenuBar
-from src.broadcast import BroadcastMixin
-from src.db_interface import db
+from tasktracker.broadcast import BroadcastMixin
 
-Builder.load_file('./src/screencontroller.kv')
-
+from tasktracker.menubar import MenuBar
+from tasktracker.task.taskview import TaskListScreen
 
 class ScreenController(ScreenManager, BroadcastMixin):
     def __init__(self, **kwargs):

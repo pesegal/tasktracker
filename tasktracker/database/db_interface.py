@@ -6,6 +6,7 @@ import os
 import os.path
 import sqlite3
 from datetime import datetime
+__location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
 
 class Database:
@@ -80,4 +81,4 @@ class Database:
     def close_connection(self):
         self.connection.close()
 
-db = Database('./db/tt_dev.db')
+db = Database(os.path.join(__location__, 'tt_dev.db'))

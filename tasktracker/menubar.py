@@ -5,12 +5,11 @@
     screen.
 """
 
-from kivy.uix.boxlayout import BoxLayout
 from kivy.lang import Builder
-from src.taskcontainer import TaskCreationScreen
-from src.broadcast import BroadcastMixin
+from kivy.uix.boxlayout import BoxLayout
 
-Builder.load_file('./src/menubar.kv')
+from tasktracker.broadcast import BroadcastMixin
+from tasktracker.task.taskcontainer import TaskCreationScreen
 
 
 class MenuBar(BoxLayout, BroadcastMixin):

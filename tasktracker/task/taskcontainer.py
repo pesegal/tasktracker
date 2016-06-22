@@ -5,16 +5,15 @@
 # Todo: Implement Reordering of tasks widgets.
 # Todo: Implement creation and destruction of task widgets to support moving tasks between display windows.
 
-from kivy.uix.scrollview import ScrollView
-from kivy.uix.gridlayout import GridLayout
-from kivy.properties import StringProperty, NumericProperty, ObjectProperty
-from kivy.uix.popup import Popup
-from kivy.uix.spinner import Spinner
 from kivy.lang import Builder
-from src.task import Task
-from src.db_interface import db
+from kivy.properties import NumericProperty, ObjectProperty
+from kivy.uix.gridlayout import GridLayout
+from kivy.uix.popup import Popup
+from kivy.uix.scrollview import ScrollView
+from kivy.uix.spinner import Spinner
 
-Builder.load_file('./src/taskcontainer.kv')
+from tasktracker.database.db_interface import db
+from tasktracker.task.task import Task
 
 
 class ProjectSelector(Spinner):
@@ -46,7 +45,7 @@ class TaskCreationScreen(TaskScreen):
         self.dismiss()
 
 
-class TaskEditScreen(TaskScreen): # Need to figure out how to open the task screen!
+class TaskEditScreen(TaskScreen):  # Need to figure out how to open the task screen!
     def __init__(self, task, **kwargs):
         super(TaskEditScreen, self).__init__(**kwargs)
         self.load_task_data(task.uuid)
