@@ -198,12 +198,6 @@ class TaskListScreen(Screen, BroadcastMixin):
         else:
             self.animating = False
 
-    def click_drag_reposition(self, task, size, position):
-        task.parent.remove_widget(task)
-        self.add_widget(task)
-        task.pos = position
-        task.size_hint_x = None
-        task.size = size
 
     def check_children(self, touch_pos):
         """

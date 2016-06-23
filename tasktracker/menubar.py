@@ -30,14 +30,15 @@ class MenuBar(BoxLayout, BroadcastMixin):
     def switch_lists(self, direction):
             self.parent.broadcast_child('slide_task_lists', direction=direction)
 
-    def width_state_change(self, **kwargs):
-        screen_state = kwargs['width_state']
+    def width_state_change(self, width_state, **kwargs):
+        screen_state = width_state
         if screen_state == 4:
-            self.remove_widget(self.ids.scroll_list_left)
-            self.remove_widget(self.ids.scroll_list_right)
-        elif screen_state is not 4 and self.ids.scroll_list_left not in self.children:
-            self.add_widget(self.ids.scroll_list_left, index=len(self.children))
-            self.add_widget(self.ids.scroll_list_right, index=0)
+            self.remove_widget(self.ids.scroll_list_left.__self__)
+            self.remove_widget(self.ids.scroll_list_right.__self__)
+        elif screen_state is not 4 and self.ids.scroll_list_left.__self__ not in self.children:
+            # TODO: Figure out how to correct bug with weakref object not existing.
+            self.add_widget(self.ids.scroll_list_left.__self__, index=len(self.children))
+            self.add_widget(self.ids.scroll_list_right.__self__, index=0)
 
 
 

@@ -42,9 +42,8 @@ class Task(Button):
         # TODO: Figure out how time based clicking works.
         # TODO: Figure out a better way to trigger click drag rearrangements
 
-
         if self.collide_point(*touch.pos):
-            tvc = self.parent.parent.parent.parent  # TODO: Look into finding a better way to get tvc widget.
+            tvc = self.get_root_window().children[0]
             self.state = 'down'
             self.x_off = touch.x - self.x
             self.y_off = touch.y - self.y
@@ -58,7 +57,7 @@ class Task(Button):
     def on_touch_up(self, touch):
         if touch.grab_current is self:
             self.state = 'normal'
-            col_data = self.parent.check_children(touch.pos)
+            col_data = self.parent.tasks.check_children(touch.pos)
             self.parent.remove_widget(self)
             self.size_hint_x = 1
             last_list = self.last_parent

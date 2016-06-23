@@ -6,7 +6,7 @@
 import os
 from kivy.app import App
 from kivy.lang import Builder
-from tasktracker.screencontroller import ScreenMenuAndDisplay
+from tasktracker.screencontroller import ScreenClickDragWindow
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
@@ -20,7 +20,7 @@ for file in os.listdir(layout_path):
 class TaskApp(App):
     def build(self):
         self.title = 'TaskTracker++'
-        return ScreenMenuAndDisplay()
+        return ScreenClickDragWindow()
 
 if __name__ == '__main__':
     TaskApp().run()

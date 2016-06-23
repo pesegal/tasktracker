@@ -1,11 +1,13 @@
 from kivy.lang import Builder
 from kivy.properties import NumericProperty
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.screenmanager import ScreenManager, Screen
 from tasktracker.broadcast import BroadcastMixin
 
 from tasktracker.menubar import MenuBar
 from tasktracker.task.taskview import TaskListScreen
+
 
 class ScreenController(ScreenManager, BroadcastMixin):
     def __init__(self, **kwargs):
@@ -61,6 +63,22 @@ class ScreenMenuAndDisplay(BoxLayout, BroadcastMixin):
     def broadcast_window_resize(self, *args):
         # print(self.screen_size, "ARGS: ", args)
         self.broadcast_child('width_state_change', width_state=self.screen_size)
+
+
+class ScreenClickDragWindow(FloatLayout):
+    def __init__(self, **kwargs):
+        super(ScreenClickDragWindow, self).__init__(**kwargs)
+        self.screen_menu = ScreenMenuAndDisplay()
+        self.add_widget(self.screen_menu)
+
+    def click_drag_reposition(self, task, size, position):
+        task.parent.remove_widget(task)
+        self.add_widget(task)
+        task.pos = position
+        task.size_hint_x = None
+        task.size = size
+
+    # TODO: CONTINUE HERE WITH WIDGET SCANNING FUNCTIONALITY
 
 
 
