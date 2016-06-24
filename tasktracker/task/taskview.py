@@ -4,7 +4,7 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.screenmanager import Screen
 from tasktracker.task.taskcontainer import TaskScrollContainer
 
-from tasktracker.broadcast import BroadcastMixin
+from tasktracker.mixins import BroadcastMixin
 from tasktracker.database.db_interface import db
 from tasktracker.task.task import Task
 
@@ -197,27 +197,3 @@ class TaskListScreen(Screen, BroadcastMixin):
                 self.animating = False
         else:
             self.animating = False
-
-
-    def check_children(self, touch_pos):
-        """
-        This function returns the task list widget and the task widget the touch position releases on.
-        :param touch_pos:
-        :return: TaskList Widget, Task Object
-        """
-        # TODO Will need to add a check in case it's not a scroll view.
-        t_list = None
-        task = None
-
-        for child in self.children:
-            if not child.collide_point(*touch_pos):
-                continue
-            for c in child.children:
-                if c.collide_point(*touch_pos):
-                    t_list = c.task_list
-            if not t_list:
-                continue
-            for tasks in t_list.children:
-                if tasks.collide_point(*tasks.to_widget(*touch_pos)):
-                    task = tasks
-        return t_list, task

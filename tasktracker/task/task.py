@@ -26,6 +26,7 @@ from tasktracker.database.db_interface import db
 class Task(Button):
     def __init__(self, id, name, notes, project=0, **kwargs):
         super(Task, self).__init__(**kwargs)
+        self.drop_type = 'task'
         self.uuid = id
         self.text = name
         self.notes = notes
@@ -56,8 +57,9 @@ class Task(Button):
 
     def on_touch_up(self, touch):
         if touch.grab_current is self:
+            print("Selected Task: ", self.uid, "Touch Pos: ", touch.pos)
             self.state = 'normal'
-            col_data = self.parent.tasks.check_children(touch.pos)
+            col_data = self.parent.check_children(touch.pos)
             self.parent.remove_widget(self)
             self.size_hint_x = 1
             last_list = self.last_parent
@@ -78,6 +80,7 @@ class Task(Button):
             self.pos = (touch.x - self.x_off, touch.y - self.y_off)
             #print(touch.pos)
             # self.parent.switch_positions(self)
+
 
 
 

@@ -8,7 +8,7 @@
 from kivy.lang import Builder
 from kivy.uix.boxlayout import BoxLayout
 
-from tasktracker.broadcast import BroadcastMixin
+from tasktracker.mixins import BroadcastMixin
 from tasktracker.task.taskcontainer import TaskCreationScreen
 
 

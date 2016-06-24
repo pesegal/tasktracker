@@ -63,6 +63,7 @@ class TaskScrollContainer(ScrollView):
         super(TaskScrollContainer, self).__init__(**kwargs)
 
         # Test to add something to display information!
+        self.drop_type = 'scroll_list'
         self.list_id = list_id
         self.name = name
         self.task_list = TaskList(self.list_id)
@@ -72,6 +73,7 @@ class TaskScrollContainer(ScrollView):
 class TaskList(GridLayout):
     def __init__(self, list_id, **kwargs):
         super(TaskList, self).__init__(**kwargs)
+        self.drop_type = 'tasklist'
         self.list_id = list_id
         self.cols = 1
         self.spacing = 1

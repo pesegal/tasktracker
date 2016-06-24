@@ -3,7 +3,7 @@ from kivy.properties import NumericProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.screenmanager import ScreenManager, Screen
-from tasktracker.broadcast import BroadcastMixin
+from tasktracker.mixins import BroadcastMixin
 
 from tasktracker.menubar import MenuBar
 from tasktracker.task.taskview import TaskListScreen
@@ -79,6 +79,35 @@ class ScreenClickDragWindow(FloatLayout):
         task.size = size
 
     # TODO: CONTINUE HERE WITH WIDGET SCANNING FUNCTIONALITY
+
+    def check_children(self, touch_pos):
+        """
+        This function returns the task list widget and the task widget the touch position releases on.
+        :param touch_pos:
+        :return: TaskList Widget, Task Object
+        """
+        t_list = None
+        task = None
+
+        widget_list = []
+
+        for widget in self.walk():
+            widget_list.append(widget)
+            if widget in self.children:  # Skip currently selected task.
+                continue
+            drop = hasattr(widget, 'drop_type')
+            if widget.collide_point(*touch_pos) and drop:  # check for task_list collision
+                if widget.drop_type == 'scroll_list':
+                    t_list = widget.task_list
+            if widget.collide_point(*widget.to_widget(*touch_pos)) and drop:  # test for task collision
+                if widget.drop_type == 'task':
+                    task = widget
+
+            # TODO: Add in drop type functionality for menu buttons!
+
+        return t_list, task
+
+
 
 
 
