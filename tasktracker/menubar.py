@@ -7,6 +7,7 @@
 
 from kivy.lang import Builder
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.button import Button
 
 from tasktracker.mixins import BroadcastMixin
 from tasktracker.task.taskcontainer import TaskCreationScreen
@@ -41,6 +42,19 @@ class MenuBar(BoxLayout, BroadcastMixin):
             self.add_widget(self.ids.scroll_list_right.__self__, index=0)
 
 
+class ScrollButton(Button):
+    pass
+
+
+class MultiUseButton(Button):
+    def __init__(self, **kwargs):
+        super(MultiUseButton, self).__init__(**kwargs)
+        self.drop_type = 'task_edit'
+
+
+
+class SwitchScreenButton(Button):
+    pass
 
 
 

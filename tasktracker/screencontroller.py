@@ -3,10 +3,11 @@ from kivy.properties import NumericProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.screenmanager import ScreenManager, Screen
-from tasktracker.mixins import BroadcastMixin
 
+from tasktracker.mixins import BroadcastMixin
 from tasktracker.menubar import MenuBar
 from tasktracker.task.taskview import TaskListScreen
+from tasktracker.task.taskcontainer import TaskEditScreen
 
 
 class ScreenController(ScreenManager, BroadcastMixin):
@@ -22,6 +23,7 @@ class ScreenController(ScreenManager, BroadcastMixin):
         self.add_widget(self.stats)
 
 # TODO: Break this out into their own modules eventually.
+
 
 class TimerScreen(Screen):
     pass
@@ -78,9 +80,7 @@ class ScreenClickDragWindow(FloatLayout):
         task.size_hint_x = None
         task.size = size
 
-    # TODO: CONTINUE HERE WITH WIDGET SCANNING FUNCTIONALITY
-
-    def check_children(self, touch_pos):
+    def check_children(self, touch_pos, selected_task):
         """
         This function returns the task list widget and the task widget the touch position releases on.
         :param touch_pos:
@@ -99,6 +99,8 @@ class ScreenClickDragWindow(FloatLayout):
             if widget.collide_point(*touch_pos) and drop:  # check for task_list collision
                 if widget.drop_type == 'scroll_list':
                     t_list = widget.task_list
+                elif widget.drop_type == 'task_edit':
+                    TaskEditScreen(selected_task).open()
             if widget.collide_point(*widget.to_widget(*touch_pos)) and drop:  # test for task collision
                 if widget.drop_type == 'task':
                     task = widget

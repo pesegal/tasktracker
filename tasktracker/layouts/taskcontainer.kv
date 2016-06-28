@@ -77,16 +77,19 @@
             height: 40
             padding: 0, 3
             TaskListSelectionButton:
+                id: today_button
                 text: 'Today'
-                state: 'down'
                 on_press: root.list_selection = 0
             TaskListSelectionButton:
+                id: tomorrow_button
                 text: 'Tomorrow'
                 on_press: root.list_selection = 1
             TaskListSelectionButton:
+                id: future_button
                 text: 'Future'
                 on_press: root.list_selection = 2
             TaskListSelectionButton:
+                id: archive_button
                 text: 'Archive'
                 on_press: root.list_selection = 3
 

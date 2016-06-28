@@ -6,23 +6,23 @@
     height: 30
 
     # Need to adjust this file for dynamic screen resizing.
-    Button:
+    ScrollButton:
         id: scroll_list_left
         text: '<<'
         on_press: root.switch_lists('left')
-    Button:
+    MultiUseButton:
         id: multi_use_button
         text: "New Task"
         on_press: root.create_new_task(*args)
-    Button:
+    SwitchScreenButton:
         id: switch_screen_1
         text: 'Timer'
         on_press: root.switch_screens('timer', 'right')
-    Button:
+    SwitchScreenButton:
         id: switch_screen_2
         text: 'Stats'
         on_press: root.switch_screens('stats', 'up')
-    Button:
+    ScrollButton:
         id: scroll_list_right
         text: '>>'
         on_press: root.switch_lists('right')

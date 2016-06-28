@@ -35,18 +35,18 @@ class Database:
         return self.cursor.fetchall()
 
     def load_task_data(self, task_id):
-        self.cursor.execute('SELECT * FROM tasks WHERE id = ?', (task_id,))
+        self.cursor.execute('SELECT * FROM tasks WHERE id = ?;', (task_id,))
         return self.cursor.fetchone()
 
     def add_new_task(self, task_name, task_notes, list_id, list_pos, project_id=0):
         now = datetime.now()
         list_id += 1
         # Insert the task record
-        self.cursor.execute('INSERT INTO tasks(creation_date, project_id, list_id, list_pos, name, notes)' +
+        self.cursor.execute('INSERT INTO tasks(creation_date, project_id, list_id, list_pos, name, notes);' +
                             ' VALUES (?,?,?,?,?,?)', (now, project_id, list_id, list_pos, task_name, task_notes))
         task_id = self.cursor.lastrowid
         # Insert the column history record
-        self.cursor.execute('INSERT INTO column_history(creation_date, task_id, column_id) VALUES (?,?,?)',
+        self.cursor.execute('INSERT INTO column_history(creation_date, task_id, column_id) VALUES (?,?,?);',
                             (now, task_id, list_id))
 
         self.connection.commit()
@@ -56,14 +56,18 @@ class Database:
         self.cursor.execute('UPDATE tasks SET list_pos = ? WHERE id = ?', (index, task_id))
         self.connection.commit()
 
-    def update_task(self, task):
-        pass
+    def update_task(self, task_id, name, notes, project_id):
+        # TODO: Update to allow tasks to be deleted as well.
+        print(name, notes, project_id, task_id)
+        self.cursor.execute('UPDATE tasks SET name = ?, notes = ?, project_id = ? WHERE id = ?;',
+                            (name, notes, project_id, task_id))
+        self.connection.commit()
 
     def task_switch(self, task_id, list_id):
         list_id += 1
-        self.cursor.execute('INSERT INTO column_history(creation_date, task_id, column_id) VALUES (?,?,?)',
+        self.cursor.execute('INSERT INTO column_history(creation_date, task_id, column_id) VALUES (?,?,?);',
                             (datetime.now(), task_id, list_id))
-        self.cursor.execute('UPDATE tasks SET list_id = ? WHERE id = ?', (list_id, task_id))
+        self.cursor.execute('UPDATE tasks SET list_id = ? WHERE id = ?;', (list_id, task_id))
         self.connection.commit()
 
     def task_action(self, task):

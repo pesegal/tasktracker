@@ -57,9 +57,8 @@ class Task(Button):
 
     def on_touch_up(self, touch):
         if touch.grab_current is self:
-            print("Selected Task: ", self.uid, "Touch Pos: ", touch.pos)
             self.state = 'normal'
-            col_data = self.parent.check_children(touch.pos)
+            col_data = self.parent.check_children(touch.pos, self)
             self.parent.remove_widget(self)
             self.size_hint_x = 1
             last_list = self.last_parent
