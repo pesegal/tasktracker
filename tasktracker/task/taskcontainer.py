@@ -35,6 +35,7 @@ class TaskCreationScreen(TaskScreen):
         super(TaskCreationScreen, self).__init__(**kwargs)
 
     def create_task(self):
+        print(self.parent)
         t_list = self.parent.children[1].screen_controller.tasks  # TODO FIX THIS LINE!
         new_task_index = t_list.get_list_length(self.list_selection)
         print(self.list_selection, self.project_selection)
@@ -79,9 +80,14 @@ class TaskEditScreen(TaskScreen):  # Need to figure out how to open the task scr
             task_list_screen.add_task_to_list(self.task, self.list_selection)
             db.task_switch(self.task.uuid, self.list_selection)
             self.task.parent.update_list_positions()
-        db.update_task(self.task.uuid, self.task_name.text, self.notes.text, self.project_selection)
 
-        # TODO: Set tasks to update in the program itself!
+        # Update task in the database
+        db.update_task(self.task.uuid, self.task_name.text, self.notes.text, self.project_selection)
+        # Update task in the current session
+        self.task.text = self.task_name.text
+        self.task.notes = self.notes.text
+        self.task.project_id = self.project_selection
+
         self.dismiss()
 
     def updated_list_flag(self, *args):

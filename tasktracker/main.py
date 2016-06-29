@@ -20,6 +20,8 @@ for file in os.listdir(layout_path):
 class TaskApp(App):
     def build(self):
         self.title = 'TaskTracker++'
+        self.minimum_width = 150
+        self.minimum_height = 300
         return ScreenClickDragWindow()
 
 if __name__ == '__main__':
