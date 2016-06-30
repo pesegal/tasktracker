@@ -42,8 +42,8 @@ class Database:
         now = datetime.now()
         list_id += 1
         # Insert the task record
-        self.cursor.execute('INSERT INTO tasks(creation_date, project_id, list_id, list_pos, name, notes);' +
-                            ' VALUES (?,?,?,?,?,?)', (now, project_id, list_id, list_pos, task_name, task_notes))
+        self.cursor.execute('INSERT INTO tasks(creation_date, project_id, list_id, list_pos, name, notes)' +
+                            ' VALUES (?,?,?,?,?,?);', (now, project_id, list_id, list_pos, task_name, task_notes))
         task_id = self.cursor.lastrowid
         # Insert the column history record
         self.cursor.execute('INSERT INTO column_history(creation_date, task_id, column_id) VALUES (?,?,?);',

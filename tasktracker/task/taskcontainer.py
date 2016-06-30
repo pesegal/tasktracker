@@ -2,10 +2,6 @@
     Tasklist that handles the ordering and displaying of objects.
 """
 
-# Todo: Implement Reordering of tasks widgets.
-# Todo: Implement creation and destruction of task widgets to support moving tasks between display windows.
-
-from kivy.lang import Builder
 from kivy.properties import NumericProperty, ObjectProperty
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.popup import Popup
@@ -35,13 +31,12 @@ class TaskCreationScreen(TaskScreen):
         super(TaskCreationScreen, self).__init__(**kwargs)
 
     def create_task(self):
-        print(self.parent)
-        t_list = self.parent.children[1].screen_controller.tasks  # TODO FIX THIS LINE!
+        t_list = self.parent.children[1].children[0].screen_controller.tasks  # can this be done better?
         new_task_index = t_list.get_list_length(self.list_selection)
         print(self.list_selection, self.project_selection)
         task_id = db.add_new_task(self.task_name.text, self.notes.text, self.list_selection,
                                   new_task_index, self.project_selection)
-        task = Task(1, self.task_name.text, self.notes.text)
+        task = Task(task_id, self.task_name.text, self.notes.text)
         t_list.add_task_to_list(task, self.list_selection)
         self.dismiss()
 
