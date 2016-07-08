@@ -12,11 +12,52 @@ from tasktracker.database.db_interface import db
 from tasktracker.task.task import Task
 
 
+class Project():
+    def __init__(self, id, creation, deletion, name, color):
+        self.db_id = id
+        self.name = name
+        self.creation_date = creation
+        self.deletion_date = deletion
+        self.color = color
+
+    def create_project(self):
+        pass
+
+    def update_project(self):
+        pass
+
+    def delete_project(self):
+        pass
+
+
 class ProjectSelector(Spinner):
     def __init__(self, **kwargs):
         super(ProjectSelector, self).__init__(**kwargs)
-        self.text = 'No Project Selected'
-        self.values = ['Project 1', 'Project 2', 'Project 3', 'Project 1', 'Project 2', 'Project 3','Project 1', 'Project 2', 'Project 3','Project 1', 'Project 2', 'Project 3']
+        self.values = list()
+        self.project_list = list()
+
+        self.load_all_projects()
+        self.text = self.project_list[0].name
+
+        self.populate_values()
+
+    def load_all_projects(self):
+        projects = db.load_all_projects()
+        for project in projects:
+            print(project)
+            self.project_list.append(Project(*project))
+
+    def select_project(self):
+        pass
+
+    def populate_values(self):
+        self.values = list()
+        for project in self.project_list:
+            self.values.append(project.name)
+
+
+class ProjectCreationScreen(Popup):
+    pass
 
 
 class TaskScreen(Popup):
@@ -115,10 +156,3 @@ class TaskList(GridLayout):
     def update_list_positions(self):
         for index, child in enumerate(self.children):
             db.update_task_list_index(index, child.uuid)
-
-
-
-
-
-
-

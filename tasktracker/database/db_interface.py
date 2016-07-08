@@ -76,6 +76,10 @@ class Database:
     def task_archive(self, task):
         pass
 
+    def load_all_projects(self):
+        self.cursor.execute('SELECT * FROM projects;')
+        return self.cursor.fetchall()
+
     def new_project(self, project):
         pass
 
