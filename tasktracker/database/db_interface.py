@@ -14,6 +14,7 @@ class Database:
         Database class handles all read/write connections with the database for TaskTracker App.
         this will allow for flexibility in the future when accessing multiple databases.
     """
+
     def __init__(self, path):
         self.path = path
         self.connection = None
@@ -88,5 +89,6 @@ class Database:
 
     def close_connection(self):
         self.connection.close()
+
 
 db = Database(os.path.join(__location__, 'tt_dev.db'))

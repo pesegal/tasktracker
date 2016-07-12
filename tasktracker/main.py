@@ -13,9 +13,6 @@ __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file
 # Load in the .kv files
 layout_path = os.path.join(__location__, 'layouts')
 
-for file in os.listdir(layout_path):
-    Builder.load_file(os.path.join(layout_path, file))
-
 
 class TaskApp(App):
     def build(self):
@@ -25,4 +22,8 @@ class TaskApp(App):
         return ScreenClickDragWindow()
 
 if __name__ == '__main__':
+    # Load KV
+    for file in os.listdir(layout_path):
+        Builder.load_file(os.path.join(layout_path, file))
+    # Load configurations
     TaskApp().run()

@@ -58,8 +58,9 @@ class ProjectSelector(Spinner):
 
 
 class ProjectPopup(Popup):
-    pass
-
+    def __init__(self, **kwargs):
+        super(ProjectPopup, self).__init__(**kwargs)
+        # Loading color selection configuration file
     # Todo : Utilize Python's standard library .conf file loader tool!
 
 
