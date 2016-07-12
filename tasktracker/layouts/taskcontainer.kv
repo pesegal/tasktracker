@@ -38,7 +38,7 @@
                 text: 'Future'
                 on_press: root.list_selection = 2
 
-        ProjectSelectionScreen:
+        ProjectSelectionSection:
 
         TextInput:
             id: task_notes
@@ -93,7 +93,7 @@
                 text: 'Archive'
                 on_press: root.list_selection = 3
 
-        ProjectSelectionScreen:
+        ProjectSelectionSection:
 
         TextInput:
             id: task_notes
@@ -122,10 +122,10 @@
     multiline: False
     size_hint_y: None
     height: 30
-    hint_text: 'Task Title'
+    hint_text: '//Task Title'
     # Do styling here
 
-<ProjectSelectionScreen@BoxLayout>:
+<ProjectSelectionSection>:
     # Layout information for the project selection section!
     orientation: 'horizontal'
     size_hint_y: None
@@ -141,4 +141,5 @@
         size_hint_x: .1
         size_hint_y: None
         height: 30
+        on_press: root.open_project_screen()
 

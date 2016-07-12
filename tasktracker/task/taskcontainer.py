@@ -4,6 +4,7 @@
 
 from kivy.properties import NumericProperty, ObjectProperty
 from kivy.uix.gridlayout import GridLayout
+from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.popup import Popup
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.spinner import Spinner
@@ -56,8 +57,15 @@ class ProjectSelector(Spinner):
             self.values.append(project.name)
 
 
-class ProjectCreationScreen(Popup):
+class ProjectPopup(Popup):
     pass
+
+    # Todo : Utilize Python's standard library .conf file loader tool!
+
+
+class ProjectSelectionSection(BoxLayout):
+    def open_project_screen(self):
+        ProjectPopup().open()
 
 
 class TaskScreen(Popup):
