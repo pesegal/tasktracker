@@ -1,4 +1,4 @@
-class BroadcastMixin:
+class Broadcast:
     def broadcast_child(self, function, **kwargs):
         """
             Broadcast a function call to all children with the broadcast mixin.

@@ -4,12 +4,12 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.screenmanager import Screen
 from tasktracker.task.taskcontainer import TaskScrollContainer
 
-from tasktracker.mixins import BroadcastMixin
+from tasktracker.mixins import Broadcast
 from tasktracker.database.db_interface import db
 from tasktracker.task.task import Task
 
 
-class TaskListView(FloatLayout, BroadcastMixin):
+class TaskListView(FloatLayout, Broadcast):
     """
         This class dynamically displays different scroll views based on how many
         widgets are supplied during construction this is used in conjunction with
@@ -83,7 +83,7 @@ class TaskListView(FloatLayout, BroadcastMixin):
             i += 1
 
 
-class TaskListScreen(Screen, BroadcastMixin):
+class TaskListScreen(Screen, Broadcast):
     """
         This is the task screen that contains references to all the list objects. And contains the logic for
         changing the task list view.

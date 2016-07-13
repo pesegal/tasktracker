@@ -9,11 +9,11 @@ from kivy.lang import Builder
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 
-from tasktracker.mixins import BroadcastMixin
+from tasktracker.mixins import Broadcast
 from tasktracker.task.taskcontainer import TaskCreationScreen
 
 
-class MenuBar(BoxLayout, BroadcastMixin):
+class MenuBar(BoxLayout, Broadcast):
     def __init__(self, **kwargs):
         super(MenuBar, self).__init__(**kwargs)
         self.current_screen = 'tasks'

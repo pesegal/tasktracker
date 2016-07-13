@@ -4,13 +4,13 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.screenmanager import ScreenManager, Screen
 
-from tasktracker.mixins import BroadcastMixin
+from tasktracker.mixins import Broadcast
 from tasktracker.menubar import MenuBar
 from tasktracker.task.taskview import TaskListScreen
 from tasktracker.task.taskcontainer import TaskEditScreen
 
 
-class ScreenController(ScreenManager, BroadcastMixin):
+class ScreenController(ScreenManager, Broadcast):
     def __init__(self, **kwargs):
         super(ScreenController, self).__init__(**kwargs)
 
@@ -33,7 +33,7 @@ class StatsScreen(Screen):
     pass
 
 
-class ScreenMenuAndDisplay(BoxLayout, BroadcastMixin):
+class ScreenMenuAndDisplay(BoxLayout, Broadcast):
     screen_size = NumericProperty(0)
 
     def __init__(self, **kwargs):

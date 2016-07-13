@@ -2,18 +2,22 @@
     Tasklist that handles the ordering and displaying of objects.
 """
 
-from kivy.properties import NumericProperty, ObjectProperty
+from kivy.properties import NumericProperty, ObjectProperty, BooleanProperty
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.popup import Popup
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.spinner import Spinner
+from kivy.uix.togglebutton import ToggleButton
+from kivy.uix.behaviors import ToggleButtonBehavior
+from kivy.utils import get_color_from_hex
 
 from tasktracker.database.db_interface import db
+from tasktracker.settings import __project_colors__
 from tasktracker.task.task import Task
 
 
-class Project():
+class Project:
     def __init__(self, id, creation, deletion, name, color):
         self.db_id = id
         self.name = name
@@ -45,7 +49,6 @@ class ProjectSelector(Spinner):
     def load_all_projects(self):
         projects = db.load_all_projects()
         for project in projects:
-            print(project)
             self.project_list.append(Project(*project))
 
     def select_project(self):
@@ -60,14 +63,32 @@ class ProjectSelector(Spinner):
 class ProjectPopup(Popup):
     def __init__(self, **kwargs):
         super(ProjectPopup, self).__init__(**kwargs)
-        # Loading color selection configuration file
-    # Todo : Utilize Python's standard library .conf file loader tool!
+        self.ids.color_selector.load_color_buttons()
 
 
-class ProjectSelectionSection(BoxLayout):
-    def open_project_screen(self):
-        ProjectPopup().open()
+class ColorSelectionWindow(GridLayout):
+    def __int__(self, **kwargs):
+        super(ColorSelectionWindow, self).__init__(**kwargs)
+        self.resize_flag = False
 
+    def load_color_buttons(self):
+        self.cols = 11
+        for name, color in __project_colors__.get_name_and_hex_values():
+            self.add_widget(ColorSelectionButton(name, color))
+
+
+class ColorSelectionButton(ToggleButton):
+    def __init__(self, name, color, **kwargs):
+        super(ColorSelectionButton, self).__init__(**kwargs)
+        self.name = name
+        self.group = 'color_selections'
+        self.hex = color
+        self.background_color = get_color_from_hex(color)
+
+        # Todo: Return the color hex and the names of colors.
+
+
+# --- Logic for Task Screens ---
 
 class TaskScreen(Popup):
     task_name = ObjectProperty(None)
@@ -83,7 +104,6 @@ class TaskCreationScreen(TaskScreen):
     def create_task(self):
         t_list = self.parent.children[1].children[0].screen_controller.tasks  # can this be done better?
         new_task_index = t_list.get_list_length(self.list_selection)
-        print(self.list_selection, self.project_selection)
         task_id = db.add_new_task(self.task_name.text, self.notes.text, self.list_selection,
                                   new_task_index, self.project_selection)
         task = Task(task_id, self.task_name.text, self.notes.text)
@@ -138,6 +158,17 @@ class TaskEditScreen(TaskScreen):  # Need to figure out how to open the task scr
     def updated_list_flag(self, *args):
         self.list_changed_flag = True
         print("IT MOVED!")
+
+
+class ProjectSelectionSection(BoxLayout):
+    def open_project_screen(self):
+        ProjectPopup().open()
+
+
+class TaskListSelectionButton(ToggleButton):
+    def _do_press(self):
+        if self.state == 'normal':
+            ToggleButtonBehavior._do_press(self)
 
 
 class TaskScrollContainer(ScrollView):
