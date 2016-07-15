@@ -2,7 +2,7 @@
     Tasklist that handles the ordering and displaying of objects.
 """
 
-from kivy.properties import NumericProperty, ObjectProperty, BooleanProperty
+from kivy.properties import NumericProperty, ObjectProperty
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.popup import Popup
@@ -65,8 +65,14 @@ class ProjectPopup(Popup):
         super(ProjectPopup, self).__init__(**kwargs)
         self.ids.color_selector.load_color_buttons()
 
+    def update_project_color(self, color_name, color):
+        self.title = 'Projects // Color: %s' % color_name.capitalize()
+        self.separator_color = color
+
 
 class ColorSelectionWindow(GridLayout):
+    popup = ObjectProperty(None)
+
     def __int__(self, **kwargs):
         super(ColorSelectionWindow, self).__init__(**kwargs)
         self.resize_flag = False
@@ -83,10 +89,11 @@ class ColorSelectionButton(ToggleButton):
         self.name = name
         self.group = 'color_selections'
         self.hex = color
+        self.background_normal = ''
         self.background_color = get_color_from_hex(color)
 
-        # Todo: Return the color hex and the names of colors.
-
+    def on_press(self):
+        self.parent.popup.update_project_color(self.name, self.background_color)
 
 # --- Logic for Task Screens ---
 

@@ -1,4 +1,5 @@
 <ProjectPopup>:
+    id: project_popup
     title: 'Projects'
     size_hint: None, None
     size: app.root.width/1.1, app.root.height/1.1
@@ -20,10 +21,10 @@
 
         ColorSelectionWindow:
             id: color_selector
-            height: root.height - cancel_button.height + selector.height + project_title.height
+            popup: project_popup
             size_hint_x: 1
             size_hint_y: 1
-            padding: 0, 5, 0, 0
+            padding: 2, 5
 
 
         BoxLayout:
