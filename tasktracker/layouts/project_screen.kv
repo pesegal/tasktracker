@@ -9,6 +9,7 @@
         padding: 0, 3, 0, 0
         ProjectSelector:
             id: selector
+            popup: root
             size_hint_y: None
             height: 30
 
@@ -18,14 +19,12 @@
             height: 30
             hint_text: '//Project Title'
 
-
         ColorSelectionWindow:
             id: color_selector
-            popup: project_popup
+            popup: root
             size_hint_x: 1
             size_hint_y: 1
             padding: 2, 5
-
 
         BoxLayout:
             orientation: 'horizontal'

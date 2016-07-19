@@ -9,6 +9,8 @@
     auto_dismiss: False
 
 <TaskCreationScreen>:
+    id: task_screen
+    project_selection_section: project_selection_section
     title: 'Add New Task'
 
     #Properties
@@ -39,6 +41,8 @@
                 on_press: root.list_selection = 2
 
         ProjectSelectionSection:
+            id: project_selection_section
+            task_screen: task_screen
 
         TextInput:
             id: task_notes
@@ -58,6 +62,8 @@
                 on_press: root.create_task()
 
 <TaskEditScreen>:
+    id: task_screen
+    project_selection_section: project_selection_section
     title: 'Edit Task'
 
     #Properties
@@ -94,6 +100,9 @@
                 on_press: root.list_selection = 3
 
         ProjectSelectionSection:
+            id: project_selection_section
+            task_screen: task_screen
+
 
         TextInput:
             id: task_notes

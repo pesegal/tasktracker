@@ -40,7 +40,6 @@ class ProjectSelector(Spinner):
         super(ProjectSelector, self).__init__(**kwargs)
         self.values = list()
         self.project_list = list()
-
         self.load_all_projects()
         self.text = self.project_list[0].name
 
@@ -51,7 +50,17 @@ class ProjectSelector(Spinner):
         for project in projects:
             self.project_list.append(Project(*project))
 
-    def select_project(self):
+    def return_project_by_id(self, p_id):
+        for project in self.project_list:
+            if p_id == project.db_id:
+                return project
+
+    def return_project_by_name(self, name):
+        for project in self.project_list:
+            if name == project.name:
+                return project
+
+    def select_project(self, project_id):
         pass
 
     def populate_values(self):
@@ -59,28 +68,52 @@ class ProjectSelector(Spinner):
         for project in self.project_list:
             self.values.append(project.name)
 
+# TODO: Creating a new project and saving to to database!
+# TODO: Default Color Selection requirements!
+
 
 class ProjectPopup(Popup):
     def __init__(self, **kwargs):
         super(ProjectPopup, self).__init__(**kwargs)
+        # self.project = project
+        self.project_id = None
         self.ids.color_selector.load_color_buttons()
+        self.separator_height = 4
+
+    def set_project_id(self, project_id):
+        self.project_id = project_id
+        print("Project ID Set: %s" % self.project_id)
+        if self.project_id != 0:
+            self.load_selected_project_data(self.project_id)
+        else:
+            self.title = 'Create a New Project'
 
     def update_project_color(self, color_name, color):
         self.title = 'Projects // Color: %s' % color_name.capitalize()
         self.separator_color = color
 
+    def load_selected_project_data(self, project_id):
+        project = self.ids.selector.return_project_by_id(project_id)
+        self.ids.project_title = project.name
+        self.ids.color_selector.find_and_select_button(project.color)
+
 
 class ColorSelectionWindow(GridLayout):
     popup = ObjectProperty(None)
 
-    def __int__(self, **kwargs):
+    def __init__(self, **kwargs):
         super(ColorSelectionWindow, self).__init__(**kwargs)
-        self.resize_flag = False
 
     def load_color_buttons(self):
         self.cols = 11
         for name, color in __project_colors__.get_name_and_hex_values():
             self.add_widget(ColorSelectionButton(name, color))
+
+    def find_and_select_button(self, hex):
+        for child in self.children:
+            if child.hex == hex:
+                child.state = 'down'
+                self.popup.update_project_color(child.name, child.background_color)
 
 
 class ColorSelectionButton(ToggleButton):
@@ -97,11 +130,17 @@ class ColorSelectionButton(ToggleButton):
 
 # --- Logic for Task Screens ---
 
+
 class TaskScreen(Popup):
     task_name = ObjectProperty(None)
     list_selection = NumericProperty(0)
     project_selection = NumericProperty(0)
     notes = ObjectProperty(None)
+    project_popup = ObjectProperty(None)
+
+    def __init__(self, **kwargs):
+        super(TaskScreen, self).__init__(**kwargs)
+        self.project_popup = ProjectPopup()
 
 
 class TaskCreationScreen(TaskScreen):
@@ -142,7 +181,6 @@ class TaskEditScreen(TaskScreen):  # Need to figure out how to open the task scr
 
         # Future Project Selection Information here!
         self.project_selection = task_data[3]
-
         self.bind(list_selection=self.updated_list_flag)
 
     def update_task(self):
@@ -169,7 +207,9 @@ class TaskEditScreen(TaskScreen):  # Need to figure out how to open the task scr
 
 class ProjectSelectionSection(BoxLayout):
     def open_project_screen(self):
-        ProjectPopup().open()
+        # send the task project_id or 0 for none
+        self.task_screen.project_popup.set_project_id(self.task_screen.project_selection)
+        self.task_screen.project_popup.open()
 
 
 class TaskListSelectionButton(ToggleButton):
