@@ -82,8 +82,10 @@ class Database:
         self.cursor.execute('SELECT * FROM projects;')
         return self.cursor.fetchall()
 
-    def new_project(self, project):
-        pass
+    def new_project(self, name, color):
+        self.cursor.execute('INSERT INTO projects(creation_date, name, color) VALUES (?,?,?);',
+                            (datetime.now(), name, color))
+        self.connection.commit()
 
     def delete_project(self, project):
         pass

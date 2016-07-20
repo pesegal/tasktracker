@@ -41,9 +41,15 @@ class ProjectSelector(Spinner):
         self.values = list()
         self.project_list = list()
         self.load_all_projects()
-        self.text = self.project_list[0].name
+        self.text = self.project_list[0].name  # TODO: account for when a task is loaded.
 
         self.populate_values()
+        self.bind(text=self.select_project)
+
+    def select_project(self, spinner, text):
+        if hasattr(self, 'popup'):
+            self.popup.set_project_id(self.return_project_by_name(text).db_id)
+
 
     def load_all_projects(self):
         projects = db.load_all_projects()
@@ -60,17 +66,13 @@ class ProjectSelector(Spinner):
             if name == project.name:
                 return project
 
-    def select_project(self, project_id):
-        pass
-
     def populate_values(self):
         self.values = list()
         for project in self.project_list:
             self.values.append(project.name)
 
 # TODO: Creating a new project and saving to to database!
-# TODO: Default Color Selection requirements!
-
+# TODO: Get Project loading working! Switching and otherstuff needs redesign!
 
 class ProjectPopup(Popup):
     def __init__(self, **kwargs):
@@ -79,12 +81,12 @@ class ProjectPopup(Popup):
         self.project_id = None
         self.ids.color_selector.load_color_buttons()
         self.separator_height = 4
+        self.current_selected_color = None
 
     def set_project_id(self, project_id):
         self.project_id = project_id
-        print("Project ID Set: %s" % self.project_id)
         if self.project_id != 0:
-            self.load_selected_project_data(self.project_id)
+            self._load_selected_project_data(self.project_id)
         else:
             self.title = 'Create a New Project'
 
@@ -92,10 +94,18 @@ class ProjectPopup(Popup):
         self.title = 'Projects // Color: %s' % color_name.capitalize()
         self.separator_color = color
 
-    def load_selected_project_data(self, project_id):
+    def _load_selected_project_data(self, project_id):
+        # Loads the project data into the window if there is project selected.
         project = self.ids.selector.return_project_by_id(project_id)
-        self.ids.project_title = project.name
+        self.ids.project_title.text = project.name
         self.ids.color_selector.find_and_select_button(project.color)
+
+    def create_project(self):
+        # Checks for field completeness and creates project.
+        name, color = self.ids.project_title.text, self.current_selected_color
+        if name != "" and color:
+            db.new_project(name, color)
+            print("Project Created: %s, %s", (name, color))
 
 
 class ColorSelectionWindow(GridLayout):
@@ -126,6 +136,7 @@ class ColorSelectionButton(ToggleButton):
         self.background_color = get_color_from_hex(color)
 
     def on_press(self):
+        self.parent.popup.current_selected_color = self.hex
         self.parent.popup.update_project_color(self.name, self.background_color)
 
 # --- Logic for Task Screens ---
