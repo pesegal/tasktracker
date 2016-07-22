@@ -39,40 +39,23 @@ class ProjectSelector(Spinner):
     def __init__(self, **kwargs):
         super(ProjectSelector, self).__init__(**kwargs)
         self.values = list()
-        self.project_list = list()
-        self.load_all_projects()
-        self.text = self.project_list[0].name  # TODO: account for when a task is loaded.
 
-        self.populate_values()
-        self.bind(text=self.select_project)
+        self.bind(text=self.project_change)
 
-    def select_project(self, spinner, text):
-        if hasattr(self, 'popup'):
-            self.popup.set_project_id(self.return_project_by_name(text).db_id)
+    def set_project(self, project):
+        self.text = project.name
 
-
-    def load_all_projects(self):
-        projects = db.load_all_projects()
+    def load_projects(self, projects):
         for project in projects:
-            self.project_list.append(Project(*project))
-
-    def return_project_by_id(self, p_id):
-        for project in self.project_list:
-            if p_id == project.db_id:
-                return project
-
-    def return_project_by_name(self, name):
-        for project in self.project_list:
-            if name == project.name:
-                return project
-
-    def populate_values(self):
-        self.values = list()
-        for project in self.project_list:
             self.values.append(project.name)
+
+    def project_change(self, spinner, text):
+        self.parent.task_screen.change_project(text)
+
 
 # TODO: Creating a new project and saving to to database!
 # TODO: Get Project loading working! Switching and otherstuff needs redesign!
+
 
 class ProjectPopup(Popup):
     def __init__(self, **kwargs):
@@ -82,13 +65,6 @@ class ProjectPopup(Popup):
         self.ids.color_selector.load_color_buttons()
         self.separator_height = 4
         self.current_selected_color = None
-
-    def set_project_id(self, project_id):
-        self.project_id = project_id
-        if self.project_id != 0:
-            self._load_selected_project_data(self.project_id)
-        else:
-            self.title = 'Create a New Project'
 
     def update_project_color(self, color_name, color):
         self.title = 'Projects // Color: %s' % color_name.capitalize()
@@ -145,13 +121,36 @@ class ColorSelectionButton(ToggleButton):
 class TaskScreen(Popup):
     task_name = ObjectProperty(None)
     list_selection = NumericProperty(0)
-    project_selection = NumericProperty(0)
+    selected_project = ObjectProperty(None)
     notes = ObjectProperty(None)
     project_popup = ObjectProperty(None)
 
     def __init__(self, **kwargs):
         super(TaskScreen, self).__init__(**kwargs)
         self.project_popup = ProjectPopup()
+        self.project_list = list()
+        self.load_all_projects()
+        self.ids.project_selection_section.ids.selector.set_project(self.project_list[0])
+        self.ids.project_selection_section.ids.selector.load_projects(self.project_list)
+
+    def load_all_projects(self):
+        projects = db.load_all_projects()
+        for project in projects:
+            self.project_list.append(Project(*project))
+
+    def change_project(self, text):
+        self.selected_project = self.return_project_by_name(text)
+        print("New Project Selected: %s" % text)
+
+    def return_project_by_id(self, p_id):
+        for project in self.project_list:
+            if p_id == project.db_id:
+                return project
+
+    def return_project_by_name(self, name):
+        for project in self.project_list:
+            if name == project.name:
+                return project
 
 
 class TaskCreationScreen(TaskScreen):
@@ -162,7 +161,7 @@ class TaskCreationScreen(TaskScreen):
         t_list = self.parent.children[1].children[0].screen_controller.tasks  # can this be done better?
         new_task_index = t_list.get_list_length(self.list_selection)
         task_id = db.add_new_task(self.task_name.text, self.notes.text, self.list_selection,
-                                  new_task_index, self.project_selection)
+                                  new_task_index, self.selected_project.db_id)
         task = Task(task_id, self.task_name.text, self.notes.text)
         t_list.add_task_to_list(task, self.list_selection)
         self.dismiss()
@@ -190,8 +189,10 @@ class TaskEditScreen(TaskScreen):  # Need to figure out how to open the task scr
         elif self.list_selection == 3:
             self.ids.archive_button.state = 'down'
 
-        # Future Project Selection Information here!
-        self.project_selection = task_data[3]
+        # Load correct project!
+        self.selected_project = self.return_project_by_id(task_data[3])
+        self.ids.project_selection_section.ids.selector.set_project(self.selected_project)
+
         self.bind(list_selection=self.updated_list_flag)
 
     def update_task(self):
@@ -203,11 +204,11 @@ class TaskEditScreen(TaskScreen):  # Need to figure out how to open the task scr
             self.task.parent.update_list_positions()
 
         # Update task in the database
-        db.update_task(self.task.uuid, self.task_name.text, self.notes.text, self.project_selection)
+        db.update_task(self.task.uuid, self.task_name.text, self.notes.text, self.selected_project.db_id)
         # Update task in the current session
         self.task.text = self.task_name.text
         self.task.notes = self.notes.text
-        self.task.project_id = self.project_selection
+        self.task.project_id = self.selected_project.db_id
 
         self.dismiss()
 
@@ -219,7 +220,6 @@ class TaskEditScreen(TaskScreen):  # Need to figure out how to open the task scr
 class ProjectSelectionSection(BoxLayout):
     def open_project_screen(self):
         # send the task project_id or 0 for none
-        self.task_screen.project_popup.set_project_id(self.task_screen.project_selection)
         self.task_screen.project_popup.open()
 
 

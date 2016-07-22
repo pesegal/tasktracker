@@ -3,15 +3,11 @@
     title: 'Projects'
     size_hint: None, None
     size: app.root.width/1.1, app.root.height/1.1
+
     BoxLayout:
         orientation: 'vertical'
         pos_hint_y: 1
         padding: 0, 3, 0, 0
-        ProjectSelector:
-            id: selector
-            popup: root
-            size_hint_y: None
-            height: 30
 
         TextInput:
             id: project_title
@@ -29,7 +25,7 @@
         BoxLayout:
             orientation: 'horizontal'
             size_hint_y:  None
-            height: 30
+            height: 50
             pos_hint_y: 0
 
             Button:
