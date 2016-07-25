@@ -29,7 +29,8 @@ CREATE TABLE projects (
     creation_date DATETIME,
     deletion_date DATETIME,
     name TEXT,
-    color INTEGER
+    color INTEGER,
+    color_name TEXT
 );
 
 CREATE TABLE column_history (

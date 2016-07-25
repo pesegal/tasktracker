@@ -18,15 +18,13 @@ from tasktracker.task.task import Task
 
 
 class Project:
-    def __init__(self, id, creation, deletion, name, color):
+    def __init__(self, id, creation, deletion, name, color, color_name):
         self.db_id = id
         self.name = name
         self.creation_date = creation
         self.deletion_date = deletion
         self.color = color
-
-    def create_project(self):
-        pass
+        self.color_name = color_name
 
     def update_project(self):
         pass
@@ -54,7 +52,7 @@ class ProjectSelector(Spinner):
 
 
 # TODO: Creating a new project and saving to to database!
-# TODO: Get Project loading working! Switching and otherstuff needs redesign!
+# TODO: Get Project loading working! Switching and other stuff needs redesign!
 
 
 class ProjectPopup(Popup):
@@ -64,10 +62,13 @@ class ProjectPopup(Popup):
         self.project_id = None
         self.ids.color_selector.load_color_buttons()
         self.separator_height = 4
+        self.edit = False
         self.current_selected_color = None
+        self.current_selected_color_name = None
 
     def update_project_color(self, color_name, color):
         self.title = 'Projects // Color: %s' % color_name.capitalize()
+        self.current_selected_color_name = color_name
         self.separator_color = color
 
     def _load_selected_project_data(self, project_id):
@@ -77,11 +78,16 @@ class ProjectPopup(Popup):
         self.ids.color_selector.find_and_select_button(project.color)
 
     def create_project(self):
-        # Checks for field completeness and creates project.
-        name, color = self.ids.project_title.text, self.current_selected_color
-        if name != "" and color:
-            db.new_project(name, color)
-            print("Project Created: %s, %s", (name, color))
+        if self.edit:
+            pass  # TODO: Add project updating logic here.
+        else:
+            # Checks for field completeness and creates project.
+            name, color = self.ids.project_title.text, self.current_selected_color
+            color_name = self.current_selected_color_name
+            if name != "" and color:
+                db.new_project(name, color, color_name)
+                print("Project Created: %s, %s", (name, color))
+        self.dismiss()
 
 
 class ColorSelectionWindow(GridLayout):
