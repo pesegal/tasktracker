@@ -7,15 +7,18 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.popup import Popup
 from kivy.uix.scrollview import ScrollView
-from kivy.uix.spinner import Spinner
+from kivy.uix.spinner import Spinner, SpinnerOption
 from kivy.uix.togglebutton import ToggleButton
 from kivy.uix.behaviors import ToggleButtonBehavior
 from kivy.utils import get_color_from_hex
+from kivy.factory import Factory
 
 from tasktracker.database.db_interface import db
 from tasktracker.settings import __project_colors__
 from tasktracker.task.task import Task
 
+
+Factory.register('project_spinner_option', cls=ProjectSpinnerOption)
 
 class Project:
     def __init__(self, id, creation, deletion, name, color, color_name):
@@ -49,6 +52,25 @@ class ProjectSelector(Spinner):
 
     def project_change(self, spinner, text):
         self.parent.task_screen.change_project(text)
+
+
+class ProjectPopupSelector(ProjectPopup):
+    def __init__(self, **kwargs):
+        super(ProjectPopupSelector, self).__init__(**kwargs)
+
+    def load_archived_projects:
+        pass
+
+    def archive_project:
+        pass
+
+
+class ProjectSpinnerOption(SpinnerOption):
+    def __init__(self, **kwargs):
+        super(ProjectSpinnerOption, self).__init__(**kwargs)
+
+    def archive_spinner(self):
+        pass
 
 
 # TODO: Creating a new project and saving to to database!
