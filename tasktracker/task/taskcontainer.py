@@ -18,8 +18,6 @@ from tasktracker.settings import __project_colors__
 from tasktracker.task.task import Task
 
 
-Factory.register('project_spinner_option', cls=ProjectSpinnerOption)
-
 class Project:
     def __init__(self, id, creation, deletion, name, color, color_name):
         self.db_id = id
@@ -54,14 +52,13 @@ class ProjectSelector(Spinner):
         self.parent.task_screen.change_project(text)
 
 
-class ProjectPopupSelector(ProjectPopup):
+class ProjectPopupSelector(ProjectSelector):
     def __init__(self, **kwargs):
         super(ProjectPopupSelector, self).__init__(**kwargs)
 
-    def load_archived_projects:
-        pass
+        # TODO: HOW DO I ACCESS THE LIST OF POPUPS!!!
 
-    def archive_project:
+    def archive_project(self):
         pass
 
 
@@ -82,11 +79,15 @@ class ProjectPopup(Popup):
         super(ProjectPopup, self).__init__(**kwargs)
         # self.project = project
         self.project_id = None
+        self.project_list = None
         self.ids.color_selector.load_color_buttons()
         self.separator_height = 4
         self.edit = False
         self.current_selected_color = None
         self.current_selected_color_name = None
+
+    def set_project_list(self, projects):
+        self.project_list = projects
 
     def update_project_color(self, color_name, color):
         self.title = 'Projects // Color: %s' % color_name.capitalize()
@@ -249,6 +250,7 @@ class ProjectSelectionSection(BoxLayout):
     def open_project_screen(self):
         # send the task project_id or 0 for none
         self.task_screen.project_popup.open()
+        self.task_screen.project_popup.set_project_list(self.task_screen.project_list)
 
 
 class TaskListSelectionButton(ToggleButton):
@@ -282,3 +284,5 @@ class TaskList(GridLayout):
     def update_list_positions(self):
         for index, child in enumerate(self.children):
             db.update_task_list_index(index, child.uuid)
+
+Factory.register('project_spinner_option', cls=ProjectSpinnerOption)
