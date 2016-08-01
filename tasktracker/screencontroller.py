@@ -7,7 +7,7 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 from tasktracker.mixins import Broadcast
 from tasktracker.menubar import MenuBar
 from tasktracker.task.taskview import TaskListScreen
-from tasktracker.task.taskcontainer import TaskEditScreen
+from tasktracker.task.taskpopups import TaskEditScreen
 
 
 class ScreenController(ScreenManager, Broadcast):

@@ -10,7 +10,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 
 from tasktracker.mixins import Broadcast
-from tasktracker.task.taskcontainer import TaskCreationScreen
+from tasktracker.task.taskpopups import TaskCreationScreen
 
 
 class MenuBar(BoxLayout, Broadcast):
