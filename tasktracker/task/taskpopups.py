@@ -26,11 +26,39 @@ class Project:
         self.color = color
         self.color_name = color_name
 
-    def update_project(self):
-        pass
 
-    def delete_project(self):
-        pass
+class ProjectList():
+    """ProjectList Class is a global container that is used to load and track
+    modification to project objects.
+    """
+    def __init__(self):
+        super(ProjectList, self).__init__()
+        self.project_list = list()
+        self.selected_project = None
+        self.load_all_projects()
+        self.default = self.project_list[0]
+
+    def __call__(self):
+        return self.project_list
+
+    def load_all_projects(self):
+        projects = db.load_all_projects()
+        for project in projects:
+            self.project_list.append(Project(*project))
+
+    def change_project(self, text):
+        self.selected_project = self.return_project_by_name(text)
+        print("New Project Selected: %s" % text)
+
+    def return_project_by_id(self, p_id):
+        for project in self.project_list:
+            if p_id == project.db_id:
+                return project
+
+    def return_project_by_name(self, name):
+        for project in self.project_list:
+            if name == project.name:
+                return project
 
 
 class ProjectSelector(Spinner):
@@ -48,7 +76,7 @@ class ProjectSelector(Spinner):
             self.values.append(project.name)
 
     def project_change(self, spinner, text):
-        self.parent.task_screen.change_project(text)
+        __projects__.change_project(text)
 
 
 class ProjectPopupSelector(ProjectSelector):
@@ -150,29 +178,8 @@ class TaskScreen(Popup):
     def __init__(self, **kwargs):
         super(TaskScreen, self).__init__(**kwargs)
         self.project_popup = ProjectPopup()
-        self.project_list = list()
-        self.load_all_projects()
-        self.ids.project_selection_section.ids.selector.set_project(self.project_list[0])
-        self.ids.project_selection_section.ids.selector.load_projects(self.project_list)
-
-    def load_all_projects(self):
-        projects = db.load_all_projects()
-        for project in projects:
-            self.project_list.append(Project(*project))
-
-    def change_project(self, text):
-        self.selected_project = self.return_project_by_name(text)
-        print("New Project Selected: %s" % text)
-
-    def return_project_by_id(self, p_id):
-        for project in self.project_list:
-            if p_id == project.db_id:
-                return project
-
-    def return_project_by_name(self, name):
-        for project in self.project_list:
-            if name == project.name:
-                return project
+        self.ids.project_selection_section.ids.selector.set_project(__projects__.default)
+        self.ids.project_selection_section.ids.selector.load_projects(__projects__())
 
 
 class TaskCreationScreen(TaskScreen):
@@ -243,7 +250,7 @@ class ProjectSelectionSection(BoxLayout):
     def open_project_screen(self):
         # send the task project_id or 0 for none
         self.task_screen.project_popup.open()
-        self.task_screen.project_popup.set_project_list(self.task_screen.project_list)
+        self.task_screen.project_popup.set_project_list(__projects__())
 
 
 class TaskListSelectionButton(ToggleButton):
@@ -251,4 +258,5 @@ class TaskListSelectionButton(ToggleButton):
         if self.state == 'normal':
             ToggleButtonBehavior._do_press(self)
 
+__projects__ = ProjectList()
 Factory.register('project_spinner_option', cls=ProjectSpinnerOption)

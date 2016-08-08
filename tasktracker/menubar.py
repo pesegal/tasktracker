@@ -29,7 +29,7 @@ class MenuBar(BoxLayout, Broadcast):
         self.parent.screen_controller.current = name
 
     def switch_lists(self, direction):
-            self.parent.broadcast_child('slide_task_lists', direction=direction)
+        self.parent.broadcast_child('slide_task_lists', direction=direction)
 
     def width_state_change(self, width_state, **kwargs):
         screen_state = width_state

@@ -6,6 +6,7 @@ import os
 from configparser import ConfigParser
 from kivy.utils import get_color_from_hex
 
+
 class Borg:
     """
         The Borg class allows inheritable singleton behavior between all configuration objects.
