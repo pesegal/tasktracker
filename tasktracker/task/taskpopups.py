@@ -10,7 +10,7 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.popup import Popup
 from kivy.uix.spinner import Spinner, SpinnerOption
 from kivy.uix.togglebutton import ToggleButton
-from kivy.utils import get_color_from_hex
+from kivy.utils import get_color_from_hex, get_hex_from_color
 
 from tasktracker.database.db_interface import db
 from tasktracker.settings import __project_colors__
@@ -27,7 +27,7 @@ class Project:
         self.color_name = color_name
 
 
-class ProjectList():
+class ProjectList:
     """ProjectList Class is a global container that is used to load and track
     modification to project objects.
     """
@@ -42,9 +42,13 @@ class ProjectList():
         return self.project_list
 
     def load_all_projects(self):
+        self.project_list = list()
         projects = db.load_all_projects()
         for project in projects:
             self.project_list.append(Project(*project))
+
+    def change_project_by_id(self, project_id):
+        self.selected_project = self.return_project_by_id(project_id)
 
     def change_project(self, text):
         self.selected_project = self.return_project_by_name(text)
@@ -65,7 +69,7 @@ class ProjectSelector(Spinner):
         super(ProjectSelector, self).__init__(**kwargs)
         self.values = list()
         self.bind(text=self.project_change)
-        print("Project Selecter StArted")
+        print("Project Selector Started")
 
     def set_project(self, project):
         self.text = project.name
@@ -76,6 +80,7 @@ class ProjectSelector(Spinner):
 
     def project_change(self, spinner, text):
         __projects__.change_project(text)
+        self.parent.new_project_button_label_update(__projects__.selected_project)
         print("Project Changed")
 
 
@@ -122,6 +127,8 @@ class ProjectPopup(Popup):
     def set_selected_project(self, project):
         self.ids.popup_selector.set_project(project)
         self.selected_project = project
+        self.current_selected_color = self.selected_project.color
+        self.current_selected_color_name = self.selected_project.color_name
 
         if self.selected_project == __projects__.default:
             self.edit = False
@@ -129,13 +136,15 @@ class ProjectPopup(Popup):
             self.separator_color = self.default_color
         else:
             self.edit = True
-            self.update_project_color(project.color_name, get_color_from_hex(project.color))
-
+            self.update_project_color(self.selected_project.color_name, get_color_from_hex(project.color))
+            self.ids.project_title.text = self.selected_project.name
 
     def update_project_color(self, color_name, color):
-        self.title = 'Projects // Color: %s' % color_name.capitalize()
-        self.current_selected_color_name = color_name
+        self.title = 'Projects // Color: %s' % color_name.title()
+        self.current_selected_color_name = color_name.title()
+        self.current_selected_color = get_hex_from_color(color)
         self.separator_color = color
+        print("New Color Selected: %s, %s" % (self.current_selected_color, self.current_selected_color_name))
 
     def create_update_button_update(self, popup, edit):
         if edit:
@@ -145,14 +154,19 @@ class ProjectPopup(Popup):
 
     def create_project(self):
         if self.edit:
-            pass  # TODO: Add project updating logic here.
+            self.selected_project.name = self.ids.project_title.text
+            self.selected_project.color = self.current_selected_color
+            self.selected_project.color_name = self.current_selected_color_name
+            db.update_project(self.selected_project)
         else:
             # Checks for field completeness and creates project.
             name, color = self.ids.project_title.text, self.current_selected_color
             color_name = self.current_selected_color_name
             if name != "" and color:
-                db.new_project(name, color, color_name)
-                print("Project Created: %s, %s", (name, color))
+                pid = db.new_project(name, color, color_name)
+                __projects__.load_all_projects()
+                __projects__.change_project_by_id(pid)
+                print("Project Created: %s, %s" % (name, color))
         self.dismiss()
 
 
@@ -200,6 +214,10 @@ class TaskScreen(Popup):
         self.project_popup = ProjectPopup()
         self.ids.project_selection_section.ids.selector.set_project(__projects__.default)
         self.ids.project_selection_section.ids.selector.load_projects(__projects__())
+        self.project_popup.bind(on_dismiss=self.project_updated)
+
+    def project_updated(self, popup):
+        self.ids.project_selection_section.ids.selector.set_project(__projects__.selected_project)
 
 
 class TaskCreationScreen(TaskScreen):
@@ -267,11 +285,18 @@ class TaskEditScreen(TaskScreen):  # Need to figure out how to open the task scr
 
 
 class ProjectSelectionSection(BoxLayout):
+
     def open_project_screen(self):
         # send the task project_id or 0 for none
         self.task_screen.project_popup.open()
         self.task_screen.project_popup.set_project_list(__projects__())
         self.task_screen.project_popup.set_selected_project(__projects__.selected_project)
+
+    def new_project_button_label_update(self, project):
+        if project == __projects__.default:
+            self.ids.new_project.text = "New"
+        else:
+            self.ids.new_project.text = "Edit"
 
 
 class TaskListSelectionButton(ToggleButton):

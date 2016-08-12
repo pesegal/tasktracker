@@ -85,6 +85,13 @@ class Database:
     def new_project(self, name, color, color_name):
         self.cursor.execute('INSERT INTO projects(creation_date, name, color, color_name) VALUES (?,?,?,?);',
                             (datetime.now(), name, color, color_name))
+        project_id = self.cursor.lastrowid
+        self.connection.commit()
+        return project_id
+
+    def update_project(self, project):
+        self.cursor.execute('UPDATE projects SET name = ?, color = ?, color_name = ? WHERE id = ?;',
+                            (project.name, project.color, project.color_name, project.db_id))
         self.connection.commit()
 
     def delete_project(self, project):
