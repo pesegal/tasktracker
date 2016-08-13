@@ -18,6 +18,8 @@ from tasktracker.task.task import Task
 
 
 class Project:
+    """ Project class is a data structure that contains project data.
+    """
     def __init__(self, id, creation, deletion, name, color, color_name):
         self.db_id = id
         self.name = name
@@ -65,6 +67,10 @@ class ProjectList:
 
 
 class ProjectSelector(Spinner):
+    """ Project Selector contains is the controller functionality for the spinner
+    widget that is on the main task screen. The view logic is contained inside
+    the taskcontainer.kv layout file.
+    """
     def __init__(self, **kwargs):
         super(ProjectSelector, self).__init__(**kwargs)
         self.values = list()
@@ -85,6 +91,9 @@ class ProjectSelector(Spinner):
 
 
 class ProjectPopupSelector(ProjectSelector):
+    """ ProjectPopupSelector contains the controller logic for the project selection spinner widget
+        that is inside the ProjectPopup window.
+    """
     popup = ObjectProperty(None)
 
     def __init__(self, **kwargs):
@@ -101,8 +110,11 @@ class ProjectPopupSelector(ProjectSelector):
 
 
 class ProjectSpinnerOption(SpinnerOption):
+    """ Extending the SpinnerOption widget
+    """
     def __init__(self, **kwargs):
         super(ProjectSpinnerOption, self).__init__(**kwargs)
+        self.height = 20
         # TODO: Display Projects Selected Colors
 
 
@@ -133,6 +145,7 @@ class ProjectPopup(Popup):
         if self.selected_project == __projects__.default:
             self.edit = False
             self.title = 'Create a New Project'
+            self.ids.project_title.text = ''
             self.separator_color = self.default_color
         else:
             self.edit = True
