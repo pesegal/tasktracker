@@ -25,6 +25,7 @@ class MenuBar(BoxLayout, Broadcast):
         print('test:', self.get_root_window().children)
 
     def switch_screens(self, name, direction):
+        self.current_screen = name
         self.parent.screen_controller.transition.direction = direction
         self.parent.screen_controller.current = name
 
@@ -41,6 +42,8 @@ class MenuBar(BoxLayout, Broadcast):
             self.add_widget(self.ids.scroll_list_left.__self__, index=len(self.children))
             self.add_widget(self.ids.scroll_list_right.__self__, index=0)
 
+
+class AbstractMenuButton(Button):
 
 class ScrollButton(Button):
     pass

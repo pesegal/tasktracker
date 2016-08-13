@@ -110,7 +110,7 @@ class ProjectPopupSelector(ProjectSelector):
 
 
 class ProjectSpinnerOption(SpinnerOption):
-    """ Extending the SpinnerOption widget
+    """ Extending the SpinnerOption widget allows for customization of the drawing of the widget.
     """
     def __init__(self, **kwargs):
         super(ProjectSpinnerOption, self).__init__(**kwargs)
@@ -119,6 +119,9 @@ class ProjectSpinnerOption(SpinnerOption):
 
 
 class ProjectPopup(Popup):
+    """ ProjectPopup is the controller for most of the logic for the project selection and editing.
+    popup. This contains the function to trigger creating and updating project records in the database.
+    """
     edit = BooleanProperty(False)
 
     def __init__(self, **kwargs):
@@ -184,6 +187,8 @@ class ProjectPopup(Popup):
 
 
 class ColorSelectionWindow(GridLayout):
+    """ ColorSelectionWindow is the controller for the multiple diffrent colors one can select for a project.
+    """
     popup = ObjectProperty(None)
 
     def __init__(self, **kwargs):
@@ -202,6 +207,8 @@ class ColorSelectionWindow(GridLayout):
 
 
 class ColorSelectionButton(ToggleButton):
+    """ Contains controller functionality for the buttons that show color selection.
+    """
     def __init__(self, name, color, **kwargs):
         super(ColorSelectionButton, self).__init__(**kwargs)
         self.name = name
@@ -216,6 +223,9 @@ class ColorSelectionButton(ToggleButton):
 
 
 class TaskScreen(Popup):
+    """ This is the parent class for both the new task screen and the task creation screen.
+    It contains controller logic that is shared between both types of popups.
+    """
     task_name = ObjectProperty(None)
     list_selection = NumericProperty(0)
     selected_project = ObjectProperty(None)
@@ -234,11 +244,14 @@ class TaskScreen(Popup):
 
 
 class TaskCreationScreen(TaskScreen):
+    """ TaskCreationScreen is shown when a clicks the create new task button. View logic is contained
+    in taskcontainer.kv.
+    """
     def __init__(self, **kwargs):
         super(TaskCreationScreen, self).__init__(**kwargs)
 
     def create_task(self):
-        t_list = self.parent.children[1].children[0].screen_controller.tasks  # can this be done better?
+        t_list = self.parent.children[1].children[0].screen_controller.tasks  # todo: can this be done better?
         new_task_index = t_list.get_list_length(self.list_selection)
         task_id = db.add_new_task(self.task_name.text, self.notes.text, self.list_selection,
                                   new_task_index, self.selected_project.db_id)
@@ -247,7 +260,9 @@ class TaskCreationScreen(TaskScreen):
         self.dismiss()
 
 
-class TaskEditScreen(TaskScreen):  # Need to figure out how to open the task screen!
+class TaskEditScreen(TaskScreen):
+    """ TaskEditScreen contains controller logic for the editable task screen version of the code.
+    """
     def __init__(self, task, **kwargs):
         super(TaskEditScreen, self).__init__(**kwargs)
         self.list_changed_flag = False
@@ -298,7 +313,6 @@ class TaskEditScreen(TaskScreen):  # Need to figure out how to open the task scr
 
 
 class ProjectSelectionSection(BoxLayout):
-
     def open_project_screen(self):
         # send the task project_id or 0 for none
         self.task_screen.project_popup.open()
