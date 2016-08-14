@@ -8,18 +8,28 @@
 from kivy.lang import Builder
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
+from kivy.properties import ObjectProperty, StringProperty
 
 from tasktracker.mixins import Broadcast
 from tasktracker.task.taskpopups import TaskCreationScreen
 
 
 class MenuBar(BoxLayout, Broadcast):
+    current_screen = StringProperty('tasks')
+
     def __init__(self, **kwargs):
         super(MenuBar, self).__init__(**kwargs)
-        self.current_screen = 'tasks'
+        self.bind(current_screen=self.screen_state_change)
+        self.scroll_list_left = ScrollButton(text='<<', on_press=lambda x: self.switch_lists('left'))
+        self.scroll_list_right = ScrollButton(text='>>', on_press=lambda x: self.switch_lists('right'))
+        # self.add_widget(self.scroll_list_left, index=len(self.children))
+        # self.add_widget(self.scroll_list_right, index=0)
 
-    def create_new_task(self, *args):
-        TaskCreationScreen().open()
+    def task_multi_use_press(self, *args):
+        if self.current_screen == 'tasks':
+            TaskCreationScreen().open()
+        else:
+            self.switch_screens('tasks', 'down')
 
     def print_stuff(self, *args):
         print('test:', self.get_root_window().children)
@@ -32,27 +42,47 @@ class MenuBar(BoxLayout, Broadcast):
     def switch_lists(self, direction):
         self.parent.broadcast_child('slide_task_lists', direction=direction)
 
+    def screen_state_change(self, *args):
+        if self.current_screen == 'tasks':
+            self.ids.multi_use_button.text = 'New Task'
+            self._add_scroll_buttons()
+        else:
+            self.ids.multi_use_button.text = 'Tasks'
+            self._remove_scroll_buttons()
+
     def width_state_change(self, width_state, **kwargs):
         screen_state = width_state
         if screen_state == 4:
-            self.remove_widget(self.ids.scroll_list_left.__self__)
-            self.remove_widget(self.ids.scroll_list_right.__self__)
-        elif screen_state is not 4 and self.ids.scroll_list_left.__self__ not in self.children:
-            # TODO: Figure out how to correct bug with weakref object not existing.
-            self.add_widget(self.ids.scroll_list_left.__self__, index=len(self.children))
-            self.add_widget(self.ids.scroll_list_right.__self__, index=0)
+            self._remove_scroll_buttons()
+        elif screen_state is not 4 and self.current_screen == 'tasks':
+            self._add_scroll_buttons()
 
+    def _add_scroll_buttons(self):
+        if self.scroll_list_left not in self.children:
+            self.add_widget(self.scroll_list_left, index=len(self.children))
+            self.add_widget(self.scroll_list_right, index=0)
 
-class AbstractMenuButton(Button):
+    def _remove_scroll_buttons(self):
+        if self.scroll_list_left in self.children:
+            self.remove_widget(self.scroll_list_left)
+            self.remove_widget(self.scroll_list_right)
+
 
 class ScrollButton(Button):
-    pass
+    def __init__(self, **kwargs):
+        super(ScrollButton, self).__init__(**kwargs)
+        self.drop_type = None
 
 
 class MultiUseButton(Button):
+    menu = ObjectProperty(None)
+
     def __init__(self, **kwargs):
         super(MultiUseButton, self).__init__(**kwargs)
         self.drop_type = 'task_edit'
+
+    def execute_function(self, function):
+        pass
 
 
 

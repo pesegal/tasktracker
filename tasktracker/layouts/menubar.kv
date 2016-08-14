@@ -5,23 +5,18 @@
     padding: 0
     height: 30
 
-    ScrollButton:
-        id: scroll_list_left
-        text: '<<'
-        on_press: root.switch_lists('left')
     MultiUseButton:
         id: multi_use_button
+        menu: menubar
         text: "New Task"
-        on_press: root.create_new_task(*args)
+        on_press: root.task_multi_use_press(*args)
     SwitchScreenButton:
         id: switch_screen_1
         text: 'Timer'
+        drop_type: 'timer'
         on_press: root.switch_screens('timer', 'right')
     SwitchScreenButton:
         id: switch_screen_2
         text: 'Stats'
+        drop_type: 'status'
         on_press: root.switch_screens('stats', 'up')
-    ScrollButton:
-        id: scroll_list_right
-        text: '>>'
-        on_press: root.switch_lists('right')
