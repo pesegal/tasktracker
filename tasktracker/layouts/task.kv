@@ -1,3 +1,23 @@
 <Task>:
     size_hint_y: None
     height: 60
+
+    background_normal: self.task_texture
+#    background_down: 'test.png'
+    border: [2, 2, 2, 2]
+
+    canvas:
+        Color:
+            rgba: root.current_shadow_color
+        BorderImage:
+            source: root.shadow_texture
+            border: [3,3,3,3]
+            pos: self.x - 1, self.y
+            size: self.width*.07, self.height
+        Color:
+            rgba: root.current_project_color
+        BorderImage:
+            source: root.project_indicator
+            border: [2,2,2,2]
+            pos: self.x, self.y
+            size: self.width*.07 - 4, self.height

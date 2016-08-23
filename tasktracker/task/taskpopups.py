@@ -301,7 +301,7 @@ class TaskEditScreen(TaskScreen):
         # Update task in the database
         db.update_task(self.task.uuid, self.task_name.text, self.notes.text, __projects__.selected_project.db_id)
         # Update task in the current session
-        self.task.text = self.task_name.text
+        self.task.set_text(self.task_name.text)
         self.task.notes = self.notes.text
         self.task.project_id = __projects__.selected_project.db_id
 

@@ -13,22 +13,50 @@
 """
 from kivy.lang import Builder
 from kivy.uix.button import Button
+from kivy.uix.label import Label
+from kivy.properties import ListProperty, StringProperty
 
 from tasktracker.database.db_interface import db
+from tasktracker.themes import themes
 
 
 # Todo: Task widget should be able to be clicked and opens up a editing screen.
 # Todo: Task widget should be able to be categorized in larger project groupings.
-# Todo: Categorized tasks should have a colorized marker on their graphical representation that shows grouping.
-# Todo: Task widget should track statistical information based on user interaction.
 
 
 class Task(Button):
+    """ Contains all controller information for the task objects. Visual layout is contained in
+    task.kv file that is in ./layouts. Note that due to how the label dynamic layout works all
+    label attribute access should go through self.tasktext
+    """
+    current_project_color = ListProperty([.3, .5, .6, 1])
+    current_shadow_color = ListProperty([1, 1, 1, .5])
+    task_texture = StringProperty(themes.__task_texture__)
+    shadow_texture = StringProperty(themes.__shadow__)
+    project_indicator = StringProperty(themes.__project_indicator__)
+
     def __init__(self, id, name, notes, project=0, **kwargs):
         super(Task, self).__init__(**kwargs)
         self.drop_type = 'task'
         self.uuid = id
-        self.text = name
+
+        # Init self.tasktext
+        self.tasktext = Label()
+        self.add_widget(self.tasktext)
+        self.tasktext.text = name
+
+        self.tasktext.color = [0, 0, 0, 1]  # Todo: replace this with theme data.
+        # self.tasktext.disabled_color = [0, 0, 0, .38]  # Todo: replace this with theme data.
+        # self.tasktext.font_size = 17
+
+        self.tasktext.halign = 'left'
+        self.tasktext.valign = 'middle'
+        self.tasktext.shorten_from = 'right'
+        self.bind(size=self._size_change)
+
+        # TODO: Adjust label to global positioning
+
+
         self.notes = notes
         self.project_id = project
         # Used For Click Drag Movement
@@ -37,6 +65,26 @@ class Task(Button):
 
         self.x_off = self.x
         self.y_off = self.y
+
+    def set_text(self, text):
+        self.tasktext.text = text
+
+    def _size_change(self, _object, size, short_padding=5):
+
+        start = self.width * .07 + 5
+        self.tasktext.width = self.width - start - 20
+        self.tasktext.height = self.height
+        self.tasktext.text_size = (self.width - start - 40, None)
+        # if not self.tasktext.shorten:
+        #     self.multi_line_height = self.tasktext.texture_size[1] + short_padding
+        # if (self.tasktext.texture_size[1] + short_padding >= self.height
+        #         and not self.tasktext.shorten):
+        #     print('TASKS TRUEs')
+        #     self.tasktext.shorten = True
+        # elif self.multi_line_height < self.height:
+        #     self.tasktext.shorten = False
+        self.tasktext.x = self.x + start + 20
+        self.tasktext.y = self.y
 
     def on_touch_down(self, touch):
         # TODO: Figure out how right click works!
@@ -66,7 +114,7 @@ class Task(Button):
                 self.last_parent = col_data[0]
             if col_data[1]:
                 in_index = col_data[1].parent.children.index(col_data[1])
-                self.last_parent.add_widget(self, index=in_index+1)
+                self.last_parent.add_widget(self, index=in_index + 1)
             else:
                 self.last_parent.add_widget(self)
             db.task_switch(self.uuid, self.last_parent.list_id)
@@ -77,12 +125,5 @@ class Task(Button):
     def on_touch_move(self, touch):
         if touch.grab_current is self:
             self.pos = (touch.x - self.x_off, touch.y - self.y_off)
-            #print(touch.pos)
+            # print(touch.pos)
             # self.parent.switch_positions(self)
-
-
-
-
-
-
-

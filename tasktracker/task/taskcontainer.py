@@ -4,6 +4,8 @@
 
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.scrollview import ScrollView
+from kivy.properties import ListProperty
+from kivy.utils import get_color_from_hex
 
 from tasktracker.database.db_interface import db
 
@@ -16,10 +18,11 @@ from tasktracker.database.db_interface import db
 
 
 class TaskScrollContainer(ScrollView):
+    scroll_bg_color = ListProperty(get_color_from_hex('#c8c8c8'))
     def __init__(self, list_id, name='none', **kwargs):
         super(TaskScrollContainer, self).__init__(**kwargs)
 
-        # Test to add something to display information!
+
         self.drop_type = 'scroll_list'
         self.list_id = list_id
         self.name = name
@@ -32,8 +35,9 @@ class TaskList(GridLayout):
         super(TaskList, self).__init__(**kwargs)
         self.drop_type = 'tasklist'
         self.list_id = list_id
+        self.padding = 3, 3, 3, 0
         self.cols = 1
-        self.spacing = 1
+        self.spacing = 5
         self.size_hint_y = None
         self.bind(minimum_height=self.setter('height'))
 

@@ -1,12 +1,19 @@
 <TaskScrollContainer>:
     size_hint: 1, 1
     scroll_timeout: 20 # Use this to adjust how long it takes for the touch event to be sent to the children
+    canvas:
+        Color:
+            rgba: root.scroll_bg_color
+        Rectangle:
+            size: root.size
+            pos: root.pos
 
 <TaskScreen>:
     title: 'Task Screen'
     size_hint: None, None
     size: app.root.width/1.1, app.root.height/1.1
     auto_dismiss: False
+
 
 <TaskCreationScreen>:
     id: task_screen
