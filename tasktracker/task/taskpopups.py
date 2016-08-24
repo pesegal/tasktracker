@@ -303,7 +303,7 @@ class TaskEditScreen(TaskScreen):
         # Update task in the current session
         self.task.set_text(self.task_name.text)
         self.task.notes = self.notes.text
-        self.task.project_id = __projects__.selected_project.db_id
+        self.task.project = __projects__.selected_project
 
         self.dismiss()
 
@@ -314,7 +314,7 @@ class TaskEditScreen(TaskScreen):
 
 class ProjectSelectionSection(BoxLayout):
     def open_project_screen(self):
-        # send the task project_id or 0 for none
+        # send the task project or None
         self.task_screen.project_popup.open()
         self.task_screen.project_popup.set_project_list(__projects__())
         self.task_screen.project_popup.set_selected_project(__projects__.selected_project)

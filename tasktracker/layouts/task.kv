@@ -6,9 +6,18 @@
 #    background_down: 'test.png'
     border: [2, 2, 2, 2]
 
-    canvas:
+    canvas.before:
         Color:
             rgba: root.current_shadow_color
+        BorderImage:
+            source: root.shadow_texture
+            border: [3,3,3,3]
+            pos: self.x - 3, self.y -3
+            size: self.width , self.height
+
+    canvas:
+        Color:
+            rgba: root.current_project_shadow_color
         BorderImage:
             source: root.shadow_texture
             border: [3,3,3,3]
@@ -19,5 +28,5 @@
         BorderImage:
             source: root.project_indicator
             border: [2,2,2,2]
-            pos: self.x, self.y
+            pos: self.x - 1, self.y
             size: self.width*.07 - 4, self.height

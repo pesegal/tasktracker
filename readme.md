@@ -20,5 +20,7 @@ This includes a timer to help keep focus and statistical tracking to see how muc
 
 
 ### Bug List
+
++ Crash when project selector spinner is open and the edit button is pressed.
 + Fix Multi Touch Task repositioning.
 + Make sure that swappling lists is multi-touch protected.
