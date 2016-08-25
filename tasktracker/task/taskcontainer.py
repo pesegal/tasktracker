@@ -10,19 +10,12 @@ from kivy.utils import get_color_from_hex
 from tasktracker.database.db_interface import db
 
 
-# TODO: Creating a new project and saving to to database!
-# TODO: Get Project loading working! Switching and other stuff needs redesign!
-
-
-# --- Logic for Task Screens ---
-
-
 class TaskScrollContainer(ScrollView):
-    scroll_bg_color = ListProperty(get_color_from_hex('#c8c8c8'))
+    scroll_bg_color = ListProperty(get_color_from_hex('#F5F5F5'))
+    # todo: Replace with theme color loader
+
     def __init__(self, list_id, name='none', **kwargs):
         super(TaskScrollContainer, self).__init__(**kwargs)
-
-
         self.drop_type = 'scroll_list'
         self.list_id = list_id
         self.name = name
@@ -35,10 +28,6 @@ class TaskList(GridLayout):
         super(TaskList, self).__init__(**kwargs)
         self.drop_type = 'tasklist'
         self.list_id = list_id
-        self.padding = 3, 3, 3, 0
-        self.cols = 1
-        self.spacing = 5
-        self.size_hint_y = None
         self.bind(minimum_height=self.setter('height'))
 
     def update_list_positions(self):

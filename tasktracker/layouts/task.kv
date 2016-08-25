@@ -3,7 +3,7 @@
     height: 60
 
     background_normal: self.task_texture
-#    background_down: 'test.png'
+    background_down: self.task_texture
     border: [2, 2, 2, 2]
 
     canvas.before:
@@ -11,9 +11,10 @@
             rgba: root.current_shadow_color
         BorderImage:
             source: root.shadow_texture
-            border: [3,3,3,3]
-            pos: self.x - 3, self.y -3
-            size: self.width , self.height
+            border: [1, 1, 1, 1]
+            pos: self.x - 3, self.y - 3
+            # Todo: Make the shadow increase in size when clicking dragging tasks.
+            size: self.width + 6 , self.height + 6
 
     canvas:
         Color:
@@ -21,8 +22,8 @@
         BorderImage:
             source: root.shadow_texture
             border: [3,3,3,3]
-            pos: self.x - 1, self.y
-            size: self.width*.07, self.height
+            pos: self.x + 1, self.y - 1
+            size: self.width*.07 - 4, self.height + 2
         Color:
             rgba: root.current_project_color
         BorderImage:

@@ -3,16 +3,23 @@
     be contained in a sub-directory.
 """
 
+from configparser import ConfigParser
+from kivy.uix.image import Image
+
 # Texture Paths todo: replace with atlas
-__project_indicator__ = './gfx/all_white3.png'
-__shadow__ = './gfx/shadow.png'
-__task_texture__ = './gfx/all_white'
+
+
+__project_indicator__ = './themes/gfx/all_white3.png'
+__shadow__ = './themes/gfx/shadow.png'
+__task_texture__ = './themes/gfx/all_white3.png'
 
 # Global Color Helpers
 __transparent__ = [1, 1, 1, 0]
 
 
-
-
-
 # TODO: Dynamically Load in themes so that all of the tags change correctly.
+
+class ThemeController:
+    """
+        The theme controller loads all of the color schemes that can generate
+    """

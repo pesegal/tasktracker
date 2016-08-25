@@ -5,8 +5,16 @@
         Color:
             rgba: root.scroll_bg_color
         Rectangle:
-            size: root.size
-            pos: root.pos
+            size: root.width - 4, root.height
+            pos: root.x + 1, root.y
+
+<TaskList>:
+    size_hint_x: .99
+    size_hint_y: None
+    cols: 1
+    padding: 6, 3, 3, 0
+    spacing: 3
+
 
 <TaskScreen>:
     title: 'Task Screen'

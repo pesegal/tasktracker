@@ -94,7 +94,6 @@ class Task(Button):
             self.current_project_shadow_color = _project_shadow_color
 
     def _label_position_update(self, _object, size, short_padding=5):
-
         start = self.width * .07 + 5
         self.tasktext.width = self.width - start - 20
         self.tasktext.height = self.height
@@ -110,7 +109,7 @@ class Task(Button):
         #     self.tasktext.shorten = True
         # elif self.multi_line_height < self.height:
         #     self.tasktext.shorten = False
-        self.tasktext.x = self.x + start + 20
+        self.tasktext.x = self.x + start + 5
         self.tasktext.y = self.y
 
     def on_touch_down(self, touch):
