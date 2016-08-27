@@ -75,7 +75,6 @@ class ProjectSelector(Spinner):
         super(ProjectSelector, self).__init__(**kwargs)
         self.values = list()
         self.bind(text=self.project_change)
-        print("Project Selector Started")
 
     def set_project(self, project):
         self.text = project.name
@@ -87,7 +86,6 @@ class ProjectSelector(Spinner):
     def project_change(self, spinner, text):
         __projects__.change_project(text)
         self.parent.new_project_button_label_update(__projects__.selected_project)
-        print("Project Changed")
 
 
 class ProjectPopupSelector(ProjectSelector):
@@ -100,7 +98,6 @@ class ProjectPopupSelector(ProjectSelector):
         super(ProjectPopupSelector, self).__init__(**kwargs)
         self.values = list()
         self.set_project(__projects__.selected_project)
-        print("Project Popup Selecter Started: %s" % __projects__.selected_project.name)
         self.load_projects(__projects__())
 
     def project_change(self, spinner, text):
@@ -160,7 +157,6 @@ class ProjectPopup(Popup):
         self.current_selected_color_name = color_name.title()
         self.current_selected_color = get_hex_from_color(color)
         self.separator_color = color
-        print("New Color Selected: %s, %s" % (self.current_selected_color, self.current_selected_color_name))
 
     def create_update_button_update(self, popup, edit):
         if edit:
@@ -182,7 +178,6 @@ class ProjectPopup(Popup):
                 pid = db.new_project(name, color, color_name)
                 __projects__.load_all_projects()
                 __projects__.change_project_by_id(pid)
-                print("Project Created: %s, %s" % (name, color))
         self.dismiss()
 
 
@@ -309,7 +304,6 @@ class TaskEditScreen(TaskScreen):
 
     def updated_list_flag(self, *args):
         self.list_changed_flag = True
-        print("IT MOVED!")
 
 
 class ProjectSelectionSection(BoxLayout):

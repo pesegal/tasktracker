@@ -18,6 +18,7 @@ from kivy.utils import get_color_from_hex
 
 from tasktracker.database.db_interface import db
 from tasktracker.themes import themes
+from tasktracker.themes.themes import __Theme__
 import tasktracker.task.taskpopups
 
 # Todo: Task widget should be able to be clicked and opens up a editing screen.
@@ -31,8 +32,10 @@ class Task(Button):
     task.kv file that is in ./layouts. Note that due to how the label dynamic layout works all
     label attribute access should go through self.tasktext
     """
+
+    task_color = ListProperty(__Theme__.tasks)
     current_project_color = ListProperty()
-    current_shadow_color = ListProperty(_project_shadow_color)
+    current_shadow_color = ListProperty()
     current_project_shadow_color = ListProperty()
     task_texture = StringProperty(themes.__task_texture__)
     shadow_texture = StringProperty(themes.__shadow__)
@@ -79,7 +82,6 @@ class Task(Button):
         self.tasktext.text = text
 
     def _update_project_display(self, task, project):
-        print(project)
         if project is None:
             self.current_project_color = themes.__transparent__  # Make the project rectangle transparent
             self.current_project_shadow_color = themes.__transparent__
@@ -118,6 +120,7 @@ class Task(Button):
         # TODO: Figure out a better way to trigger click drag rearrangements
 
         if self.collide_point(*touch.pos):
+            __Theme__.set_theme('Dark Theme')
             tvc = self.get_root_window().children[0]
             self.state = 'down'
             self.x_off = touch.x - self.x

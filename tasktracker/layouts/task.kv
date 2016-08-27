@@ -2,6 +2,7 @@
     size_hint_y: None
     height: 60
 
+#    background_color: self.task_color
     background_normal: self.task_texture
     background_down: self.task_texture
     border: [2, 2, 2, 2]
@@ -14,7 +15,7 @@
             border: [1, 1, 1, 1]
             pos: self.x - 3, self.y - 3
             # Todo: Make the shadow increase in size when clicking dragging tasks.
-            size: self.width + 6 , self.height + 6
+            size: self.width + 3 , self.height + 3
 
     canvas:
         Color:
