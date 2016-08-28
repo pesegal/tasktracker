@@ -9,6 +9,7 @@ from kivy.core.window import Window
 from kivy.utils import get_color_from_hex
 from kivy.lang import Builder
 from tasktracker.screencontroller import ScreenClickDragWindow
+from tasktracker.themes import themes
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
@@ -24,8 +25,6 @@ class TaskApp(App):
         return ScreenClickDragWindow()
 
 if __name__ == '__main__':
-    # Load KV
-    Window.clearcolor = get_color_from_hex("#FAFAFA")
     for file in os.listdir(layout_path):
         Builder.load_file(os.path.join(layout_path, file))
     # Load configurations

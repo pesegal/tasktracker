@@ -18,32 +18,36 @@ from kivy.utils import get_color_from_hex
 
 from tasktracker.database.db_interface import db
 from tasktracker.themes import themes
-from tasktracker.themes.themes import __Theme__
+from tasktracker.themes.themes import Themeable
 import tasktracker.task.taskpopups
 
 # Todo: Task widget should be able to be clicked and opens up a editing screen.
 # Todo: Task widget should be able to be categorized in larger project groupings.
 
-_project_shadow_color = [0, 0, 0, .5]
 
 
-class Task(Button):
+
+class Task(Button, Themeable):
     """ Contains all controller information for the task objects. Visual layout is contained in
     task.kv file that is in ./layouts. Note that due to how the label dynamic layout works all
     label attribute access should go through self.tasktext
     """
-
-    task_color = ListProperty(__Theme__.tasks)
+    # Themeable Properties
+    task_color = ListProperty()
     current_project_color = ListProperty()
-    current_shadow_color = ListProperty()
+    # Shadow Texture Colors: Used for to switch from visible to transparent
+    current_shadow_color = ListProperty(themes.SHADOW_COLOR)
     current_project_shadow_color = ListProperty()
-    task_texture = StringProperty(themes.__task_texture__)
-    shadow_texture = StringProperty(themes.__shadow__)
-    project_indicator = StringProperty(themes.__project_indicator__)
+    # Task textures
+    task_texture = StringProperty(themes.TASK_TEXTURE)
+    shadow_texture = StringProperty(themes.SHADOW_TEXTURE)
+    project_indicator = StringProperty(themes.PROJECT_TEXTURE)
+
     project = ObjectProperty(None)
 
     def __init__(self, id, name, notes, project_id=0, **kwargs):
         super(Task, self).__init__(**kwargs)
+
         self.drop_type = 'task'
         self.uuid = id
 
@@ -52,9 +56,7 @@ class Task(Button):
         self.add_widget(self.tasktext)
         self.tasktext.text = name
 
-        self.tasktext.color = [0, 0, 0, 1]  # Todo: replace this with theme data.
-        # self.tasktext.disabled_color = [0, 0, 0, .38]  # Todo: replace this with theme data.
-        # self.tasktext.font_size = 17
+        self.theme_update()
 
         self.tasktext.halign = 'left'
         self.tasktext.valign = 'middle'
@@ -78,22 +80,29 @@ class Task(Button):
         self.x_off = self.x
         self.y_off = self.y
 
+    def theme_update(self):
+        self.tasktext.color = self.theme.text
+        # self.tasktext.disabled_color = [0, 0, 0, .38] # Figure out how I want to utilize this
+        # self.tasktext.font_size = 17
+        print(self.theme.tasks)
+        self.task_color = self.theme.tasks
+
     def set_text(self, text):
         self.tasktext.text = text
 
     def _update_project_display(self, task, project):
         if project is None:
-            self.current_project_color = themes.__transparent__  # Make the project rectangle transparent
-            self.current_project_shadow_color = themes.__transparent__
+            self.current_project_color = themes.TRANSPARENT  # Make the project rectangle transparent
+            self.current_project_shadow_color = themes.TRANSPARENT
         elif project.name == 'No Project':
-            self.current_project_color = themes.__transparent__  # Make the project rectangle transparent
-            self.current_project_shadow_color = themes.__transparent__
+            self.current_project_color = themes.TRANSPARENT  # Make the project rectangle transparent
+            self.current_project_shadow_color = themes.TRANSPARENT
             self.project = None
 
         else:
             self.project = project
             self.current_project_color = get_color_from_hex(project.color)
-            self.current_project_shadow_color = _project_shadow_color
+            self.current_project_shadow_color = themes.SHADOW_COLOR
 
     def _label_position_update(self, _object, size, short_padding=5):
         start = self.width * .07 + 5
@@ -119,8 +128,13 @@ class Task(Button):
         # TODO: Figure out how time based clicking works.
         # TODO: Figure out a better way to trigger click drag rearrangements
 
+        # *** REMOVE THIS AFTER THEME TESTING DONE
+        if self.theme.theme_name == 'Light Theme':
+            self.theme.set_theme('Dark Theme')
+        else:
+            self.theme.set_theme('Light Theme')
+
         if self.collide_point(*touch.pos):
-            __Theme__.set_theme('Dark Theme')
             tvc = self.get_root_window().children[0]
             self.state = 'down'
             self.x_off = touch.x - self.x

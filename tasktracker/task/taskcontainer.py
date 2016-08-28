@@ -6,11 +6,12 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.scrollview import ScrollView
 from kivy.properties import ListProperty
 from kivy.utils import get_color_from_hex
+from tasktracker.themes.themes import Themeable
 
 from tasktracker.database.db_interface import db
 
 
-class TaskScrollContainer(ScrollView):
+class TaskScrollContainer(ScrollView, Themeable):
     scroll_bg_color = ListProperty(get_color_from_hex('#F5F5F5'))
     # todo: Replace with theme color loader
 
@@ -21,6 +22,9 @@ class TaskScrollContainer(ScrollView):
         self.name = name
         self.task_list = TaskList(self.list_id)
         self.add_widget(self.task_list)
+
+    def theme_update(self):
+        self.scroll_bg_color = self.theme.list_bg
 
 
 class TaskList(GridLayout):

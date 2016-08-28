@@ -3,10 +3,13 @@
     be contained in a sub-directory.
 """
 
+import abc
+import weakref
 from configparser import ConfigParser
 from collections import namedtuple
 from kivy.uix.widget import Widget
-from kivy.properties import ListProperty
+from kivy.properties import ListProperty, StringProperty
+from kivy.core.window import Window
 from kivy.utils import get_color_from_hex
 
 from tasktracker.settings import Borg
@@ -15,38 +18,48 @@ __theme_config_path__ = './tasktracker/themes/themes.conf'
 
 
 # Texture Paths todo: replace with atlas
-__project_indicator__ = './themes/gfx/all_white3.png'
-__shadow__ = './themes/gfx/shadow.png'
-__task_texture__ = './themes/gfx/all_white3.png'
+PROJECT_TEXTURE = './themes/gfx/all_white3.png'
+SHADOW_TEXTURE = './themes/gfx/shadow.png'
+TASK_TEXTURE = './themes/gfx/all_white3.png'
 
 # Config Setup
 
 # Global Color Helpers
-__transparent__ = [1, 1, 1, 0]
-
+TRANSPARENT = [1, 1, 1, 0]
+SHADOW_COLOR = [0, 0, 0, .5]
 
 # Theme Object Definitions
 Theme = namedtuple('Theme', 'name, status, listbg, background, tasks, text')
 
 
-# TODO: Dynamically Load in themes so that all of the tags change correctly.
+class Themeable:
+    def __init__(self):
+        self.theme = THEME_CONTROLLER
+        self.theme.register(weakref.ref(self))
+
+    def theme_update(self):
+        raise NotImplementedError('Themeable widgets need to implement a theme_update method.')
+
 
 class ThemeController(Borg, Widget):
     """ The theme controller is a singleton that handles all of the color scheme loading
         and changing of data.
     """
     # Theme Color Property Initialization
+    theme_name = StringProperty()
     status = ListProperty()
     list_bg = ListProperty()
     background = ListProperty()
     tasks = ListProperty()
-    text = ListProperty
+    text = ListProperty()
 
     def __init__(self):
         super().__init__()
         self.theme_list = list()
         self._load_theme_configuration()
-        self.set_theme('Light Theme')
+        self.registry = list()
+
+        self.set_theme('Light Theme')  # Stored Configuration Settings Loaded Here
 
     def _load_theme_configuration(self):
         config = ConfigParser()
@@ -60,6 +73,8 @@ class ThemeController(Borg, Widget):
 
     def set_theme(self, theme_name):
         print(theme_name)
+
+        self.theme_name = theme_name
         for theme in self.theme_list:
             if theme.name == theme_name:
                 self.status = theme.status
@@ -68,5 +83,28 @@ class ThemeController(Borg, Widget):
                 self.tasks = theme.tasks
                 self.text = theme.text
 
+        Window.clearcolor = list(self.background)
+        self._broadcast_theme_changes()
 
-__Theme__ = ThemeController()
+    def register(self, ref):
+        self.registry.append(ref)
+
+    def _flush(self):
+        to_remove = []
+
+        for ref in self.registry:
+            if ref() is None:
+                to_remove.append(ref)
+
+        for item in to_remove:
+            self.registry.remove(item)
+
+    def _broadcast_theme_changes(self):
+        self._flush()
+
+        for widget in self.registry:
+            print(widget)
+            widget().theme_update()
+
+
+THEME_CONTROLLER = ThemeController()
