@@ -3,7 +3,6 @@
     be contained in a sub-directory.
 """
 
-import abc
 import weakref
 from configparser import ConfigParser
 from collections import namedtuple
@@ -59,7 +58,7 @@ class ThemeController(Borg, Widget):
         self._load_theme_configuration()
         self.registry = list()
 
-        self.set_theme('Light Theme')  # Stored Configuration Settings Loaded Here
+        self.set_theme('Dark Theme')  # Stored Configuration Settings Loaded Here
 
     def _load_theme_configuration(self):
         config = ConfigParser()

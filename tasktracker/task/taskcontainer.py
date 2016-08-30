@@ -22,6 +22,7 @@ class TaskScrollContainer(ScrollView, Themeable):
         self.name = name
         self.task_list = TaskList(self.list_id)
         self.add_widget(self.task_list)
+        self.theme_update()
 
     def theme_update(self):
         self.scroll_bg_color = self.theme.list_bg

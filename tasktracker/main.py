@@ -5,11 +5,8 @@
 """
 import os
 from kivy.app import App
-from kivy.core.window import Window
-from kivy.utils import get_color_from_hex
 from kivy.lang import Builder
 from tasktracker.screencontroller import ScreenClickDragWindow
-from tasktracker.themes import themes
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 

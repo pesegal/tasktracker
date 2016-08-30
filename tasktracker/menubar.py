@@ -8,22 +8,30 @@
 from kivy.lang import Builder
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
-from kivy.properties import ObjectProperty, StringProperty
+from kivy.properties import ObjectProperty, StringProperty, ListProperty
 
 from tasktracker.mixins import Broadcast
 from tasktracker.task.taskpopups import TaskCreationScreen
+from tasktracker.themes.themes import Themeable
 
 
-class MenuBar(BoxLayout, Broadcast):
+class MenuBar(BoxLayout, Broadcast, Themeable):
     current_screen = StringProperty('tasks')
+    menu_bar_bg_color = ListProperty()
 
     def __init__(self, **kwargs):
         super(MenuBar, self).__init__(**kwargs)
         self.bind(current_screen=self.screen_state_change)
         self.scroll_list_left = ScrollButton(text='<<', on_press=lambda x: self.switch_lists('left'))
         self.scroll_list_right = ScrollButton(text='>>', on_press=lambda x: self.switch_lists('right'))
+        self.theme_update()
         # self.add_widget(self.scroll_list_left, index=len(self.children))
         # self.add_widget(self.scroll_list_right, index=0)
+
+    def theme_update(self):
+        self.menu_bar_bg_color = self.theme.status
+
+
 
     def task_multi_use_press(self, *args):
         if self.current_screen == 'tasks':
