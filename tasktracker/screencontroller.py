@@ -1,4 +1,3 @@
-from kivy.lang import Builder
 from kivy.properties import NumericProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.floatlayout import FloatLayout
@@ -8,6 +7,7 @@ from tasktracker.mixins import Broadcast
 from tasktracker.menubar import MenuBar
 from tasktracker.task.taskview import TaskListScreen
 from tasktracker.task.taskpopups import TaskEditScreen
+from tasktracker.timer.timer import TimerScreen
 
 
 class ScreenController(ScreenManager, Broadcast):
@@ -23,10 +23,6 @@ class ScreenController(ScreenManager, Broadcast):
         self.add_widget(self.stats)
 
 # TODO: Break this out into their own modules eventually.
-
-
-class TimerScreen(Screen):
-    pass
 
 
 class StatsScreen(Screen):

@@ -1,0 +1,31 @@
+<TimerScreen>:
+    BoxLayout:
+        orientation: "vertical"
+        BoxLayout:
+            size_hint_y: None
+            height: 80
+            padding: 20, 10
+            orientation: 'horizontal'
+            Button:
+                text: "Pomo"
+            Button:
+                text: "Short Break"
+            Button:
+                text: "Long Break"
+            Button:
+                text: "Stopwatch"
+
+        Label:
+            font_size: 120
+            text: '[b]00[/b]:00'
+            markup: True
+
+        BoxLayout:
+            size_hint_y: None
+            height: 80
+            padding: 20, 10
+            orientation: "horizontal"
+            Button:
+                text: "Start"
+            Button:
+                text: "Reset"
