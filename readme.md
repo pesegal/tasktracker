@@ -6,12 +6,12 @@ This includes a timer to help keep focus and statistical tracking to see how muc
 
 
 ### TODO:
-+ Build out task creation functionality
 + Build out timer window
 + Build out stats tracking functionality
 
 
 ### Potential Future Features
++ Organization buttons to organize tasks by date / project.
 + Ability to categorize tasks into groups (epics) that will will provide statistical summary of tasks contained within.
 + Graphs and other Visualizations that can provide interesting insights where your time is spent.
 + Ability to log-in and store data in the cloud.
@@ -23,4 +23,6 @@ This includes a timer to help keep focus and statistical tracking to see how muc
 
 + Crash when project selector spinner is open and the edit button is pressed.
 + Fix Multi Touch Task repositioning.
-+ Make sure that swappling lists is multi-touch protected.
++ Make sure that swapping lists is multi-touch protected.
++ Project color labels not updating when project color is changed.
++ Menu Button color not reset to transparent with clicking dragging away.

@@ -25,8 +25,6 @@ import tasktracker.task.taskpopups
 # Todo: Task widget should be able to be categorized in larger project groupings.
 
 
-
-
 class Task(Button, Themeable):
     """ Contains all controller information for the task objects. Visual layout is contained in
     task.kv file that is in ./layouts. Note that due to how the label dynamic layout works all
@@ -84,7 +82,6 @@ class Task(Button, Themeable):
         self.tasktext.color = self.theme.text
         # self.tasktext.disabled_color = [0, 0, 0, .38] # Figure out how I want to utilize this
         # self.tasktext.font_size = 17
-        print(self.theme.tasks)
         self.task_color = self.theme.tasks
 
     def set_text(self, text):
@@ -97,12 +94,11 @@ class Task(Button, Themeable):
         elif project.name == 'No Project':
             self.current_project_color = themes.TRANSPARENT  # Make the project rectangle transparent
             self.current_project_shadow_color = themes.TRANSPARENT
-            self.project = None
-
         else:
             self.project = project
             self.current_project_color = get_color_from_hex(project.color)
             self.current_project_shadow_color = themes.SHADOW_COLOR
+        self.canvas.ask_update()
 
     def _label_position_update(self, _object, size, short_padding=5):
         start = self.width * .07 + 5

@@ -20,6 +20,7 @@ __theme_config_path__ = './tasktracker/themes/themes.conf'
 PROJECT_TEXTURE = './themes/gfx/all_white3.png'
 SHADOW_TEXTURE = './themes/gfx/shadow.png'
 TASK_TEXTURE = './themes/gfx/all_white3.png'
+MENUBUTTON_TEXTURE = '/themes/gfx/all_white2.png'
 
 # Config Setup
 
@@ -28,7 +29,7 @@ TRANSPARENT = [1, 1, 1, 0]
 SHADOW_COLOR = [0, 0, 0, .5]
 
 # Theme Object Definitions
-Theme = namedtuple('Theme', 'name, status, listbg, background, tasks, text')
+Theme = namedtuple('Theme', 'name, status, listbg, background, tasks, text, menudown')
 
 
 class Themeable:
@@ -52,6 +53,7 @@ class ThemeController(Borg, Widget):
     background = ListProperty()
     tasks = ListProperty()
     text = ListProperty()
+    menu_down = ListProperty()
 
     def __init__(self):
         super().__init__()
@@ -80,6 +82,7 @@ class ThemeController(Borg, Widget):
                 self.background = theme.background
                 self.tasks = theme.tasks
                 self.text = theme.text
+                self.menu_down = theme.menudown
 
         Window.clearcolor = list(self.background)
         self._broadcast_theme_changes()

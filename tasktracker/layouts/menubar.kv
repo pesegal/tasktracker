@@ -12,24 +12,32 @@
             size: root.width, root.height
             pos: root.x, root.y
 
-
-
     MenuButton:
         id: multi_use_button
         menu: menubar
         drop_type: 'task_edit'
-        text: "New Task"
+        text: "NEW TASK"
         on_press: root.task_multi_use_press(*args)
     MenuButton:
         id: switch_screen_1
-        text: 'Timer'
+        text: 'TIMER'
         drop_type: 'timer'
         on_press: root.switch_screens('timer', 'right')
     MenuButton:
         id: switch_screen_2
-        text: 'Stats'
+        text: 'STATS'
         drop_type: 'status'
         on_press: root.switch_screens('stats', 'up')
+    MenuButton:
+        id: settings
+        text: 'SETTINGS'
+        drop_type: 'settings'
+        on_press: print("Setting's Clicked")
 
-
-
+<MenuButton>:
+    bold: True
+    font_kerning: True
+    color: self.text_color
+    border: [2, 2, 2, 2]
+    background_color: [0,0,0,0]
+    background_down: self.button_texture

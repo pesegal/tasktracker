@@ -11,6 +11,7 @@ from kivy.properties import ObjectProperty, StringProperty, ListProperty
 
 from tasktracker.mixins import Broadcast
 from tasktracker.task.taskpopups import TaskCreationScreen
+from tasktracker.themes import themes
 from tasktracker.themes.themes import Themeable
 
 
@@ -21,8 +22,8 @@ class MenuBar(BoxLayout, Broadcast, Themeable):
     def __init__(self, **kwargs):
         super(MenuBar, self).__init__(**kwargs)
         self.bind(current_screen=self.screen_state_change)
-        self.scroll_list_left = ScrollButton(text='<<', on_press=lambda x: self.switch_lists('left'))
-        self.scroll_list_right = ScrollButton(text='>>', on_press=lambda x: self.switch_lists('right'))
+        self.scroll_list_left = MenuButton(text='<<', on_press=lambda x: self.switch_lists('left'))
+        self.scroll_list_right = MenuButton(text='>>', on_press=lambda x: self.switch_lists('right'))
         self.theme_update()
         # self.add_widget(self.scroll_list_left, index=len(self.children))
         # self.add_widget(self.scroll_list_right, index=0)
@@ -49,10 +50,10 @@ class MenuBar(BoxLayout, Broadcast, Themeable):
 
     def screen_state_change(self, *args):
         if self.current_screen == 'tasks':
-            self.ids.multi_use_button.text = 'New Task'
+            self.ids.multi_use_button.text = 'NEW TASK'
             self._add_scroll_buttons()
         else:
-            self.ids.multi_use_button.text = 'Tasks'
+            self.ids.multi_use_button.text = 'TASKS'
             self._remove_scroll_buttons()
 
     def width_state_change(self, width_state, **kwargs):
@@ -73,18 +74,28 @@ class MenuBar(BoxLayout, Broadcast, Themeable):
             self.remove_widget(self.scroll_list_right)
 
 
-class ScrollButton(Button):
-    def __init__(self, **kwargs):
-        super(ScrollButton, self).__init__(**kwargs)
-        self.drop_type = None
-
-
-class MenuButton(Button):
+class MenuButton(Button, Themeable):
     menu = ObjectProperty(None)
     drop_type = StringProperty()
+    text_color = ListProperty()
+    press_color = ListProperty()
+    button_texture = StringProperty(themes.MENUBUTTON_TEXTURE)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.theme_update()
+
+    def theme_update(self):
+        self.text_color = self.theme.text
+        self.press_color = self.theme.menu_down
+        self.press_color[3] = .4
+        self.text_color[3] = .88
+
+    def on_press(self):
+        self.background_color = self.press_color
+
+    def on_release(self):
+        self.background_color = [0, 0, 0, 0]
 
     def execute_function(self, function):
         pass
@@ -92,11 +103,3 @@ class MenuButton(Button):
 
 class SwitchScreenButton(Button):
     pass
-
-
-
-
-
-
-
-
