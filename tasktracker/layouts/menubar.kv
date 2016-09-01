@@ -14,18 +14,22 @@
 
 
 
-    MultiUseButton:
+    MenuButton:
         id: multi_use_button
         menu: menubar
+        drop_type: 'task_edit'
         text: "New Task"
         on_press: root.task_multi_use_press(*args)
-    SwitchScreenButton:
+    MenuButton:
         id: switch_screen_1
         text: 'Timer'
         drop_type: 'timer'
         on_press: root.switch_screens('timer', 'right')
-    SwitchScreenButton:
+    MenuButton:
         id: switch_screen_2
         text: 'Stats'
         drop_type: 'status'
         on_press: root.switch_screens('stats', 'up')
+
+
+

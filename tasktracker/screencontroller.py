@@ -2,30 +2,37 @@ from kivy.properties import NumericProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.uix.screenmanager import FallOutTransition, SlideTransition,\
+    SwapTransition, FadeTransition, WipeTransition, RiseInTransition
 
 from tasktracker.mixins import Broadcast
 from tasktracker.menubar import MenuBar
 from tasktracker.task.taskview import TaskListScreen
 from tasktracker.task.taskpopups import TaskEditScreen
 from tasktracker.timer.timer import TimerScreen
+from tasktracker.themes.themes import Themeable
 
 
-class ScreenController(ScreenManager, Broadcast):
+class ScreenController(ScreenManager, Broadcast, Themeable):
     def __init__(self, **kwargs):
         super(ScreenController, self).__init__(**kwargs)
 
         self.tasks = TaskListScreen(name='tasks')
         self.timer = TimerScreen(name='timer')
         self.stats = StatsScreen(name='stats')
+        self.theme_update()
 
         self.add_widget(self.tasks)
         self.add_widget(self.timer)
         self.add_widget(self.stats)
 
-# TODO: Break this out into their own modules eventually.
+    def theme_update(self):
+        self.transition = WipeTransition()
+        self.transition.clearcolor = self.theme.background
+        self.transition.duration = .08
 
 
-class StatsScreen(Screen):
+class StatsScreen(Screen): # TODO: Break this out into their own modules eventually.
     pass
 
 

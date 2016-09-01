@@ -5,7 +5,6 @@
     screen.
 """
 
-from kivy.lang import Builder
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.properties import ObjectProperty, StringProperty, ListProperty
@@ -30,8 +29,6 @@ class MenuBar(BoxLayout, Broadcast, Themeable):
 
     def theme_update(self):
         self.menu_bar_bg_color = self.theme.status
-
-
 
     def task_multi_use_press(self, *args):
         if self.current_screen == 'tasks':
@@ -82,16 +79,15 @@ class ScrollButton(Button):
         self.drop_type = None
 
 
-class MultiUseButton(Button):
+class MenuButton(Button):
     menu = ObjectProperty(None)
+    drop_type = StringProperty()
 
     def __init__(self, **kwargs):
-        super(MultiUseButton, self).__init__(**kwargs)
-        self.drop_type = 'task_edit'
+        super().__init__(**kwargs)
 
     def execute_function(self, function):
         pass
-
 
 
 class SwitchScreenButton(Button):

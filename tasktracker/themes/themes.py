@@ -37,7 +37,8 @@ class Themeable:
         self.theme.register(weakref.ref(self))
 
     def theme_update(self):
-        raise NotImplementedError('Themeable widgets need to implement a theme_update method.')
+        raise NotImplementedError('Themeable widget (%s) need to implement a theme_update method.' %
+                                  self.__class__.__name__)
 
 
 class ThemeController(Borg, Widget):
@@ -71,8 +72,6 @@ class ThemeController(Borg, Widget):
             self.theme_list.append(Theme(theme, *value_list))
 
     def set_theme(self, theme_name):
-        print(theme_name)
-
         self.theme_name = theme_name
         for theme in self.theme_list:
             if theme.name == theme_name:
@@ -102,7 +101,6 @@ class ThemeController(Borg, Widget):
         self._flush()
 
         for widget in self.registry:
-            print(widget)
             widget().theme_update()
 
 
