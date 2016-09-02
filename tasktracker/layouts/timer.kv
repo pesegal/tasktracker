@@ -15,7 +15,15 @@
             Button:
                 text: "Stopwatch"
 
+        Button:
+            text: "Selected Task"
+            size_hint_y: None
+            size_hint_x: .5
+            pos_hint: {'center_x': .5, 'top': .5}
+            height: 60
+
         Label:
+            id: timer
             font_size: 120
             text: '[b]00[/b]:00'
             markup: True
@@ -27,5 +35,6 @@
             orientation: "horizontal"
             Button:
                 text: "Start"
+                on_press: root.on_start()
             Button:
                 text: "Reset"
