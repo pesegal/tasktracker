@@ -9,16 +9,16 @@
             TimerSettingsButton:
                 state: 'down'
                 text: "Pomo"
-                on_press: root.timer_type_selection = 0
+                on_press: root.switch_timer_type(0)
             TimerSettingsButton:
                 text: "Short Break"
-                on_press: root.timer_type_selection = 1
+                on_press: root.switch_timer_type(1)
             TimerSettingsButton:
                 text: "Long Break"
-                on_press: root.timer_type_selection = 2
+                on_press: root.switch_timer_type(2)
             TimerSettingsButton:
                 text: "Stopwatch"
-                on_press: root.timer_type_selection = 3
+                on_press: root.switch_timer_type(3)
 
         Button:
             text: "Selected Task"
@@ -29,7 +29,8 @@
 
         Label:
             id: timer
-            font_size: 120
+            font_size: self.width / 4
+            color: root.text_color
             text: '[b]00[/b]:00'
             markup: True
 
@@ -39,8 +40,9 @@
             padding: 20, 10
             orientation: "horizontal"
             Button:
+                id: start_pause_button
                 text: "Start"
-                on_press: root.on_start()
+                on_press: root.start_pause_trigger()
             Button:
                 text: "Reset"
 
