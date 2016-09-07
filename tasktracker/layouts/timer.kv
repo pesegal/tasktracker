@@ -6,14 +6,19 @@
             height: 80
             padding: 20, 10
             orientation: 'horizontal'
-            Button:
+            TimerSettingsButton:
+                state: 'down'
                 text: "Pomo"
-            Button:
+                on_press: root.timer_type_selection = 0
+            TimerSettingsButton:
                 text: "Short Break"
-            Button:
+                on_press: root.timer_type_selection = 1
+            TimerSettingsButton:
                 text: "Long Break"
-            Button:
+                on_press: root.timer_type_selection = 2
+            TimerSettingsButton:
                 text: "Stopwatch"
+                on_press: root.timer_type_selection = 3
 
         Button:
             text: "Selected Task"
@@ -38,3 +43,6 @@
                 on_press: root.on_start()
             Button:
                 text: "Reset"
+
+<TimerSettingsButton>:
+    group: 'timer_type'
