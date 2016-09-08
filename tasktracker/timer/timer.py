@@ -11,9 +11,9 @@ from tasktracker.themes import themes
 from tasktracker.themes.themes import Themeable
 
 # TODO: Break these out to the settings module
-POMOTIME = 25
+POMO_TIME = 25 * 60
 SHORT_BREAK = 5 * 60
-LONG_BREAK = 15
+LONG_BREAK = 15 * 60
 
 # TODO: Create timer selection logic for buttons.
 # TODO: Create bool flag to switch between start and stop functionality.
@@ -28,13 +28,14 @@ class TimerScreen(Screen, Themeable):
     text_color = ListProperty(themes.THEME_CONTROLLER.text)
 
     # Functional Properties
-    current_time = NumericProperty(SHORT_BREAK)
     _clock_event = ObjectProperty()
     timer_active = BooleanProperty(False)
+    timer_type_selection = NumericProperty(0)
 
-    def __int__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.timer_type_selection = 0
+    def __init__(self, **kwargs):
+        super(Screen, self).__init__(**kwargs)
+        self.current_time = POMO_TIME
+        self._timer_display_update()
 
     def theme_update(self):
         self.text_color = self.theme.text
@@ -42,41 +43,60 @@ class TimerScreen(Screen, Themeable):
 
     def switch_timer_type(self, selected):
         self.timer_type_selection = selected
-        print("Timer Type Selected: ", self.timer_type_selection)
-        # TODO: Add logic here to display the selected time on the timer label.
+        if not self.timer_active:
+            if selected == 0:
+                self.current_time = POMO_TIME
+            elif selected == 1:
+                self.current_time = SHORT_BREAK
+            elif selected == 2:
+                self.current_time = LONG_BREAK
+            elif selected == 3:
+                self.current_time = 0
+        self._timer_display_update()
+
+    def _timer_display_update(self):
+        minutes, seconds = divmod(self.current_time, 60)
+        self.ids.timer.text = ('[b]%02d[/b]:%02d' % (int(minutes), int(seconds)))
+
+    def timer_reset(self):
+        self.timer_active = False
+        Clock.unschedule(self._clock_event)
+        self.ids.start_pause_button.text = 'Start'
+        self.switch_timer_type(self.timer_type_selection)
 
     def start_pause_trigger(self):
-        print(self.current_time)
-        # TODO: Need to call the function to make sure that default times are displayed before starting timer.
+        if self.timer_type_selection == 3:
+            timer_function = self.update
+        else:
+            timer_function = self.count_down
+
         if self.timer_active:
             self.ids.start_pause_button.text = 'Start'
             Clock.unschedule(self._clock_event)
             self.timer_active = False
         else:
-            self._clock_event = Clock.schedule_interval(self.count_down, 0.016)
+            self._clock_event = Clock.schedule_interval(timer_function, 0.016)
             self.ids.start_pause_button.text = 'Pause'
             self.timer_active = True
 
     def update(self, nap):
         self.current_time += nap
-        print(self.current_time)
-
-        minutes, seconds = divmod(self.current_time, 60)
-
-        self.ids.timer.text = ('%02d:%02d' % (int(minutes), int(seconds)))
+        self._timer_display_update()
 
     def count_down(self, nap):
         self.current_time -= nap
         minutes, seconds = divmod(self.current_time, 60)
         if self.current_time <= 0:
-            print("FINISHED")
+            self.count_down_alert()
             Clock.unschedule(self._clock_event)
+            self.current_time = 0
         else:
             self.ids.timer.text = ('[b]%02d[/b]:%02d' % (int(minutes), int(seconds)))
 
-    def update_time(self, nap):
-        pass
-
+    def count_down_alert(self):
+        # Use this function to trigger notifications and other logic when the
+        # count down timer is finished.
+        print("FINISHED")
 
 class TimerSettingsButton(ToggleButton, Themeable):
     def __init__(self, **kwargs):
