@@ -20,8 +20,7 @@
                 text: "Stopwatch"
                 on_press: root.switch_timer_type(3)
 
-        Button:
-            text: "Selected Task"
+        TimerTaskDisplayManager:
             size_hint_y: None
             size_hint_x: .5
             pos_hint: {'center_x': .5, 'top': .5}
@@ -49,3 +48,4 @@
 
 <TimerSettingsButton>:
     group: 'timer_type'
+

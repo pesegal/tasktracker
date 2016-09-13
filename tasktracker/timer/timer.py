@@ -4,6 +4,8 @@
 
 from kivy.clock import Clock
 from kivy.uix.screenmanager import Screen
+from kivy.uix.button import Button
+from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.togglebutton import ToggleButton, ToggleButtonBehavior
 from kivy.properties import NumericProperty, ObjectProperty, ListProperty, BooleanProperty
 
@@ -97,6 +99,37 @@ class TimerScreen(Screen, Themeable):
         # Use this function to trigger notifications and other logic when the
         # count down timer is finished.
         print("FINISHED")
+
+
+class TimerTaskDisplayManager(BoxLayout):
+    """ This object acts as an interface for the selected task widget display on the timer screen.
+    when no project is selected this widget will show the default view of a button that allows
+    the user to select a project to work on.
+    """
+
+    def __init__(self, **kwargs):
+        super(TimerTaskDisplayManager, self).__init__(**kwargs)
+        self.default = NoProjectSelectedButton()
+        self.selected = self.default
+        self.add_widget(self.selected)
+
+    def swap_default_for_task(self, project):
+        self.clear_widgets()
+        self.add_widget(project)
+
+    def reset_default_project(self):
+        self.clear_widgets()
+        self.add_widget(self.default)
+
+
+class NoProjectSelectedButton(Button, Themeable):
+    def __init__(self, **kwargs):
+        super(NoProjectSelectedButton, self).__init__(**kwargs)
+        self.text = 'Select a project!'
+
+    def theme_update(self):
+        pass
+
 
 class TimerSettingsButton(ToggleButton, Themeable):
     def __init__(self, **kwargs):

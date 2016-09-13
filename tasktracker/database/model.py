@@ -49,7 +49,9 @@ action_types = (
     'Pomodoro',
     'Pause',
     'Short Break',
-    'Long Break'
+    'Long Break',
+    'Stopwatch Start',
+    'Stopwatch Stop'
 )
 
 for data in action_types:
