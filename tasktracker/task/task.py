@@ -18,6 +18,7 @@ from kivy.utils import get_color_from_hex
 
 from tasktracker.database.db_interface import db
 from tasktracker.themes import themes
+from tasktracker.mixins import TapAndHold
 from tasktracker.themes.themes import Themeable
 import tasktracker.task.taskpopups
 
@@ -25,7 +26,7 @@ import tasktracker.task.taskpopups
 # Todo: Task widget should be able to be categorized in larger project groupings.
 
 
-class Task(Button, Themeable):
+class Task(Button, Themeable): # TapAndHold
     """ Contains all controller information for the task objects. Visual layout is contained in
     task.kv file that is in ./layouts. Note that due to how the label dynamic layout works all
     label attribute access should go through self.tasktext
@@ -48,6 +49,9 @@ class Task(Button, Themeable):
 
         self.drop_type = 'task'
         self.uuid = id
+
+        # Tap Hold Length (Seconds)
+        self._hold_length = .5
 
         # Init self.tasktext
         self.tasktext = Label()
@@ -119,51 +123,52 @@ class Task(Button, Themeable):
         self.tasktext.x = self.x + start + 5
         self.tasktext.y = self.y
 
-    def on_touch_down(self, touch):
-        # TODO: Figure out how right click works!
-        # TODO: Figure out how time based clicking works.
-        # TODO: Figure out a better way to trigger click drag rearrangements
+    def _change_parent(self, touch):
+        """ This function contains the original movement code for click drag list changes."""
+        tvc = self.get_root_window().children[0]
+        self.state = 'down'
+        self.x_off = touch.x - self.x
+        self.y_off = touch.y - self.y
+        self.last_index = self.parent.children.index(self)
+        self.last_parent = self.parent  # Used to handle if mouse is outside window boundaries
+        global_pos = self.to_window(touch.x, touch.y)
+        global_pos = global_pos[0] - self.x_off, global_pos[1] - self.y_off  # Offset Global POS
+        tvc.click_drag_reposition(self, tuple(self.size), global_pos)
+        touch.grab(self)
+        print(self.parent, self.last_parent)
 
-        # *** REMOVE THIS AFTER THEME TESTING DONE
-        if self.theme.theme_name == 'Light Theme':
-            self.theme.set_theme('Dark Theme')
-        else:
-            self.theme.set_theme('Light Theme')
 
-        if self.collide_point(*touch.pos):
-            tvc = self.get_root_window().children[0]
-            self.state = 'down'
-            self.x_off = touch.x - self.x
-            self.y_off = touch.y - self.y
-            self.last_index = self.parent.children.index(self)
-            self.last_parent = self.parent  # Used to handle if mouse is outside window boundaries
-            global_pos = self.to_window(touch.x, touch.y)
-            global_pos = global_pos[0] - self.x_off, global_pos[1] - self.y_off  # Offset Global POS
-            tvc.click_drag_reposition(self, tuple(self.size), global_pos)
-            touch.grab(self)
 
-    def on_touch_up(self, touch):
-        if touch.grab_current is self:
-            self.state = 'normal'
-            col_data = self.parent.check_children(touch.pos, self)
-            self.parent.remove_widget(self)
-            self.size_hint_x = 1
-            last_list = self.last_parent
-            if col_data[0] is not None:  # If it is None then task was released outside of a TaskList..
-                self.last_parent = col_data[0]
-            if col_data[1]:
-                in_index = col_data[1].parent.children.index(col_data[1])
-                self.last_parent.add_widget(self, index=in_index + 1)
-            else:
-                self.last_parent.add_widget(self)
-            db.task_switch(self.uuid, self.last_parent.list_id)
-            last_list.update_list_positions()  # Writes new indexs to database from list that task left
-            self.last_parent.update_list_positions()  # writes new task indexes to the database
-
-            touch.ungrab(self)
-
-    def on_touch_move(self, touch):
-        if touch.grab_current is self:
-            self.pos = (touch.x - self.x_off, touch.y - self.y_off)
-            # print(touch.pos)
-            # self.parent.switch_positions(self)
+    # def on_tap_hold(self, touch):
+    #     self._change_parent(touch)
+    #
+    # def on_touch_up(self, touch):
+    #     print("start of on touch up", self.parent)
+    #     TapAndHold.on_touch_up(self, touch)
+    #     if touch.grab_current is self and self.triggered:
+    #         self.state = 'normal'
+    #         print(self.parent)
+    #         col_data = self.parent.check_children(touch.pos, self)
+    #         self.parent.remove_widget(self)
+    #         self.size_hint_x = 1
+    #         last_list = self.last_parent
+    #         if col_data[0] is not None:  # If it is None then task was released outside of a TaskList..
+    #             self.last_parent = col_data[0]
+    #         if col_data[1]:
+    #             in_index = col_data[1].parent.children.index(col_data[1])
+    #             self.last_parent.add_widget(self, index=in_index + 1)
+    #         else:
+    #             self.last_parent.add_widget(self)
+    #         db.task_switch(self.uuid, self.last_parent.list_id)
+    #         last_list.update_list_positions()  # Writes new indexs to database from list that task left
+    #         self.last_parent.update_list_positions()  # writes new task indexes to the database
+    #
+    #         touch.ungrab(self)
+    #
+    # def on_touch_move(self, touch):
+    #     TapAndHold.on_touch_move(self, touch)
+    #     if touch.grab_current is self and self.triggered:
+    #         print("on_touch_move: ", self.parent)
+    #         self.pos = (touch.x - self.x_off, touch.y - self.y_off)
+    #         # print(touch.pos)
+    #         # self.parent.switch_positions(self)
