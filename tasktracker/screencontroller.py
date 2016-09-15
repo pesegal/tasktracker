@@ -11,6 +11,7 @@ from tasktracker.task.taskview import TaskListScreen
 from tasktracker.task.taskpopups import TaskEditScreen
 from tasktracker.timer.timer import TimerScreen
 from tasktracker.themes.themes import Themeable
+from tasktracker.task.clickdragcontrol import CLICK_DRAG_CONTROLLER
 
 
 class ScreenController(ScreenManager, Broadcast, Themeable):
@@ -75,6 +76,7 @@ class ScreenClickDragWindow(FloatLayout):
         super(ScreenClickDragWindow, self).__init__(**kwargs)
         self.screen_menu = ScreenMenuAndDisplay()
         self.add_widget(self.screen_menu)
+        CLICK_DRAG_CONTROLLER.click_drag_window = self  # create reference in the controller
 
     def click_drag_reposition(self, task, size, position):
         task.parent.remove_widget(task)
@@ -111,8 +113,6 @@ class ScreenClickDragWindow(FloatLayout):
             # TODO: Add in drop type functionality for menu buttons!
 
         return t_list, task
-
-
 
 
 
