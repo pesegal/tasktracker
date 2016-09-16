@@ -1,7 +1,4 @@
-from copy import copy
 from math import sqrt
-from kivy.clock import Clock
-from kivy.uix.widget import Widget
 
 
 class Broadcast:
@@ -34,13 +31,16 @@ class Broadcast:
             self.parent.broadcast_parent(function, **kwargs)
 
 
-class TapAndHold(Widget):
-    """ A tap and hold mixin for widgets, thanks to Paul Sephton"""
-    _point = None         # Contains point after trigger
-    _sensitivity = 4      # Sensitivity (pixels)
-    _hold_length = 1.4    # Seconds
-    _event = None         # Outstanding event or none
-    triggered = False     # Whether or not the event was triggered
+class TapAndHold():
+    # TODO: MOVE ALL OF THIS CODE INTO THE TASK OBJECT!
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self._point = None  # Contains point after trigger
+        self._sensitivity = 4  # Sensitivity (pixels)
+        self._hold_length = 1.4  # Seconds
+        self._event = None  # Outstanding event or none
+        self.triggered = False  # Whether or not the event was triggered
 
     def _distance(self, touch):
         """ Calculate distance moved from start """
@@ -62,14 +62,6 @@ class TapAndHold(Widget):
             self.triggered = True
             self.on_tap_hold(self._point)  # Generate event
             self._release_event()
-
-    def on_touch_down(self, touch):
-        """ touch down event """
-        if self.collide_point(touch.x, touch.y):  # filter touch events
-            self.triggered = False
-            self._release_event()
-            self._point = copy(touch)         # Touch events share an instance
-            self._event = Clock.schedule_once(self._long_hold, self._hold_length)
 
     def on_touch_move(self, touch):
         """ If there was movement, invalidate the tap+hold """

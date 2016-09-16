@@ -51,6 +51,7 @@ class ScreenMenuAndDisplay(BoxLayout, Broadcast):
         # This is where you transmit
         self.bind(screen_size=self.broadcast_window_resize)
 
+
         self.add_widget(self.menu_bar)
         self.add_widget(self.screen_controller)
 
