@@ -1,6 +1,7 @@
 from tasktracker.settings import Borg
 from tasktracker.database.db_interface import db
 
+from kivy.animation import Animation
 
 class ClickDragController(Borg):
     """ This controller object is the better way of handling click drag related functionality.
@@ -12,7 +13,12 @@ class ClickDragController(Borg):
         self.click_drag_window = None
         self.drop_list = []
 
+        # Popup expansion
+        self.width_exp = 10
+        self.height_exp = 10
+
         # Task Click Drag Movement
+        self.height = None
         self.last_parent = None
         self.last_index = None
 
@@ -24,6 +30,10 @@ class ClickDragController(Borg):
         self.last_parent = task.parent  # Used to handle if mouse is outside window boundaries
         global_pos = task.to_window(touch.x, touch.y)
         global_pos = global_pos[0] - task.x_off, global_pos[1] - task.y_off  # Offset Global POS
+        self.height = task.height
+        popup = Animation(size=(task.width + self.width_exp, task.height + self.height_exp),
+                          duration=.1, t='in_back')
+        popup.start(task)
         self.click_drag_window.click_drag_reposition(task, tuple(task.size), global_pos)
         touch.grab(task)
 
@@ -33,6 +43,7 @@ class ClickDragController(Borg):
         self.click_drag_window.remove_widget(task)
         task.size_hint_x = 1
         last_list = self.last_parent
+        task.height = self.height
         if col_data[0] is not None:  # If it is None then task was released outside of a TaskList..
             self.last_parent = col_data[0]
         if col_data[1]:

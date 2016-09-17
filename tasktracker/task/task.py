@@ -20,9 +20,10 @@ from copy import copy
 from kivy.clock import Clock
 
 
+
 from tasktracker.themes import themes
-from tasktracker.mixins import TapAndHold
 from tasktracker.themes.themes import Themeable
+from tasktracker.mixins import TapAndHold
 from tasktracker.task.clickdragcontrol import CLICK_DRAG_CONTROLLER
 import tasktracker.task.taskpopups
 
@@ -55,7 +56,7 @@ class Task(Button, TapAndHold, Themeable):  # TapAndHold
         self.uuid = id
 
         # Tap Hold Length (Seconds)
-        self._hold_length = .5
+        self._hold_length = .3
 
         # Init self.tasktext
         self.tasktext = Label()
@@ -126,7 +127,6 @@ class Task(Button, TapAndHold, Themeable):  # TapAndHold
         CLICK_DRAG_CONTROLLER.start_click_drag(self, touch)
 
     def on_touch_down(self, touch):
-        """ touch down event """
         if self.collide_point(touch.x, touch.y):  # filter touch events
             self.triggered = False
             self._release_event()

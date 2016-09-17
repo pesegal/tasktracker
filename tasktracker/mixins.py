@@ -31,7 +31,7 @@ class Broadcast:
             self.parent.broadcast_parent(function, **kwargs)
 
 
-class TapAndHold():
+class TapAndHold:
     # TODO: MOVE ALL OF THIS CODE INTO THE TASK OBJECT!
 
     def __init__(self, **kwargs):
@@ -79,12 +79,11 @@ class TapAndHold():
         """ To be implemented by concrete class """
         raise NotImplementedError
 
-
-
-
-
-
-
-
-
-
+    def on_touch_down(self, touch):
+        # Note since this will always been inherited by a widget object.
+        # self should resolve to a instance of a widget.
+        if self.collide_point(touch.x, touch.y):  # filter touch events
+            self.triggered = False
+            self._release_event()
+            self._point = copy(touch)         # Touch events share an instance
+            self._event = Clock.schedule_once(self._long_hold, self._hold_length)
