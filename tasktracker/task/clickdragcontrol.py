@@ -3,6 +3,7 @@ from tasktracker.database.db_interface import db
 
 from kivy.animation import Animation
 
+
 class ClickDragController(Borg):
     """ This controller object is the better way of handling click drag related functionality.
         On program start the ScreenClickDragWindow registers itself with this class.
@@ -13,7 +14,7 @@ class ClickDragController(Borg):
         self.click_drag_window = None
         self.drop_list = []
 
-        # Popup expansion
+        # Popup expansion amount
         self.width_exp = 10
         self.height_exp = 10
 
@@ -51,15 +52,11 @@ class ClickDragController(Borg):
             self.last_parent.add_widget(task, index=in_index + 1)
         else:
             self.last_parent.add_widget(task)
-        db.task_switch(task.uuid, self.last_parent.list_id)
+        if self.last_parent != last_list:  # Only record the task list switch if it's a different list.
+            db.task_switch(task.uuid, self.last_parent.list_id)
         last_list.update_list_positions()  # Writes new index to database from list that task left
         self.last_parent.update_list_positions()  # writes new task indexes to the database
         touch.ungrab(task)
-
-
-    # TODO: Define register function
-
-    # TODO: Move click drag to this class.
 
     # TODO: Improve dropping check to reduce walking of child widgets.
 

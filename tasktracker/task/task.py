@@ -142,5 +142,6 @@ class Task(Button, TapAndHold, Themeable):  # TapAndHold
         TapAndHold.on_touch_move(self, touch)
         if touch.grab_current is self and self.triggered:
             self.pos = (touch.x - self.x_off, touch.y - self.y_off)
+            self.parent.drag_scroll_check(self.to_window(touch.x, touch.y))
             # print(touch.pos)
             # self.parent.switch_positions(self)

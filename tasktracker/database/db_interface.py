@@ -65,6 +65,7 @@ class Database:
         self.connection.commit()
 
     def task_switch(self, task_id, list_id):
+        print("Task List Switching: ", list_id)
         list_id += 1
         # TODO: Figure out why task are writing index changes to task list change history.
         self.cursor.execute('INSERT INTO column_history(creation_date, task_id, column_id) VALUES (?,?,?);',

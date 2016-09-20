@@ -4,6 +4,8 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.screenmanager import FallOutTransition, SlideTransition,\
     SwapTransition, FadeTransition, WipeTransition, RiseInTransition
+from kivy.clock import Clock
+
 
 from tasktracker.mixins import Broadcast
 from tasktracker.menubar import MenuBar
@@ -51,7 +53,6 @@ class ScreenMenuAndDisplay(BoxLayout, Broadcast):
         # This is where you transmit
         self.bind(screen_size=self.broadcast_window_resize)
 
-
         self.add_widget(self.menu_bar)
         self.add_widget(self.screen_controller)
 
@@ -72,11 +73,13 @@ class ScreenMenuAndDisplay(BoxLayout, Broadcast):
         self.broadcast_child('width_state_change', width_state=self.screen_size)
 
 
-class ScreenClickDragWindow(FloatLayout):
+class ScreenClickDragWindow(FloatLayout, Broadcast):
     def __init__(self, **kwargs):
         super(ScreenClickDragWindow, self).__init__(**kwargs)
         self.screen_menu = ScreenMenuAndDisplay()
         self.add_widget(self.screen_menu)
+        self.direction = 'left'
+        self._event = None
         CLICK_DRAG_CONTROLLER.click_drag_window = self  # create reference in the controller
 
     def click_drag_reposition(self, task, size, position):
@@ -85,6 +88,30 @@ class ScreenClickDragWindow(FloatLayout):
         task.pos = position
         task.size_hint_x = None
         task.size = size
+
+    def drag_scroll_check(self, touch_pos):
+        """ This function triggers the switching of lists when a task object is moved with in
+        5 pixels of the edge of the screen.
+        :param touch_pos: the x y position of the current touch translated to global pos.
+        """
+        _list_drag_time = .2
+
+        if touch_pos[0] > self.width - 5:
+            self.direction = 'right'
+            if self._event is None:
+                self._event = Clock.schedule_once(self._broadcast_list_switch, _list_drag_time)
+        elif touch_pos[0] < 5:
+            self.direction = 'left'
+            if self._event is None:
+                self._event = Clock.schedule_once(self._broadcast_list_switch, _list_drag_time)
+        else:
+            if self._event is not None:
+                self._event.release()  # stop any outstanding events
+            self._event = None
+
+    def _broadcast_list_switch(self, *args):
+        self.broadcast_child('slide_task_lists', direction=self.direction)
+        self._event = None
 
     def check_children(self, touch_pos, selected_task):
         """
