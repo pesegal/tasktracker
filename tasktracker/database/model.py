@@ -12,7 +12,7 @@ RESET_DATABASE = True
 print(sqlite3.sqlite_version)
 
 if RESET_DATABASE:
-    os.remove('tt_dev.db')
+    os.remove('tt_dev.DB')
 
 
 def execute_scripts_from_file(filename):
@@ -28,7 +28,7 @@ def execute_scripts_from_file(filename):
         except OperationalError as msg:
             print('Command Skipped: ', msg)
 
-db = sqlite3.connect('tt_dev.db')
+db = sqlite3.connect('tt_dev.DB')
 cursor = db.cursor()
 
 execute_scripts_from_file('tt_schema.sql')

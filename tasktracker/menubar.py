@@ -73,6 +73,13 @@ class MenuBar(BoxLayout, Broadcast, Themeable):
             self.remove_widget(self.scroll_list_left)
             self.remove_widget(self.scroll_list_right)
 
+    def change_theme(self):
+        # Temporary to test the theme changes. TODO: Remove when settings menu is created.
+        if themes.THEME_CONTROLLER.theme_name == 'Dark Theme':
+            themes.THEME_CONTROLLER.set_theme('Light Theme')
+        else:
+            themes.THEME_CONTROLLER.set_theme('Dark Theme')
+
 
 class MenuButton(Button, Themeable):
     menu = ObjectProperty(None)

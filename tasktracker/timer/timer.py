@@ -1,16 +1,18 @@
 """ The Timer module contains all of the controller logic for the timer In the system.
 """
 
+from copy import copy
 
 from kivy.clock import Clock
 from kivy.uix.screenmanager import Screen
 from kivy.uix.button import Button
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.togglebutton import ToggleButton, ToggleButtonBehavior
-from kivy.properties import NumericProperty, ObjectProperty, ListProperty, BooleanProperty
+from kivy.properties import NumericProperty, ObjectProperty, ListProperty, BooleanProperty, StringProperty
 
 from tasktracker.themes import themes
 from tasktracker.themes.themes import Themeable
+from tasktracker.task.task import Task
 
 # TODO: Break these out to the settings module
 POMO_TIME = 25 * 60
@@ -99,6 +101,7 @@ class TimerScreen(Screen, Themeable):
         # Use this function to trigger notifications and other logic when the
         # count down timer is finished.
         print("FINISHED")
+        # TODO: DATABASE STUFF!
 
 
 class TimerTaskDisplayManager(BoxLayout):
@@ -113,21 +116,44 @@ class TimerTaskDisplayManager(BoxLayout):
         self.selected = self.default
         self.add_widget(self.selected)
 
-    def swap_default_for_task(self, project):
+    def load_task(self, task):
         self.clear_widgets()
-        self.add_widget(project)
+        self.selected = TaskDisplay(task.uuid, task.tasktext.text, task.notes, task.project.db_id)
+        self.add_widget(self.selected)
 
-    def reset_default_project(self):
+    def _reset_default_task(self):
         self.clear_widgets()
         self.add_widget(self.default)
 
 
-class NoProjectSelectedButton(Button, Themeable):
+class NoProjectSelectedButton(Button):
+    background = StringProperty(themes.NO_TASK_TEXTURE)
+
     def __init__(self, **kwargs):
         super(NoProjectSelectedButton, self).__init__(**kwargs)
         self.text = 'Select a project!'
 
     def theme_update(self):
+        pass
+
+
+class TaskDisplay(Task):
+    """ TaskDisplay inherits all the display functionality of the task widget
+        without the control functionality.
+    """
+    def __init__(self, *args, **kwargs):
+        super(TaskDisplay, self).__init__(*args, **kwargs)
+
+    def on_press(self):
+        pass
+
+    def on_touch_down(self, touch):
+        pass
+
+    def on_touch_move(self, touch):
+        pass
+
+    def on_release(self):
         pass
 
 

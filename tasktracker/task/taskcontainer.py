@@ -8,7 +8,7 @@ from kivy.properties import ListProperty
 from kivy.utils import get_color_from_hex
 from tasktracker.themes.themes import Themeable
 
-from tasktracker.database.db_interface import db
+from tasktracker.database.db_interface import DB
 
 
 class TaskScrollContainer(ScrollView, Themeable):
@@ -37,5 +37,5 @@ class TaskList(GridLayout):
 
     def update_list_positions(self):
         for index, child in enumerate(self.children):
-            db.update_task_list_index(index, child.uuid)
+            DB.update_task_list_index(index, child.uuid)
 

@@ -12,7 +12,7 @@ from kivy.uix.spinner import Spinner, SpinnerOption
 from kivy.uix.togglebutton import ToggleButton
 from kivy.utils import get_color_from_hex, get_hex_from_color
 
-from tasktracker.database.db_interface import db
+from tasktracker.database.db_interface import DB
 from tasktracker.settings import __project_colors__
 from tasktracker.task.task import Task
 
@@ -45,7 +45,7 @@ class ProjectList:
 
     def load_all_projects(self):
         self.project_list = list()
-        projects = db.load_all_projects()
+        projects = DB.load_all_projects()
         for project in projects:
             self.project_list.append(Project(*project))
 
@@ -169,13 +169,13 @@ class ProjectPopup(Popup):
             self.selected_project.name = self.ids.project_title.text
             self.selected_project.color = self.current_selected_color
             self.selected_project.color_name = self.current_selected_color_name
-            db.update_project(self.selected_project)
+            DB.update_project(self.selected_project)
         else:
             # Checks for field completeness and creates project.
             name, color = self.ids.project_title.text, self.current_selected_color
             color_name = self.current_selected_color_name
             if name != "" and color:
-                pid = db.new_project(name, color, color_name)
+                pid = DB.new_project(name, color, color_name)
                 __projects__.load_all_projects()
                 __projects__.change_project_by_id(pid)
         self.dismiss()
@@ -248,7 +248,7 @@ class TaskCreationScreen(TaskScreen):
     def create_task(self):
         t_list = self.parent.children[1].children[0].screen_controller.tasks  # todo: can this be done better?
         new_task_index = t_list.get_list_length(self.list_selection)
-        task_id = db.add_new_task(self.task_name.text, self.notes.text, self.list_selection,
+        task_id = DB.add_new_task(self.task_name.text, self.notes.text, self.list_selection,
                                   new_task_index, self.selected_project.db_id)
         task = Task(task_id, self.task_name.text, self.notes.text)
         t_list.add_task_to_list(task, self.list_selection)
@@ -265,7 +265,7 @@ class TaskEditScreen(TaskScreen):
         self.task = task
 
     def _load_task_data(self, task_id):
-        task_data = db.load_task_data(task_id)
+        task_data = DB.load_task_data(task_id)
         self.task_name.text = task_data[6]
         self.notes.text = task_data[7]
 
@@ -290,11 +290,11 @@ class TaskEditScreen(TaskScreen):
             task_list_screen = self.task.parent.parent.parent.parent
             self.task.parent.remove_widget(self.task)
             task_list_screen.add_task_to_list(self.task, self.list_selection)
-            db.task_switch(self.task.uuid, self.list_selection)
+            DB.task_switch(self.task.uuid, self.list_selection)
             self.task.parent.update_list_positions()
 
         # Update task in the database
-        db.update_task(self.task.uuid, self.task_name.text, self.notes.text, __projects__.selected_project.db_id)
+        DB.update_task(self.task.uuid, self.task_name.text, self.notes.text, __projects__.selected_project.db_id)
         # Update task in the current session
         self.task.set_text(self.task_name.text)
         self.task.notes = self.notes.text

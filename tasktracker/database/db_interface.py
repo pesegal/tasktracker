@@ -102,4 +102,4 @@ class Database:
         self.connection.close()
 
 
-db = Database(os.path.join(__location__, 'tt_dev.db'))
+DB = Database(os.path.join(__location__, 'tt_dev.db'))

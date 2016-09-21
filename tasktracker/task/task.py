@@ -19,8 +19,6 @@ from kivy.utils import get_color_from_hex
 from copy import copy
 from kivy.clock import Clock
 
-
-
 from tasktracker.themes import themes
 from tasktracker.themes.themes import Themeable
 from tasktracker.mixins import TapAndHold

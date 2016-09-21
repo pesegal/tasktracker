@@ -1,5 +1,5 @@
 from tasktracker.settings import Borg
-from tasktracker.database.db_interface import db
+from tasktracker.database.db_interface import DB
 
 from kivy.animation import Animation
 
@@ -53,7 +53,7 @@ class ClickDragController(Borg):
         else:
             self.last_parent.add_widget(task)
         if self.last_parent != last_list:  # Only record the task list switch if it's a different list.
-            db.task_switch(task.uuid, self.last_parent.list_id)
+            DB.task_switch(task.uuid, self.last_parent.list_id)
         last_list.update_list_positions()  # Writes new index to database from list that task left
         self.last_parent.update_list_positions()  # writes new task indexes to the database
         touch.ungrab(task)

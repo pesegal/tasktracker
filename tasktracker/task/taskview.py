@@ -5,7 +5,7 @@ from kivy.uix.screenmanager import Screen
 from tasktracker.task.taskcontainer import TaskScrollContainer
 
 from tasktracker.mixins import Broadcast
-from tasktracker.database.db_interface import db
+from tasktracker.database.db_interface import DB
 from tasktracker.task.task import Task
 
 
@@ -113,7 +113,7 @@ class TaskListScreen(Screen, Broadcast):
         self.load_tasks_on_startup()
 
     def load_tasks_on_startup(self):
-        loaded_tasks = db.load_all_tasks()
+        loaded_tasks = DB.load_all_tasks()
         for record in loaded_tasks:
             self.add_task_to_list(Task(record[0], record[6], record[7], record[3]), record[4] - 1)
 

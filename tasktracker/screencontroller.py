@@ -116,8 +116,9 @@ class ScreenClickDragWindow(FloatLayout, Broadcast):
     def check_children(self, touch_pos, selected_task):
         """
         This function returns the task list widget and the task widget the touch position releases on.
-        :param touch_pos:
-        :return: TaskList Widget, Task Object
+        :param touch_pos: tuple of the x, y position of the current touch
+        :param selected_task: instance of the selected task widget
+        :return: TaskList, Task
         """
         t_list = None
         task = None
@@ -134,6 +135,11 @@ class ScreenClickDragWindow(FloatLayout, Broadcast):
                     t_list = widget.task_list
                 elif widget.drop_type == 'task_edit':
                     TaskEditScreen(selected_task).open()
+                elif widget.drop_type == 'timer':
+                    self.screen_menu.screen_controller.timer.ids.task_manager.load_task(selected_task)
+                    self.screen_menu.menu_bar.current_screen = 'timer'
+                    self.screen_menu.screen_controller.current = 'timer'
+
             if widget.collide_point(*widget.to_widget(*touch_pos)) and drop:  # test for task collision
                 if widget.drop_type == 'task':
                     task = widget

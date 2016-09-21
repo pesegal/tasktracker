@@ -20,7 +20,8 @@ __theme_config_path__ = './tasktracker/themes/themes.conf'
 PROJECT_TEXTURE = './themes/gfx/all_white3.png'
 SHADOW_TEXTURE = './themes/gfx/shadow.png'
 TASK_TEXTURE = './themes/gfx/all_white3.png'
-MENUBUTTON_TEXTURE = '/themes/gfx/all_white2.png'
+MENUBUTTON_TEXTURE = './themes/gfx/all_white2.png'
+NO_TASK_TEXTURE = './themes/gfx/dotted.png'
 
 # Config Setup
 
