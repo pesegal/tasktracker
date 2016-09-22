@@ -73,8 +73,10 @@ class Database:
         self.cursor.execute('UPDATE tasks SET list_id = ? WHERE id = ?;', (list_id, task_id))
         self.connection.commit()
 
-    def task_action(self, task):
-        pass
+    def write_task_action(self, action):
+        self.cursor.execute('INSERT INTO task_actions(task_id, creation_date, finish_date, action_id) VALUES (?,?,?,?);',
+                            (action.task_id, action.start_time, action.finish_time, action.type))
+        self.connection.commit()
 
     def task_archive(self, task):
         pass
