@@ -22,6 +22,14 @@ LONG_BREAK = 15 * 60
 # TODO: Create timer selection logic for buttons.
 # TODO: Create bool flag to switch between start and stop functionality.
 
+# Types of task actions
+# 1 - unknown
+# 2 - Pomodoro
+# 3 - Pause
+# 4 - Short Break
+# 5 - Long Break
+# 6 - Stopwatch
+
 
 class TimerScreen(Screen, Themeable):
     """ TimerScreen Object contains all of the  control logic relating to the timer screen.
@@ -41,6 +49,7 @@ class TimerScreen(Screen, Themeable):
         self.current_time = POMO_TIME
         self._timer_display_update()
 
+
     def theme_update(self):
         self.text_color = self.theme.text
         self.text_color[3] = .88
@@ -48,6 +57,7 @@ class TimerScreen(Screen, Themeable):
     def switch_timer_type(self, selected):
         self.timer_type_selection = selected
         if not self.timer_active:
+            print("Changing Timer Types")
             if selected == 0:
                 self.current_time = POMO_TIME
             elif selected == 1:
@@ -109,7 +119,6 @@ class TimerTaskDisplayManager(BoxLayout):
     when no project is selected this widget will show the default view of a button that allows
     the user to select a project to work on.
     """
-
     def __init__(self, **kwargs):
         super(TimerTaskDisplayManager, self).__init__(**kwargs)
         self.default = NoProjectSelectedButton()
@@ -118,8 +127,11 @@ class TimerTaskDisplayManager(BoxLayout):
 
     def load_task(self, task):
         self.clear_widgets()
+        # TODO: Add in parts to write to the database when a task is switched in mid session.
         self.selected = TaskDisplay(task.uuid, task.tasktext.text, task.notes, task.project.db_id)
         self.add_widget(self.selected)
+        print(self.selected.uuid)
+        print(self.selected.tasktext.text)
 
     def _reset_default_task(self):
         self.clear_widgets()

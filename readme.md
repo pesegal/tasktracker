@@ -47,6 +47,7 @@ This includes a timer to help keep focus and statistical tracking to see how muc
 
 ### Bug List
 
++ Task screen not resizing correctly when not focused on task screen.
 + Crash when project selector spinner is open and the edit button is pressed.
 + Fix Multi Touch Task repositioning.
 + Make sure that swapping lists is multi-touch protected.
