@@ -85,6 +85,7 @@ class ScreenClickDragWindow(FloatLayout, Broadcast):
     def click_drag_reposition(self, task, size, position):
         task.parent.remove_widget(task)
         self.add_widget(task)
+        self.screen_menu.menu_bar.start_drag_menu_button_text()
         task.pos = position
         task.size_hint_x = None
         task.size = size
@@ -144,8 +145,7 @@ class ScreenClickDragWindow(FloatLayout, Broadcast):
                 if widget.drop_type == 'task':
                     task = widget
 
-            # TODO: Add in drop type functionality for menu buttons!
-
+        self.screen_menu.menu_bar.release_drag_menu_button_text()
         return t_list, task
 
 

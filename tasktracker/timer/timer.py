@@ -16,6 +16,7 @@ from tasktracker.task.task import Task
 from tasktracker.database.db_interface import DB
 
 # TODO: Break these out to the settings module
+
 POMO_TIME = 25 * 60
 SHORT_BREAK = 5 * 60
 LONG_BREAK = 15 * 60
@@ -27,6 +28,7 @@ LONG_BREAK = 15 * 60
 # 4 - Short Break
 # 5 - Long Break
 # 6 - Stopwatch
+
 
 class TaskAction:
     def __init__(self, task_id, action_type, start_time):
@@ -107,16 +109,18 @@ class TimerScreen(Screen, Themeable):
             self.current_task_action = TaskAction(task_id, self.task_action_type, datetime.now())
 
     def timer_reset(self):
-        self.timer_active = False
-        self.timer_in_progress = False
-        Clock.unschedule(self._clock_event)
-        self._complete_task_action()
-        self.ids.start_pause_button.text = 'Start'
-        self.switch_timer_type(self.timer_type_selection)
+        if self.timer_active or self.timer_in_progress:
+            self.timer_active = False
+            self.timer_in_progress = False
+            Clock.unschedule(self._clock_event)
+            self._complete_task_action()
+            self.ids.start_pause_button.text = 'Start'
+            self.switch_timer_type(self.timer_type_selection)
 
     def _complete_task_action(self):
         self.current_task_action.finish_time = datetime.now()
-        DB.write_task_action(self.current_task_action)
+        if not self.current_task_action.task_id == 0:  # TODO: Should no-task timer actions be recorded?
+            DB.write_task_action(self.current_task_action)
         self.current_task_action = None
 
     def _timer_display_update(self):

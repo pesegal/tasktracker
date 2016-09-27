@@ -7,6 +7,7 @@
 
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
+from kivy.utils import get_color_from_hex
 from kivy.properties import ObjectProperty, StringProperty, ListProperty
 
 from tasktracker.mixins import Broadcast
@@ -28,8 +29,35 @@ class MenuBar(BoxLayout, Broadcast, Themeable):
         # self.add_widget(self.scroll_list_left, index=len(self.children))
         # self.add_widget(self.scroll_list_right, index=0)
 
+        # Menu Button Text Storage
+        self.task_text = self.ids.task_button.text
+        self.timer_text = self.ids.timer_button.text
+        self.stats_text = self.ids.stats_button.text
+        self.settings_text = self.ids.settings_button.text
+
+        self.delete_color = get_color_from_hex('#e53935')
+
     def theme_update(self):
         self.menu_bar_bg_color = self.theme.status
+
+    def start_drag_menu_button_text(self):
+        # This function adjusts the menu buttons display for click drag action.
+        self.ids.task_button.text = 'EDIT TASK'
+        self.ids.timer_button.text = 'WORK'
+        self.ids.stats_button.text = 'INSPECT'
+
+        # TODO: Look into changing the color of the button to a red for delete.
+        self.ids.settings_button.background_color = self.delete_color
+        self.ids.settings_button.text = 'DELETE'
+
+    def release_drag_menu_button_text(self):
+        self.ids.task_button.text = self.task_text
+        self.ids.timer_button.text = self.timer_text
+        self.ids.stats_button.text = self.stats_text
+
+        # Todo: Reset settings button color!
+        self.ids.settings_button.background_color = self.ids.settings_button.bg_color
+        self.ids.settings_button.text = self.settings_text
 
     def task_multi_use_press(self, *args):
         if self.current_screen == 'tasks':
@@ -50,10 +78,10 @@ class MenuBar(BoxLayout, Broadcast, Themeable):
 
     def screen_state_change(self, *args):
         if self.current_screen == 'tasks':
-            self.ids.multi_use_button.text = 'NEW TASK'
+            self.ids.task_button.text = self.task_text
             self._add_scroll_buttons()
         else:
-            self.ids.multi_use_button.text = 'TASKS'
+            self.ids.task_button.text = 'TASKS'
             self._remove_scroll_buttons()
 
     def width_state_change(self, width_state, **kwargs):
@@ -91,6 +119,8 @@ class MenuButton(Button, Themeable):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.theme_update()
+        self.bg_color = [0, 0, 0, 0]
+        self.background_normal = ''
 
     def theme_update(self):
         self.text_color = self.theme.text
@@ -102,7 +132,7 @@ class MenuButton(Button, Themeable):
         self.background_color = self.press_color
 
     def on_release(self):
-        self.background_color = [0, 0, 0, 0]
+        self.background_color = self.bg_color
 
     def execute_function(self, function):
         pass

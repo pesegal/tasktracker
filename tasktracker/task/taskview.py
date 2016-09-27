@@ -95,6 +95,8 @@ class TaskListScreen(Screen, Broadcast):
         self.future_list = TaskScrollContainer(list_id=2, name='future')
         self.archived = TaskScrollContainer(list_id=3, name='archived')
 
+        self.deleted_tasks = list()
+
         # current size of screen
         self.width_state = 0
 
@@ -127,6 +129,8 @@ class TaskListScreen(Screen, Broadcast):
             self.future_list.task_list.add_widget(task, index=list_index)
         elif list_id == 3:
             self.archived.task_list.add_widget(task, index=list_index)
+        else:
+            self.deleted_tasks.append(task)
 
     def get_list_length(self, list_id):
         if list_id == 0:
