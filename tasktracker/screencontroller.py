@@ -35,7 +35,7 @@ class ScreenController(ScreenManager, Broadcast, Themeable):
         self.transition.duration = .08
 
 
-class StatsScreen(Screen): # TODO: Break this out into their own modules eventually.
+class StatsScreen(Screen): # TODO: Break this out into it's own module eventually.
     pass
 
 
@@ -140,6 +140,8 @@ class ScreenClickDragWindow(FloatLayout, Broadcast):
                     self.screen_menu.screen_controller.timer.ids.task_manager.load_task(selected_task)
                     self.screen_menu.menu_bar.current_screen = 'timer'
                     self.screen_menu.screen_controller.current = 'timer'
+                elif widget.drop_type == 'settings':
+                    t_list = self.screen_menu.screen_controller.tasks.deleted_list.task_list
 
             if widget.collide_point(*widget.to_widget(*touch_pos)) and drop:  # test for task collision
                 if widget.drop_type == 'task':

@@ -125,7 +125,7 @@ class ProjectPopup(Popup):
         super(ProjectPopup, self).__init__(**kwargs)
         # self.project = project
         self.default_color = [47 / 255., 167 / 255., 212 / 255., 1.]
-        self.selected_project = None
+        self.selected_project = __projects__.default
         self.project_list = None
         self.ids.color_selector.load_color_buttons()
         self.separator_height = 4
@@ -223,7 +223,6 @@ class TaskScreen(Popup):
     """
     task_name = ObjectProperty(None)
     list_selection = NumericProperty(0)
-    selected_project = ObjectProperty(None)
     notes = ObjectProperty(None)
     project_popup = ObjectProperty(None)
 
@@ -249,7 +248,7 @@ class TaskCreationScreen(TaskScreen):
         t_list = self.parent.children[1].children[0].screen_controller.tasks  # todo: can this be done better?
         new_task_index = t_list.get_list_length(self.list_selection)
         task_id = DB.add_new_task(self.task_name.text, self.notes.text, self.list_selection,
-                                  new_task_index, self.selected_project.db_id)
+                                  new_task_index, __projects__.selected_project.db_id)
         task = Task(task_id, self.task_name.text, self.notes.text)
         t_list.add_task_to_list(task, self.list_selection)
         self.dismiss()

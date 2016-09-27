@@ -58,16 +58,21 @@ class Database:
         self.connection.commit()
 
     def update_task(self, task_id, name, notes, project_id):
-        # TODO: Update to allow tasks to be deleted as well.
         print(name, notes, project_id, task_id)
         self.cursor.execute('UPDATE tasks SET name = ?, notes = ?, project_id = ? WHERE id = ?;',
                             (name, notes, project_id, task_id))
         self.connection.commit()
 
+    def delete_task(self, task_id, list_id):
+        now = datetime.now()
+        list_id += 1
+        self.cursor.execute('UPDATE tasks SET deletion_date=?, list_id=? WHERE id=?;',
+                            (now, list_id, task_id))
+        self.connection.commit()
+
     def task_switch(self, task_id, list_id):
         print("Task List Switching: ", list_id)
         list_id += 1
-        # TODO: Figure out why task are writing index changes to task list change history.
         self.cursor.execute('INSERT INTO column_history(creation_date, task_id, column_id) VALUES (?,?,?);',
                             (datetime.now(), task_id, list_id))
         self.cursor.execute('UPDATE tasks SET list_id = ? WHERE id = ?;', (list_id, task_id))
@@ -77,9 +82,6 @@ class Database:
         self.cursor.execute('INSERT INTO task_actions(task_id, creation_date, finish_date, action_id) VALUES (?,?,?,?);',
                             (action.task_id, action.start_time, action.finish_time, action.type))
         self.connection.commit()
-
-    def task_archive(self, task):
-        pass
 
     def load_all_projects(self):
         self.cursor.execute('SELECT * FROM projects;')

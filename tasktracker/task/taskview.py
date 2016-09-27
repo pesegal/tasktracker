@@ -93,9 +93,8 @@ class TaskListScreen(Screen, Broadcast):
         self.today_list = TaskScrollContainer(list_id=0, name='today')
         self.tomorrow_list = TaskScrollContainer(list_id=1, name='tomorrow')
         self.future_list = TaskScrollContainer(list_id=2, name='future')
-        self.archived = TaskScrollContainer(list_id=3, name='archived')
-
-        self.deleted_tasks = list()
+        self.archived_list = TaskScrollContainer(list_id=3, name='archived')
+        self.deleted_list = TaskScrollContainer(list_id=4, name='deleted')
 
         # current size of screen
         self.width_state = 0
@@ -104,7 +103,7 @@ class TaskListScreen(Screen, Broadcast):
         self.add_widget(self.current_display)
 
         # used in list swapping
-        self.lists = [self.today_list, self.tomorrow_list, self.future_list, self.archived]
+        self.lists = [self.today_list, self.tomorrow_list, self.future_list, self.archived_list]
         self.list_slide_queue = []
         self.animating = False
         self.lists_pos = 0
@@ -128,9 +127,9 @@ class TaskListScreen(Screen, Broadcast):
         elif list_id == 2:
             self.future_list.task_list.add_widget(task, index=list_index)
         elif list_id == 3:
-            self.archived.task_list.add_widget(task, index=list_index)
-        else:
-            self.deleted_tasks.append(task)
+            self.archived_list.task_list.add_widget(task, index=list_index)
+        elif list_id == 4:
+            self.deleted_list.task_list.add_widget(task)  # TODO: sort deleted tasks?
 
     def get_list_length(self, list_id):
         if list_id == 0:
@@ -140,7 +139,7 @@ class TaskListScreen(Screen, Broadcast):
         elif list_id == 2:
             return len(self.future_list.task_list.children)
         elif list_id == 3:
-            return len(self.archived.task_list.children)
+            return len(self.archived_list.task_list.children)
 
     def width_state_change(self, **kwargs):
         # This function changes the display based on the width_state of the screen
@@ -155,7 +154,7 @@ class TaskListScreen(Screen, Broadcast):
             self.current_display.view_change([self.today_list, self.tomorrow_list, self.future_list])
         elif state == 4:
             self.current_display.view_change([self.today_list, self.tomorrow_list,
-                                              self.future_list, self.archived])
+                                              self.future_list, self.archived_list])
         self.lists_pos = 0
 
     def slide_task_lists(self, **kwargs):

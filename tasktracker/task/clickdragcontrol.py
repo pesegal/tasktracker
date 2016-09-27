@@ -52,7 +52,9 @@ class ClickDragController(Borg):
             self.last_parent.add_widget(task, index=in_index + 1)
         else:
             self.last_parent.add_widget(task)
-        if self.last_parent != last_list:  # Only record the task list switch if it's a different list.
+        if self.last_parent.list_id == 4:
+            DB.delete_task(task.uuid, self.last_parent.list_id)
+        elif self.last_parent != last_list:  # Only record the task list switch if it's a different list.
             DB.task_switch(task.uuid, self.last_parent.list_id)
         last_list.update_list_positions()  # Writes new index to database from list that task left
         self.last_parent.update_list_positions()  # writes new task indexes to the database
