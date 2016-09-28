@@ -306,6 +306,9 @@ class TaskEditScreen(TaskScreen):
 
 
 class ProjectSelectionSection(BoxLayout):
+    """This object contains the projects spinner on the task creation and edit screen and controller
+    functionality for the new/edit projects button!
+    """
     def open_project_screen(self):
         # send the task project or None
         self.task_screen.project_popup.open()

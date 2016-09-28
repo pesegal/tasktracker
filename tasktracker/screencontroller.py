@@ -1,4 +1,5 @@
 from kivy.properties import NumericProperty
+from kivy.uix.label import Label
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.screenmanager import ScreenManager, Screen
@@ -82,6 +83,18 @@ class ScreenClickDragWindow(FloatLayout, Broadcast):
         self._event = None
         CLICK_DRAG_CONTROLLER.click_drag_window = self  # create reference in the controller
 
+        # Label
+        self.task_list_screen = self.screen_menu.screen_controller.tasks
+        self.labels = list()
+
+    def display_list_names(self):
+        for list in self.task_list_screen.lists:
+            list.task_list.show_label()
+
+    def remove_list_names(self):
+        for list in self.task_list_screen.lists:
+            list.task_list.remove_label()
+
     def click_drag_reposition(self, task, size, position):
         task.parent.remove_widget(task)
         self.add_widget(task)
@@ -89,6 +102,7 @@ class ScreenClickDragWindow(FloatLayout, Broadcast):
         task.pos = position
         task.size_hint_x = None
         task.size = size
+        self.display_list_names()
 
     def drag_scroll_check(self, touch_pos):
         """ This function triggers the switching of lists when a task object is moved with in
@@ -147,11 +161,9 @@ class ScreenClickDragWindow(FloatLayout, Broadcast):
                 if widget.drop_type == 'task':
                     task = widget
 
+        self.remove_list_names()
         self.screen_menu.menu_bar.release_drag_menu_button_text()
         return t_list, task
-
-
-
 
 
 
