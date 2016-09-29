@@ -1,6 +1,6 @@
 <TaskScrollContainer>:
     size_hint: 1, 1
-    scroll_timeout: 20 # Use this to adjust how long it takes for the touch event to be sent to the children
+    scroll_timeout: 55 # Use this to adjust how long it takes for the touch event to be sent to the children
     canvas.before:
         Color:
             rgba: root.scroll_bg_color
@@ -8,8 +8,18 @@
             size: root.width - 4, root.height
             pos: root.x + 1, root.y
 
-<TaskList>:
+<ListNameLabelDisplay>:
+    size_hint_y: None
     size_hint_x: .99
+    canvas.before:
+        Color:
+            rgba: [1, 1, 0, .5]
+        Rectangle:
+            pos: root.pos
+            size: root.size
+
+<TaskList>:
+    pos_hint: {'top': 1}
     size_hint_y: None
     cols: 1
     padding: 6, 3, 3, 0

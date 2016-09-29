@@ -89,11 +89,11 @@ class ScreenClickDragWindow(FloatLayout, Broadcast):
 
     def display_list_names(self):
         for list in self.task_list_screen.lists:
-            list.task_list.show_label()
+            list.label_view.show_label()
 
     def remove_list_names(self):
         for list in self.task_list_screen.lists:
-            list.task_list.remove_label()
+            list.label_view.remove_label()
 
     def click_drag_reposition(self, task, size, position):
         task.parent.remove_widget(task)
@@ -140,7 +140,7 @@ class ScreenClickDragWindow(FloatLayout, Broadcast):
 
         widget_list = []
 
-        for widget in self.walk():
+        for widget in self.walk():  # Todo Try setting to true?
             widget_list.append(widget)
             if widget in self.children:  # Skip currently selected task.
                 continue
