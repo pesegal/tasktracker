@@ -31,56 +31,60 @@ class TaskScrollContainer(ScrollView, Themeable):
         self.list_id = list_id
         self.name = name
         self.task_list = TaskList(self.list_id)
-        self.label_view = ListNameLabelDisplay(self.task_list)
+        self.label_view = ListNameLabelDisplay(self.task_list, self.name)
         self.label_view.add_widget(self.task_list)
         self.add_widget(self.label_view)
         self.label_view.pos = self.pos
         self.bind(height=self._size_update)
         self.theme_update()
-        print("Scroll Height:", self.height)
 
     def theme_update(self):
         self.scroll_bg_color = self.theme.list_bg
 
     def _size_update(self, widget, height):
         self.label_view.resize_height(widget, height)
-        print("Scroll Height:", self.height)
 
 
-class ListNameLabelDisplay(RelativeLayout):
+class ListNameLabelDisplay(FloatLayout):
 
-    def __init__(self, task_list, **kwargs):
+    def __init__(self, task_list, name, **kwargs):
         super().__init__(**kwargs)
         self.list_label = None
+        self.name = name
         self.task_list = task_list
-        self.global_y = self.to_widget(self.x, -20, relative=False)[1]
-        print("Init Global_Y: ", self.global_y)
+        self._update_global_y()
 
-    # TODO: Look into the removing of the widgets and when the height changes.
+    def _update_global_y(self):
+        self.global_y = self.to_widget(self.x, -20, relative=True)[1]
 
     def show_label(self):
-        if self.height > self.parent.height:
-            print("Widget Relative: ", self.parent.name, self.to_widget(0, -20, relative=True))
-            print("Layout Height: ", self.parent.name, self.height, self.parent.height)
-            print(self.global_y)
+        self._update_global_y()
 
-        self.list_label = ListLabels(text=self.parent.name.capitalize(),
-                                     pos=(self.x, self.global_y))
-        self.list_label.height = 0
-        label_animation = Animation(pos=(self.x, self.global_y + 40),
-                                    duration=.2, t='in_quad')
+        if self.height > self.parent.height:
+            print(self.name, True, self.height)
+            self.global_y -= (60 * self.parent.scroll_y)
+
+        self.list_label = ListLabels(text=self.name.capitalize())
+        self.list_label.pos = (self.x, self.global_y)
+        label_animation = Animation(pos=(0, self.global_y + 40), duration=.2, t='in_quad')
+
         self.add_widget(self.list_label)
+
         label_animation.start(self.list_label)
 
     def remove_label(self):
-        global_y = self.to_widget(self.x, -20, relative=True)[1]
+        self._update_global_y()
+        if self.height > self.parent.height:
+            self.global_y += (60 * self.parent.scroll_y)
+        self.list_label.pos = self.x, self.global_y
         label_animation = Animation(pos=(self.x, self.global_y), duration=.2, t='out_quad')
         label_animation.bind(on_complete=lambda *args: self.remove_widget(self.list_label))
         label_animation.start(self.list_label)
 
     def resize_height(self, widget, height):
-        self.global_y = self.to_widget(self.x, -20 , relative=True)[1]
-        print("Sized Global_y: ", self.global_y)
+        self._update_global_y()
+        if self.name == 'today':
+            print("Global_Y: ", self.global_y, "height: ", self.height, self.height - self.global_y)
         if widget is self.task_list:
             if height < self.parent.height:
                 self.height = self.parent.height
@@ -108,7 +112,6 @@ class TaskList(GridLayout):
             DB.update_task_list_index(index, child.uuid)
 
     def _update_parent_height(self, widget, height):
-        print("Task list trigger: ")
         self.parent.resize_height(widget, height)
 
 

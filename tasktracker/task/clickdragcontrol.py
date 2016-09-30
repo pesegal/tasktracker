@@ -58,6 +58,7 @@ class ClickDragController(Borg):
             DB.task_switch(task.uuid, self.last_parent.list_id)
         last_list.update_list_positions()  # Writes new index to database from list that task left
         self.last_parent.update_list_positions()  # writes new task indexes to the database
+        self.click_drag_window.remove_list_names()
         touch.ungrab(task)
 
     # TODO: Improve dropping check to reduce walking of child widgets.

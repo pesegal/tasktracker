@@ -11,12 +11,18 @@
 <ListNameLabelDisplay>:
     size_hint_y: None
     size_hint_x: .99
-    canvas.before:
-        Color:
-            rgba: [1, 1, 0, .5]
-        Rectangle:
-            pos: root.pos
-            size: root.size
+
+
+#    canvas.before:
+#        Color:
+#            rgba: [1, 1, 0, .5]
+#        Rectangle:
+#            pos: root.pos
+#            size: root.size
+#
+#    Label:
+#        pos: root.x, root.y
+#        text: str(root.size)
 
 <TaskList>:
     pos_hint: {'top': 1}

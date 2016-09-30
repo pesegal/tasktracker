@@ -161,7 +161,6 @@ class ScreenClickDragWindow(FloatLayout, Broadcast):
                 if widget.drop_type == 'task':
                     task = widget
 
-        self.remove_list_names()
         self.screen_menu.menu_bar.release_drag_menu_button_text()
         return t_list, task
 
