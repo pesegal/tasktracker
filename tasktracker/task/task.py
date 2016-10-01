@@ -56,6 +56,8 @@ class Task(Button, TapAndHold, Themeable):  # TapAndHold
         # Tap Hold Length (Seconds)
         self._hold_length = .3
 
+        self.task_height_limit = 60
+
         # Init self.tasktext
         self.tasktext = Label()
         self.add_widget(self.tasktext)

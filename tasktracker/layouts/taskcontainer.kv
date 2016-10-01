@@ -34,17 +34,20 @@
 <ListLabels>:
     font_size: 12
     size_hint_y: None
+    size_hint_x: None
+    size: 80, 20
     text_size: self.size
     halign: 'center'
-    valign: 'bottom'
+    valign: 'middle'
     color: self.theme.text
-#    canvas.before:
-#        Color:
-#            rgba: self.theme.bar_color
-#        Rectangle:
-#            pos: root.pos
-#            size: root.size
-
+    canvas.before:
+        Color:
+            rgba: root.shadow_color
+        BorderImage:
+            source: root.shadow_texture
+            border: [2,2,2,2]
+            pos: self.x, self.y
+            size: self.width, self.height
 
 
 <TaskScreen>:

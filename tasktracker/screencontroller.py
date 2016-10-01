@@ -7,6 +7,7 @@ from kivy.uix.screenmanager import FallOutTransition, SlideTransition,\
     SwapTransition, FadeTransition, WipeTransition, RiseInTransition
 from kivy.clock import Clock
 
+import time
 
 from tasktracker.mixins import Broadcast
 from tasktracker.menubar import MenuBar
@@ -87,23 +88,6 @@ class ScreenClickDragWindow(FloatLayout, Broadcast):
         self.task_list_screen = self.screen_menu.screen_controller.tasks
         self.labels = list()
 
-    def display_list_names(self):
-        for list in self.task_list_screen.lists:
-            list.label_view.show_label()
-
-    def remove_list_names(self):
-        for list in self.task_list_screen.lists:
-            list.label_view.remove_label()
-
-    def click_drag_reposition(self, task, size, position):
-        task.parent.remove_widget(task)
-        self.add_widget(task)
-        self.screen_menu.menu_bar.start_drag_menu_button_text()
-        task.pos = position
-        task.size_hint_x = None
-        task.size = size
-        self.display_list_names()
-
     def drag_scroll_check(self, touch_pos):
         """ This function triggers the switching of lists when a task object is moved with in
         5 pixels of the edge of the screen.
@@ -127,6 +111,23 @@ class ScreenClickDragWindow(FloatLayout, Broadcast):
     def _broadcast_list_switch(self, *args):
         self.broadcast_child('slide_task_lists', direction=self.direction)
         self._event = None
+
+    def display_list_names(self, last_list):
+        for s_list in self.task_list_screen.lists:
+            s_list.label_view.show_label(last_list)
+
+    def remove_list_names(self, new_list):
+        for s_list in self.task_list_screen.lists:
+            s_list.label_view.remove_label(new_list)
+
+    def click_drag_reposition(self, task, size, position, last_list):
+        self.display_list_names(last_list)
+        task.parent.remove_widget(task)
+        self.add_widget(task)
+        self.screen_menu.menu_bar.start_drag_menu_button_text()
+        task.pos = position
+        task.size_hint_x = None
+        task.size = size
 
     def check_children(self, touch_pos, selected_task):
         """

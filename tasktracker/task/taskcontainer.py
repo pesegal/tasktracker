@@ -1,24 +1,33 @@
 """
     Tasklist that handles the ordering and displaying of objects.
 """
+import time
 from kivy.uix.label import Label
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.scrollview import ScrollView
-from kivy.properties import ListProperty
+from kivy.properties import ListProperty, StringProperty
 from tasktracker.themes.themes import Themeable
+from tasktracker.themes.themes import MENUBUTTON_TEXTURE
 from kivy.animation import Animation
 
 from tasktracker.database.db_interface import DB
 
 
 class ListLabels(Label, Themeable):
+    shadow_texture = StringProperty(MENUBUTTON_TEXTURE)
+    shadow_color = ListProperty()
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.shadow_color = self.theme.background
+        self.shadow_color[3] = .9
 
     def theme_update(self):
         self.color = self.theme.text
+        self.shadow_color = self.theme.list_bg
+        self.shadow_color[3] = .8
 
 
 class TaskScrollContainer(ScrollView, Themeable):
@@ -53,37 +62,39 @@ class ListNameLabelDisplay(FloatLayout):
         self.name = name
         self.task_list = task_list
         self._update_global_y()
+        self.task_height = 60
 
     def _update_global_y(self):
         self.global_y = self.to_widget(self.x, -20, relative=True)[1]
 
-    def show_label(self):
+    def show_label(self, last_list):
         self._update_global_y()
-
-        if self.height > self.parent.height:
-            print(self.name, True, self.height)
-            self.global_y -= (60 * self.parent.scroll_y)
+        if self.height > self.parent.height and last_list.list_id == self.task_list.list_id:
+            self.global_y -= (self.task_height * self.parent.scroll_y)
 
         self.list_label = ListLabels(text=self.name.capitalize())
-        self.list_label.pos = (self.x, self.global_y)
-        label_animation = Animation(pos=(0, self.global_y + 40), duration=.2, t='in_quad')
+        x_pos = self.center_x - self.list_label.width / 2
+        self.list_label.pos = (x_pos, self.global_y)
+        label_animation = Animation(pos=(x_pos, self.global_y + 40), duration=.2, t='out_quad')
 
         self.add_widget(self.list_label)
 
         label_animation.start(self.list_label)
 
-    def remove_label(self):
+    def remove_label(self, new_list):
         self._update_global_y()
-        if self.height > self.parent.height:
-            self.global_y += (60 * self.parent.scroll_y)
-        self.list_label.pos = self.x, self.global_y
-        label_animation = Animation(pos=(self.x, self.global_y), duration=.2, t='out_quad')
+        print(new_list.list_id, self.task_list.list_id)
+        if self.task_list.height + self.task_height > self.parent.height and new_list.list_id == self.task_list.list_id:
+            print("True: ", self.task_list.list_id)
+            self.global_y += (self.task_height * self.parent.scroll_y)
+            self.list_label.y += self.task_height
+        label_animation = Animation(pos=(self.list_label.x, self.global_y), duration=.2, t='out_quad')
         label_animation.bind(on_complete=lambda *args: self.remove_widget(self.list_label))
         label_animation.start(self.list_label)
 
     def resize_height(self, widget, height):
         self._update_global_y()
-        if self.name == 'today':
+        if self.name == 'archived':
             print("Global_Y: ", self.global_y, "height: ", self.height, self.height - self.global_y)
         if widget is self.task_list:
             if height < self.parent.height:

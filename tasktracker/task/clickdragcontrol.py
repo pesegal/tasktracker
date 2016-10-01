@@ -35,7 +35,7 @@ class ClickDragController(Borg):
         popup = Animation(size=(task.width + self.width_exp, task.height + self.height_exp),
                           duration=.1, t='in_back')
         popup.start(task)
-        self.click_drag_window.click_drag_reposition(task, tuple(task.size), global_pos)
+        self.click_drag_window.click_drag_reposition(task, tuple(task.size), global_pos, self.last_parent)
         touch.grab(task)
 
     def stop_click_drag(self, task, touch):
@@ -58,7 +58,7 @@ class ClickDragController(Borg):
             DB.task_switch(task.uuid, self.last_parent.list_id)
         last_list.update_list_positions()  # Writes new index to database from list that task left
         self.last_parent.update_list_positions()  # writes new task indexes to the database
-        self.click_drag_window.remove_list_names()
+        self.click_drag_window.remove_list_names(self.last_parent)
         touch.ungrab(task)
 
     # TODO: Improve dropping check to reduce walking of child widgets.
