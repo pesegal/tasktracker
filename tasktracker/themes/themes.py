@@ -30,7 +30,7 @@ TRANSPARENT = [1, 1, 1, 0]
 SHADOW_COLOR = [0, 0, 0, .5]
 
 # Theme Object Definitions
-Theme = namedtuple('Theme', 'name, status, listbg, background, tasks, text, menudown')
+Theme = namedtuple('Theme', 'name, status, listbg, background, tasks, text, menudown, selected')
 
 
 class Themeable:
@@ -84,6 +84,7 @@ class ThemeController(Borg, Widget):
                 self.tasks = theme.tasks
                 self.text = theme.text
                 self.menu_down = theme.menudown
+                self.selected = theme.selected
 
         Window.clearcolor = list(self.background)
         self._broadcast_theme_changes()

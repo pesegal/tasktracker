@@ -82,7 +82,7 @@ class ListNameLabelDisplay(FloatLayout):
     def remove_label(self, new_list):
         self._update_global_y()
         if self.task_list.height + self.task_height > self.parent.height and new_list.list_id == self.task_list.list_id:
-            self.global_y += (self.task_height * self.parent.scroll_y)
+            self.global_y += (self.task_height * self.parent.scroll_y)  # todo: look here for list display bug
             self.list_label.y += self.task_height
         label_animation = Animation(pos=(self.list_label.x, self.global_y), duration=.2, t='out_quad')
         label_animation.bind(on_complete=lambda *args: self.remove_widget(self.list_label))

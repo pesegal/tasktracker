@@ -62,7 +62,7 @@ class TimerScreen(Screen, Themeable):
 
     def theme_update(self):
         self.text_color = self.theme.text
-        self.text_color[3] = .88
+        self.text_color[3] = .8
 
     def switch_timer_type(self, selected):
         self.timer_type_selection = selected
@@ -161,6 +161,7 @@ class TimerTaskDisplayManager(BoxLayout):
     def load_task(self, task):
         self.clear_widgets()
         # TODO: Add in parts to write to the database when a task is switched in mid session.
+        # TODO: What is the behavior when switching out a task mid timer session?
         self.selected = TaskDisplay(task.uuid, task.tasktext.text, task.notes, task.project.db_id)
         self.add_widget(self.selected)
         print(self.selected.uuid)
@@ -171,16 +172,28 @@ class TimerTaskDisplayManager(BoxLayout):
         self.add_widget(self.default)
 
 
-class NoProjectSelectedButton(Button):
-    background = StringProperty(themes.NO_TASK_TEXTURE)
+class NoProjectSelectedButton(Button, Themeable):
+    button_texture = StringProperty(themes.MENUBUTTON_TEXTURE)
+    shadow_texture = StringProperty(themes.SHADOW_TEXTURE)
+    text_color = ListProperty()
+    button_color = ListProperty()
+    shadow_color = ListProperty()
 
     def __init__(self, **kwargs):
         super(NoProjectSelectedButton, self).__init__(**kwargs)
         self.text = 'Select a project!'
         self.uuid = 0
+        self.button_color = self.theme.tasks
+        text = self.theme.text
+        text[3] = .8
+        self.text_color = text
+        self.shadow_color = themes.SHADOW_COLOR
 
     def theme_update(self):
-        pass
+        self.button_color = self.theme.tasks
+        text = self.theme.text
+        text[3] = .8
+        self.text_color = text
 
 
 class TaskDisplay(Task):
@@ -191,6 +204,7 @@ class TaskDisplay(Task):
         super(TaskDisplay, self).__init__(*args, **kwargs)
 
     def on_press(self):
+        # TODO: Switch screen back to task menu screen and wait to select task!
         pass
 
     def on_touch_down(self, touch):
@@ -203,12 +217,63 @@ class TaskDisplay(Task):
         pass
 
 
-class TimerSettingsButton(ToggleButton, Themeable):
+class TimerButton(Button, Themeable):
+    button_texture = StringProperty(themes.MENUBUTTON_TEXTURE)
+    shadow_texture = StringProperty(themes.SHADOW_TEXTURE)
+    text_color = ListProperty()
+    button_color = ListProperty()
+    shadow_color = ListProperty()
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.button_color = self.theme.tasks
+        text = self.theme.text
+        text[3] = .8
+        self.text_color = text
+        self.shadow_color = themes.SHADOW_COLOR
 
     def theme_update(self):
-        pass
+        self.button_color = self.theme.tasks
+        text = self.theme.text
+        text[3] = .8
+        self.text_color = text
+        self.on_state(self, 0)
+
+    def on_state(self, widget, value):
+        if self.state == 'down':
+            self.button_color = self.theme.selected
+        else:
+            self.button_color = self.theme.tasks
+
+
+class TimerSettingsButton(ToggleButton, Themeable):
+    button_texture = StringProperty(themes.MENUBUTTON_TEXTURE)
+    shadow_texture = StringProperty(themes.SHADOW_TEXTURE)
+    text_color = ListProperty()
+    button_color = ListProperty()
+    shadow_color = ListProperty()
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        # Theme Init Stuff
+        self.button_color = self.theme.tasks
+        text = self.theme.text
+        text[3] = .8
+        self.text_color = text
+        self.shadow_color = themes.SHADOW_COLOR
+
+    def theme_update(self):
+        self.button_color = self.theme.tasks
+        text = self.theme.text
+        text[3] = .8
+        self.text_color = text
+        self.on_state(self, 0)
+
+    def on_state(self, widget, value):
+        if self.state == 'down':
+            self.button_color = self.theme.selected
+        else:
+            self.button_color = self.theme.tasks
 
     def _do_press(self):
         if self.state == 'normal':

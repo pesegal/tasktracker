@@ -5,6 +5,7 @@
             size_hint_y: None
             height: 80
             padding: 20, 10
+            spacing: 4
             orientation: 'horizontal'
             TimerSettingsButton:
                 state: 'down'
@@ -38,22 +39,62 @@
             size_hint_y: None
             height: 80
             padding: 20, 10
+            spacing: 4
             orientation: "horizontal"
-            Button:
+            TimerButton:
                 id: start_pause_button
                 text: "Start"
                 on_press: root.start_pause_trigger()
-            Button:
+            TimerButton:
                 text: "Reset"
                 on_press: root.timer_reset()
 
+<TimerButton>:
+    border: [2, 2, 2, 2]
+    color: self.text_color
+    background_color: self.button_color
+    background_normal: self.button_texture
+    background_down: self.button_texture
+    canvas.before:
+        Color:
+            rgba: root.shadow_color
+        BorderImage:
+            source: root.shadow_texture
+            border: [1, 1, 1, 1]
+            pos: self.x - 3, self.y - 3
+            size: self.width + 3 , self.height + 3
+
 <TimerSettingsButton>:
     group: 'timer_type'
+    border: [2, 2, 2, 2]
+    color: self.text_color
+    background_color: self.button_color
+    background_normal: self.button_texture
+    background_down: self.button_texture
+    canvas.before:
+        Color:
+            rgba: root.shadow_color
+        BorderImage:
+            source: root.shadow_texture
+            border: [1, 1, 1, 1]
+            pos: self.x - 3, self.y - 3
+            size: self.width + 3 , self.height + 3
 
 <NoProjectSelectedButton>:
     text: 'Select a project!'
     border: [2, 2, 2, 2]
-    background_normal: self.background
+    color: self.text_color
+    background_color: self.button_color
+    background_normal: self.button_texture
+    background_down: self.button_texture
+    canvas.before:
+        Color:
+            rgba: root.shadow_color
+        BorderImage:
+            source: root.shadow_texture
+            border: [1, 1, 1, 1]
+            pos: self.x - 3, self.y - 3
+            size: self.width + 3 , self.height + 3
 
 
 
