@@ -21,7 +21,7 @@ PROJECT_TEXTURE = './themes/gfx/all_white3.png'
 SHADOW_TEXTURE = './themes/gfx/shadow.png'
 TASK_TEXTURE = './themes/gfx/all_white3.png'
 MENUBUTTON_TEXTURE = './themes/gfx/all_white2.png'
-NO_TASK_TEXTURE = './themes/gfx/dotted.png'
+TRANSPARENT_TEXTURE = './themes/gfx/transparent.png'
 
 # Config Setup
 

@@ -3,7 +3,7 @@
 """
 
 from kivy.factory import Factory
-from kivy.properties import ObjectProperty, NumericProperty, BooleanProperty
+from kivy.properties import ObjectProperty, NumericProperty, BooleanProperty, ListProperty, StringProperty
 from kivy.uix.behaviors import ToggleButtonBehavior
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
@@ -15,6 +15,8 @@ from kivy.utils import get_color_from_hex, get_hex_from_color
 from tasktracker.database.db_interface import DB
 from tasktracker.settings import __project_colors__
 from tasktracker.task.task import Task
+from tasktracker.themes.themes import Themeable
+from tasktracker.themes.themes import MENUBUTTON_TEXTURE, SHADOW_TEXTURE, TRANSPARENT_TEXTURE
 
 
 class Project:
@@ -128,7 +130,6 @@ class ProjectPopup(Popup):
         self.selected_project = __projects__.default
         self.project_list = None
         self.ids.color_selector.load_color_buttons()
-        self.separator_height = 4
         self.current_selected_color = None
         self.current_selected_color_name = None
         self.bind(edit=self.create_update_button_update)
@@ -217,14 +218,23 @@ class ColorSelectionButton(ToggleButton):
         self.parent.popup.update_project_color(self.name, self.background_color)
 
 
-class TaskScreen(Popup):
+class TaskScreen(Popup, Themeable):
     """ This is the parent class for both the new task screen and the task creation screen.
     It contains controller logic that is shared between both types of popups.
     """
+    # Functional Properties
     task_name = ObjectProperty(None)
     list_selection = NumericProperty(0)
     notes = ObjectProperty(None)
     project_popup = ObjectProperty(None)
+
+    # Theme Properties
+    bg_shade_color = ListProperty()
+    bg_popup_color = ListProperty()
+    label_color = ListProperty()
+    transparent_texture = StringProperty(TRANSPARENT_TEXTURE)
+    popup_texture = StringProperty(MENUBUTTON_TEXTURE)
+    shadow_texture = StringProperty(SHADOW_TEXTURE)
 
     def __init__(self, **kwargs):
         super(TaskScreen, self).__init__(**kwargs)
@@ -232,6 +242,18 @@ class TaskScreen(Popup):
         self.ids.project_selection_section.ids.selector.set_project(__projects__.default)
         self.ids.project_selection_section.ids.selector.load_projects(__projects__())
         self.project_popup.bind(on_dismiss=self.project_updated)
+
+        # Theme Initialization
+        self.bg_shade_color = self.theme.list_bg
+        self.bg_shade_color[3] = .7
+        self.bg_popup_color = self.theme.list_bg
+        self.label_color = self.theme.text
+
+    def theme_update(self):
+        self.bg_shade_color = self.theme.list_bg
+        self.bg_shade_color[3] = .7
+        self.bg_popup_color = self.theme.list_bg
+        self.label_color = self.theme.text
 
     def project_updated(self, popup):
         self.ids.project_selection_section.ids.selector.set_project(__projects__.selected_project)
@@ -262,6 +284,7 @@ class TaskEditScreen(TaskScreen):
         self.list_changed_flag = False
         self._load_task_data(task.uuid)
         self.task = task
+        # Todo: Look into setting the separator bar to the selected projects color!
 
     def _load_task_data(self, task_id):
         task_data = DB.load_task_data(task_id)

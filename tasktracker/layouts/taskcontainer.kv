@@ -54,7 +54,29 @@
     title: 'Task Screen'
     size_hint: None, None
     size: app.root.width/1.1, app.root.height/1.1
+    separator_height: 4
     auto_dismiss: False
+
+    background_color: self.bg_shade_color
+    background: self.transparent_texture
+    title_color: self.label_color
+
+
+    canvas.before:
+        Color:
+            rgba: [0, 0, 0, .9]
+        BorderImage:
+            source: root.shadow_texture
+            border: [3, 3, 3, 3]
+            pos: self.x - 5, self.y - 5
+            size: self.width + 10, self.height + 10
+        Color:
+            rgba: root.bg_popup_color
+        BorderImage:
+            source: root.popup_texture
+            border: [3, 3, 3, 3]
+            pos: root.pos
+            size: root.size
 
 
 <TaskCreationScreen>:

@@ -128,8 +128,3 @@ class TaskList(GridLayout):
 
     def _update_parent_height(self, widget, height):
         self.parent.resize_height(widget, height)
-
-
-
-
-
