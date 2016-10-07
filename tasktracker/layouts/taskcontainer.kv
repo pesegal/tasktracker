@@ -115,7 +115,7 @@
             id: project_selection_section
             task_screen: task_screen
 
-        TextInput:
+        ThemedTextInput:
             id: task_notes
             hint_text: '//Notes'
 
@@ -177,7 +177,7 @@
             task_screen: task_screen
 
 
-        TextInput:
+        ThemedTextInput:
             id: task_notes
             hint_text: '//Notes'
 
@@ -194,6 +194,10 @@
             ThemedButton:
                 text: 'Update'
                 on_press: root.update_task()
+
+
+<ThemedTextInput>:
+
 
 
 <ThemedButton>:
@@ -231,7 +235,7 @@
             pos: self.x - 3, self.y - 3
             size: self.width + 3 , self.height + 3
 
-<TaskTitle@TextInput>:
+<TaskTitle@ThemedTextInput>:
     multiline: False
     size_hint_y: None
     height: 30

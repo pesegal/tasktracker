@@ -409,8 +409,15 @@ class ThemedButton(Button, Themeable):
 
 
 class ThemedTextInput(TextInput, Themeable):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.background_color = self.theme.background
+        self.cursor_color = self.theme.selected
+        # self.hint_text_color = self.theme.selected
+        self.foreground_color = self.theme.text
+
     def theme_update(self):
-        pass
+        self.background_color = self.theme.background
 
 
 __projects__ = ProjectList()
