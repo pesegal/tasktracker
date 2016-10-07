@@ -15,12 +15,11 @@ from tasktracker.settings import Borg
 
 __theme_config_path__ = './tasktracker/themes/themes.conf'
 
-
 # Texture Paths todo: replace with atlas
-PROJECT_TEXTURE = './themes/gfx/all_white3.png'
+NO_BEV_CORNERS = './themes/gfx/all_white.png'
+ALL_BEV_CORNERS = './themes/gfx/all_white2.png'
+LEFT_BEV_CORNERS = './themes/gfx/all_white3.png'
 SHADOW_TEXTURE = './themes/gfx/shadow.png'
-TASK_TEXTURE = './themes/gfx/all_white3.png'
-MENUBUTTON_TEXTURE = './themes/gfx/all_white2.png'
 TRANSPARENT_TEXTURE = './themes/gfx/transparent.png'
 
 # Config Setup

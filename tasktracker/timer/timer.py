@@ -173,7 +173,7 @@ class TimerTaskDisplayManager(BoxLayout):
 
 
 class NoProjectSelectedButton(Button, Themeable):
-    button_texture = StringProperty(themes.MENUBUTTON_TEXTURE)
+    button_texture = StringProperty(themes.ALL_BEV_CORNERS)
     shadow_texture = StringProperty(themes.SHADOW_TEXTURE)
     text_color = ListProperty()
     button_color = ListProperty()
@@ -184,16 +184,14 @@ class NoProjectSelectedButton(Button, Themeable):
         self.text = 'Select a project!'
         self.uuid = 0
         self.button_color = self.theme.tasks
-        text = self.theme.text
-        text[3] = .8
-        self.text_color = text
+        self.text_color = self.theme.text
+        self.text_color[3] = .8
         self.shadow_color = themes.SHADOW_COLOR
 
     def theme_update(self):
         self.button_color = self.theme.tasks
-        text = self.theme.text
-        text[3] = .8
-        self.text_color = text
+        self.text_color = self.theme.text
+        self.text_color[3] = .8
 
 
 class TaskDisplay(Task):
@@ -218,7 +216,7 @@ class TaskDisplay(Task):
 
 
 class TimerButton(Button, Themeable):
-    button_texture = StringProperty(themes.MENUBUTTON_TEXTURE)
+    button_texture = StringProperty(themes.ALL_BEV_CORNERS)
     shadow_texture = StringProperty(themes.SHADOW_TEXTURE)
     text_color = ListProperty()
     button_color = ListProperty()
@@ -227,16 +225,14 @@ class TimerButton(Button, Themeable):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.button_color = self.theme.tasks
-        text = self.theme.text
-        text[3] = .8
-        self.text_color = text
+        self.text_color = self.theme.text
+        self.text_color[3] = .8
         self.shadow_color = themes.SHADOW_COLOR
 
     def theme_update(self):
         self.button_color = self.theme.tasks
-        text = self.theme.text
-        text[3] = .8
-        self.text_color = text
+        self.text_color = self.theme.text
+        self.text_color[3] = .8
         self.on_state(self, 0)
 
     def on_state(self, widget, value):
@@ -247,7 +243,7 @@ class TimerButton(Button, Themeable):
 
 
 class TimerSettingsButton(ToggleButton, Themeable):
-    button_texture = StringProperty(themes.MENUBUTTON_TEXTURE)
+    button_texture = StringProperty(themes.ALL_BEV_CORNERS)
     shadow_texture = StringProperty(themes.SHADOW_TEXTURE)
     text_color = ListProperty()
     button_color = ListProperty()

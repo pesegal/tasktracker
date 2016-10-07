@@ -114,7 +114,7 @@ class MenuButton(Button, Themeable):
     drop_type = StringProperty()
     text_color = ListProperty()
     press_color = ListProperty()
-    button_texture = StringProperty(themes.MENUBUTTON_TEXTURE)
+    button_texture = StringProperty(themes.ALL_BEV_CORNERS)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

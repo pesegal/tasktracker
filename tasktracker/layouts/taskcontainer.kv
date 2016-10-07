@@ -12,7 +12,6 @@
     size_hint_y: None
     size_hint_x: .99
 
-
 #    canvas.before:
 #        Color:
 #            rgba: [1, 1, 0, .5]
@@ -68,8 +67,8 @@
         BorderImage:
             source: root.shadow_texture
             border: [3, 3, 3, 3]
-            pos: self.x - 5, self.y - 5
-            size: self.width + 10, self.height + 10
+            pos: self.x - 4, self.y - 4
+            size: self.width + 8, self.height + 8
         Color:
             rgba: root.bg_popup_color
         BorderImage:
@@ -99,6 +98,7 @@
             orientation: 'horizontal'
             size_hint_y: None
             height: 40
+            spacing: 4
             padding: 0, 3
             TaskListSelectionButton:
                 text: 'Today'
@@ -123,12 +123,12 @@
             orientation: 'horizontal'
             size_hint_y: None
             height: 50
+            spacing: 4
             padding: 0, 3
-
-            Button:
+            ThemedButton:
                 text: 'Cancel'
                 on_press: root.dismiss()
-            Button:
+            ThemedButton:
                 text: 'Create'
                 on_press: root.create_task()
 
@@ -143,7 +143,7 @@
 
     GridLayout:
         cols: 1
-        padding: 3
+        padding: 4
 
         TaskTitle:
             id: task_title
@@ -153,6 +153,8 @@
             size_hint_y: None
             height: 40
             padding: 0, 3
+            spacing: 4
+
             TaskListSelectionButton:
                 id: today_button
                 text: 'Today'
@@ -184,19 +186,50 @@
             size_hint_y: None
             height: 50
             padding: 0, 3
+            spacing: 4
 
-            Button:
+            ThemedButton:
                 text: 'Cancel'
                 on_press: root.dismiss()
-            Button:
+            ThemedButton:
                 text: 'Update'
                 on_press: root.update_task()
+
+
+<ThemedButton>:
+    border: [2, 2, 2, 2]
+    color: self.text_color
+    background_color: self.button_color
+    background_normal: self.button_texture
+    background_down: self.button_texture
+    canvas.before:
+        Color:
+            rgba: root.shadow_color
+        BorderImage:
+            source: root.shadow_texture
+            border: [1, 1, 1, 1]
+            pos: self.x - 3, self.y - 3
+            size: self.width + 3 , self.height + 3
+
 
 
 <TaskListSelectionButton>:
     size_hint_x: .33
     height: 40
     group:'task_list_selection'
+    border: [2, 2, 2, 2]
+    color: self.text_color
+    background_color: self.button_color
+    background_normal: self.button_texture
+    background_down: self.button_texture
+    canvas.before:
+        Color:
+            rgba: root.shadow_color
+        BorderImage:
+            source: root.shadow_texture
+            border: [1, 1, 1, 1]
+            pos: self.x - 3, self.y - 3
+            size: self.width + 3 , self.height + 3
 
 <TaskTitle@TextInput>:
     multiline: False

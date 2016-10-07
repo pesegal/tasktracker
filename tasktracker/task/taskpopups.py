@@ -9,6 +9,8 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.popup import Popup
 from kivy.uix.spinner import Spinner, SpinnerOption
+from kivy.uix.textinput import TextInput
+from kivy.uix.button import Button
 from kivy.uix.togglebutton import ToggleButton
 from kivy.utils import get_color_from_hex, get_hex_from_color
 
@@ -16,7 +18,7 @@ from tasktracker.database.db_interface import DB
 from tasktracker.settings import __project_colors__
 from tasktracker.task.task import Task
 from tasktracker.themes.themes import Themeable
-from tasktracker.themes.themes import MENUBUTTON_TEXTURE, SHADOW_TEXTURE, TRANSPARENT_TEXTURE
+from tasktracker.themes import themes
 
 
 class Project:
@@ -232,9 +234,9 @@ class TaskScreen(Popup, Themeable):
     bg_shade_color = ListProperty()
     bg_popup_color = ListProperty()
     label_color = ListProperty()
-    transparent_texture = StringProperty(TRANSPARENT_TEXTURE)
-    popup_texture = StringProperty(MENUBUTTON_TEXTURE)
-    shadow_texture = StringProperty(SHADOW_TEXTURE)
+    transparent_texture = StringProperty(themes.TRANSPARENT_TEXTURE)
+    popup_texture = StringProperty(themes.NO_BEV_CORNERS)
+    shadow_texture = StringProperty(themes.SHADOW_TEXTURE)
 
     def __init__(self, **kwargs):
         super(TaskScreen, self).__init__(**kwargs)
@@ -273,6 +275,7 @@ class TaskCreationScreen(TaskScreen):
                                   new_task_index, __projects__.selected_project.db_id)
         task = Task(task_id, self.task_name.text, self.notes.text)
         t_list.add_task_to_list(task, self.list_selection)
+        task.project = __projects__.selected_project
         self.dismiss()
 
 
@@ -345,10 +348,70 @@ class ProjectSelectionSection(BoxLayout):
             self.ids.new_project.text = "Edit"
 
 
-class TaskListSelectionButton(ToggleButton):
+class TaskListSelectionButton(ToggleButton, Themeable):
+    button_texture = StringProperty(themes.ALL_BEV_CORNERS)
+    shadow_texture = StringProperty(themes.SHADOW_TEXTURE)
+    text_color = ListProperty()
+    button_color = ListProperty()
+    shadow_color = ListProperty()
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        # Theme Init Stuff
+        self.button_color = self.theme.tasks
+        self.text_color = self.theme.text
+        self.text_color[3] = .8
+        self.shadow_color = themes.SHADOW_COLOR
+
+    def theme_update(self):
+        self.button_color = self.theme.tasks
+        self.text_color = self.theme.text
+        self.text_color[3] = .8
+        self.on_state(self, 0)
+
+    def on_state(self, widget, value):
+        if self.state == 'down':
+            self.button_color = self.theme.selected
+        else:
+            self.button_color = self.theme.tasks
+
     def _do_press(self):
         if self.state == 'normal':
             ToggleButtonBehavior._do_press(self)
+
+
+class ThemedButton(Button, Themeable):
+    button_texture = StringProperty(themes.ALL_BEV_CORNERS)
+    shadow_texture = StringProperty(themes.SHADOW_TEXTURE)
+    text_color = ListProperty()
+    button_color = ListProperty()
+    shadow_color = ListProperty()
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        # Theme Init Stuff
+        self.button_color = self.theme.tasks
+        self.text_color = self.theme.text
+        self.text_color[3] = .8
+        self.shadow_color = themes.SHADOW_COLOR
+
+    def theme_update(self):
+        self.button_color = self.theme.tasks
+        self.text_color = self.theme.text
+        self.text_color[3] = .8
+        self.on_state(self, 0)
+
+    def on_state(self, widget, value):
+        if self.state == 'down':
+            self.button_color = self.theme.selected
+        else:
+            self.button_color = self.theme.tasks
+
+
+class ThemedTextInput(TextInput, Themeable):
+    def theme_update(self):
+        pass
+
 
 __projects__ = ProjectList()
 Factory.register('project_spinner_option', cls=ProjectSpinnerOption)

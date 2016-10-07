@@ -7,14 +7,14 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.scrollview import ScrollView
 from kivy.properties import ListProperty, StringProperty
 from tasktracker.themes.themes import Themeable
-from tasktracker.themes.themes import MENUBUTTON_TEXTURE
+from tasktracker.themes.themes import ALL_BEV_CORNERS
 from kivy.animation import Animation
 
 from tasktracker.database.db_interface import DB
 
 
 class ListLabels(Label, Themeable):
-    shadow_texture = StringProperty(MENUBUTTON_TEXTURE)
+    shadow_texture = StringProperty(ALL_BEV_CORNERS)
     shadow_color = ListProperty()
 
     def __init__(self, **kwargs):

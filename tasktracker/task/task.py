@@ -41,9 +41,9 @@ class Task(Button, TapAndHold, Themeable):  # TapAndHold
     current_shadow_color = ListProperty(themes.SHADOW_COLOR)
     current_project_shadow_color = ListProperty()
     # Task textures
-    task_texture = StringProperty(themes.TASK_TEXTURE)
+    task_texture = StringProperty(themes.LEFT_BEV_CORNERS)
     shadow_texture = StringProperty(themes.SHADOW_TEXTURE)
-    project_indicator = StringProperty(themes.PROJECT_TEXTURE)
+    project_indicator = StringProperty(themes.LEFT_BEV_CORNERS)
 
     project = ObjectProperty(None)
 
