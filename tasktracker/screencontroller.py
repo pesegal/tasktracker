@@ -7,7 +7,9 @@ from kivy.uix.screenmanager import FallOutTransition, SlideTransition,\
     SwapTransition, FadeTransition, WipeTransition, RiseInTransition
 from kivy.clock import Clock
 
-import time
+from tasktracker.settings import TIMER
+
+
 
 from tasktracker.mixins import Broadcast
 from tasktracker.menubar import MenuBar
@@ -140,8 +142,7 @@ class ScreenClickDragWindow(FloatLayout, Broadcast):
         task = None
 
         widget_list = []
-
-        for widget in self.walk():  # Todo Try setting to true?
+        for widget in self.walk(True):
             widget_list.append(widget)
             if widget in self.children:  # Skip currently selected task.
                 continue

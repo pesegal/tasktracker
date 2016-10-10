@@ -3,6 +3,7 @@
     variables will live.
 """
 import os
+import time
 from configparser import ConfigParser
 from kivy.utils import get_color_from_hex
 
@@ -48,6 +49,24 @@ class Colors(Borg):
                 yield color, get_color_from_hex(self.colors[key][color])
 
 
+class PrefTimer(Borg):
+    def __init__(self):
+        super().__init__()
+        self._start = None
+        self._end = None
+
+    def start(self):
+        self._start = time.time()
+
+    def end(self):
+        self._end = time.time()
+        print('Pref Time: %s' % (self._end - self._start))
+
+
+
+
+
+TIMER = PrefTimer()
 __project_colors__ = Colors('colors.conf')
 
 """ FUTURE SETTINGS MENU FEATURES

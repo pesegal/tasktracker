@@ -3,6 +3,8 @@ from tasktracker.database.db_interface import DB
 
 from kivy.animation import Animation
 
+from tasktracker.settings import TIMER
+
 
 class ClickDragController(Borg):
     """ This controller object is the better way of handling click drag related functionality.
@@ -56,10 +58,13 @@ class ClickDragController(Borg):
             DB.delete_task(task.uuid, self.last_parent.list_id)
         elif self.last_parent != last_list:  # Only record the task list switch if it's a different list.
             DB.task_switch(task.uuid, self.last_parent.list_id)
-        last_list.update_list_positions()  # Writes new index to database from list that task left
-        self.last_parent.update_list_positions()  # writes new task indexes to the database
         self.click_drag_window.remove_list_names(self.last_parent)
         touch.ungrab(task)
+        last_list.update_list_positions()  # Writes new index to database from list that task left
+        self.last_parent.update_list_positions()  # writes new task indexes to the database
+
+
+
 
     # TODO: Improve dropping check to reduce walking of child widgets.
 

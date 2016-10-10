@@ -12,6 +12,7 @@ from kivy.animation import Animation
 
 from tasktracker.database.db_interface import DB
 
+from tasktracker.settings import TIMER
 
 class ListLabels(Label, Themeable):
     shadow_texture = StringProperty(ALL_BEV_CORNERS)
@@ -123,8 +124,10 @@ class TaskList(GridLayout):
         self.list_label = None
 
     def update_list_positions(self):
-        for index, child in enumerate(self.children):
+        print(self.parent.name)
+        for index, child in enumerate(self.children): #
             DB.update_task_list_index(index, child.uuid)
+        DB.commit()
 
     def _update_parent_height(self, widget, height):
         self.parent.resize_height(widget, height)
