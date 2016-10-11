@@ -196,9 +196,6 @@
                 on_press: root.update_task()
 
 
-<ThemedTextInput>:
-
-
 
 <ThemedButton>:
     border: [2, 2, 2, 2]
@@ -250,6 +247,7 @@
     padding: 0, 2, 0, 2
     ProjectSelector:
         id: selector
+        selection_section: self
         size_hint_x: .9
         size_hint_y: None
         height: 30
@@ -261,3 +259,4 @@
         height: 30
         on_press: root.open_project_screen()
 
+<ProjectSelector>:

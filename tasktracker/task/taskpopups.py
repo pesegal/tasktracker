@@ -70,7 +70,7 @@ class ProjectList:
                 return project
 
 
-class ProjectSelector(Spinner):
+class ProjectSelector(Spinner, Themeable):
     """ Project Selector contains is the controller functionality for the spinner
     widget that is on the main task screen. The view logic is contained inside
     the taskcontainer.kv layout file.
@@ -79,6 +79,10 @@ class ProjectSelector(Spinner):
         super(ProjectSelector, self).__init__(**kwargs)
         self.values = list()
         self.bind(text=self.project_change)
+        self.option_cls = 'project_spinner_option'
+
+    def theme_update(self):
+        pass
 
     def set_project(self, project):
         self.text = project.name
@@ -90,6 +94,31 @@ class ProjectSelector(Spinner):
     def project_change(self, spinner, text):
         __projects__.change_project(text)
         self.parent.new_project_button_label_update(__projects__.selected_project)
+
+    def set_max_height(self, height, offset):
+
+        print(self, height, offset)
+        self.dropdown_cls.max_height = height - offset
+
+
+class ProjectSelectionSection(BoxLayout):
+    """This object contains the projects spinner on the task creation and edit screen and controller
+    functionality for the new/edit projects button!
+    """
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    def open_project_screen(self):
+        # send the task project or None
+        self.task_screen.project_popup.open()
+        self.task_screen.project_popup.set_project_list(__projects__())
+        self.task_screen.project_popup.set_selected_project(__projects__.selected_project)
+
+    def new_project_button_label_update(self, project):
+        if project == __projects__.default:
+            self.ids.new_project.text = "New"
+        else:
+            self.ids.new_project.text = "Edit"
 
 
 class ProjectPopupSelector(ProjectSelector):
@@ -115,7 +144,7 @@ class ProjectSpinnerOption(SpinnerOption):
     """
     def __init__(self, **kwargs):
         super(ProjectSpinnerOption, self).__init__(**kwargs)
-        self.height = 20
+        self.height = 60
         # TODO: Display Projects Selected Colors
 
 
@@ -135,6 +164,8 @@ class ProjectPopup(Popup):
         self.current_selected_color = None
         self.current_selected_color_name = None
         self.bind(edit=self.create_update_button_update)
+        self.bind(height=self._set_spinner_height)
+        self.bind(on_open=lambda *args: self._set_spinner_height(self, self.height))
 
     def set_project_list(self, projects):
         self.project_list = projects
@@ -182,6 +213,9 @@ class ProjectPopup(Popup):
                 __projects__.load_all_projects()
                 __projects__.change_project_by_id(pid)
         self.dismiss()
+
+    def _set_spinner_height(self, this, height):
+        self.ids.popup_selector.set_max_height(height, 150)
 
 
 class ColorSelectionWindow(GridLayout):
@@ -243,6 +277,8 @@ class TaskScreen(Popup, Themeable):
         self.project_popup = ProjectPopup()
         self.ids.project_selection_section.ids.selector.set_project(__projects__.default)
         self.ids.project_selection_section.ids.selector.load_projects(__projects__())
+        self.bind(height=self._set_spinner_height)
+        self._set_spinner_height(self, self.height)
         self.project_popup.bind(on_dismiss=self.project_updated)
 
         # Theme Initialization
@@ -258,7 +294,11 @@ class TaskScreen(Popup, Themeable):
         self.label_color = self.theme.text
 
     def project_updated(self, popup):
+        self._set_spinner_height(self, self.height)
         self.ids.project_selection_section.ids.selector.set_project(__projects__.selected_project)
+
+    def _set_spinner_height(self, this, height):
+        self.ids.project_selection_section.ids.selector.set_max_height(height, 220)
 
 
 class TaskCreationScreen(TaskScreen):
@@ -329,23 +369,6 @@ class TaskEditScreen(TaskScreen):
 
     def updated_list_flag(self, *args):
         self.list_changed_flag = True
-
-
-class ProjectSelectionSection(BoxLayout):
-    """This object contains the projects spinner on the task creation and edit screen and controller
-    functionality for the new/edit projects button!
-    """
-    def open_project_screen(self):
-        # send the task project or None
-        self.task_screen.project_popup.open()
-        self.task_screen.project_popup.set_project_list(__projects__())
-        self.task_screen.project_popup.set_selected_project(__projects__.selected_project)
-
-    def new_project_button_label_update(self, project):
-        if project == __projects__.default:
-            self.ids.new_project.text = "New"
-        else:
-            self.ids.new_project.text = "Edit"
 
 
 class TaskListSelectionButton(ToggleButton, Themeable):

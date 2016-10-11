@@ -49,10 +49,10 @@ This includes a timer to help keep focus and statistical tracking to see how muc
 + Ability to log-in and store data in the cloud.
 
 ## Bug List:
-
++ Windows sqlite3 database write speed slowdown causing UX issues when click-drag.
 + Task screen not resizing correctly when not focused on task screen.
 + Crash when project selector spinner is open and the edit button is pressed.
 + Fix Multi Touch Task repositioning.
 + Make sure that swapping lists is multi-touch protected.
 + Menu Button color not reset to transparent with clicking dragging away.
-+ Tasklist Label jumping incorrect amount when scroll view active on release of task
++ ~~Tasklist Label jumping incorrect amount when scroll view active on release of task~~
