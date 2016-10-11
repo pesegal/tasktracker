@@ -4,6 +4,7 @@ from tasktracker.settings import Borg
 from tasktracker.database.db_interface import DB
 
 
+import time
 class ClickDragController(Borg):
     """ This controller object is the better way of handling click drag related functionality.
         On program start the ScreenClickDragWindow registers itself with this class.
