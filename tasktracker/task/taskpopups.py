@@ -95,11 +95,6 @@ class ProjectSelector(Spinner, Themeable):
         __projects__.change_project(text)
         self.parent.new_project_button_label_update(__projects__.selected_project)
 
-    def set_max_height(self, height, offset):
-
-        print(self, height, offset)
-        self.dropdown_cls.max_height = height - offset
-
 
 class ProjectSelectionSection(BoxLayout):
     """This object contains the projects spinner on the task creation and edit screen and controller
@@ -164,8 +159,6 @@ class ProjectPopup(Popup):
         self.current_selected_color = None
         self.current_selected_color_name = None
         self.bind(edit=self.create_update_button_update)
-        self.bind(height=self._set_spinner_height)
-        self.bind(on_open=lambda *args: self._set_spinner_height(self, self.height))
 
     def set_project_list(self, projects):
         self.project_list = projects
@@ -213,9 +206,6 @@ class ProjectPopup(Popup):
                 __projects__.load_all_projects()
                 __projects__.change_project_by_id(pid)
         self.dismiss()
-
-    def _set_spinner_height(self, this, height):
-        self.ids.popup_selector.set_max_height(height, 150)
 
 
 class ColorSelectionWindow(GridLayout):
@@ -277,8 +267,6 @@ class TaskScreen(Popup, Themeable):
         self.project_popup = ProjectPopup()
         self.ids.project_selection_section.ids.selector.set_project(__projects__.default)
         self.ids.project_selection_section.ids.selector.load_projects(__projects__())
-        self.bind(height=self._set_spinner_height)
-        self._set_spinner_height(self, self.height)
         self.project_popup.bind(on_dismiss=self.project_updated)
 
         # Theme Initialization
@@ -296,9 +284,6 @@ class TaskScreen(Popup, Themeable):
     def project_updated(self, popup):
         self._set_spinner_height(self, self.height)
         self.ids.project_selection_section.ids.selector.set_project(__projects__.selected_project)
-
-    def _set_spinner_height(self, this, height):
-        self.ids.project_selection_section.ids.selector.set_max_height(height, 220)
 
 
 class TaskCreationScreen(TaskScreen):
