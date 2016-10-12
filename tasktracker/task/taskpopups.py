@@ -9,6 +9,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.popup import Popup
 from kivy.uix.spinner import Spinner, SpinnerOption
+from kivy.uix.dropdown import DropDown
 from kivy.uix.textinput import TextInput
 from kivy.uix.button import Button
 from kivy.uix.togglebutton import ToggleButton
@@ -69,6 +70,29 @@ class ProjectList:
             if name == project.name:
                 return project
 
+# SPINNER WIDGET WIDGETS!
+
+
+class ThemedDropdown(DropDown, Themeable):
+    bg_texture = StringProperty(themes.NO_BEV_CORNERS)
+    bg_color = ListProperty()
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.bg_color = self.theme.list_bg
+
+    def theme_update(self):
+        self.bg_color = self.theme.list_bg
+
+
+class ProjectSpinnerOption(SpinnerOption):
+    """ Extending the SpinnerOption widget allows for customization of the drawing of the widget.
+    """
+    def __init__(self, **kwargs):
+        super(ProjectSpinnerOption, self).__init__(**kwargs)
+        self.height = 40
+        # TODO: Display Projects Selected Colors
+
 
 class ProjectSelector(Spinner, Themeable):
     """ Project Selector contains is the controller functionality for the spinner
@@ -76,9 +100,10 @@ class ProjectSelector(Spinner, Themeable):
     the taskcontainer.kv layout file.
     """
     def __init__(self, **kwargs):
-        super(ProjectSelector, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.values = list()
         self.bind(text=self.project_change)
+        self.dropdown_cls = ThemedDropdown
         self.option_cls = 'project_spinner_option'
 
     def theme_update(self):
@@ -94,6 +119,27 @@ class ProjectSelector(Spinner, Themeable):
     def project_change(self, spinner, text):
         __projects__.change_project(text)
         self.parent.new_project_button_label_update(__projects__.selected_project)
+
+    def set_drop_down_height(self, height, offset):
+        self.dropdown_cls.max_height = height - offset
+
+
+class ProjectPopupSelector(ProjectSelector):
+    """ ProjectPopupSelector contains the controller logic for the project selection spinner widget
+        that is inside the ProjectPopup window.
+    """
+    popup = ObjectProperty(None)
+
+    def __init__(self, **kwargs):
+        super(ProjectPopupSelector, self).__init__(**kwargs)
+        self.set_project(__projects__.selected_project)
+        self.load_projects(__projects__())
+        self.height_offset = 150
+
+    def project_change(self, spinner, text):
+        __projects__.change_project(text)
+        if self.popup:
+            self.popup.set_selected_project(__projects__.selected_project)
 
 
 class ProjectSelectionSection(BoxLayout):
@@ -116,32 +162,7 @@ class ProjectSelectionSection(BoxLayout):
             self.ids.new_project.text = "Edit"
 
 
-class ProjectPopupSelector(ProjectSelector):
-    """ ProjectPopupSelector contains the controller logic for the project selection spinner widget
-        that is inside the ProjectPopup window.
-    """
-    popup = ObjectProperty(None)
-
-    def __init__(self, **kwargs):
-        super(ProjectPopupSelector, self).__init__(**kwargs)
-        self.values = list()
-        self.set_project(__projects__.selected_project)
-        self.load_projects(__projects__())
-
-    def project_change(self, spinner, text):
-        __projects__.change_project(text)
-        if self.popup:
-            self.popup.set_selected_project(__projects__.selected_project)
-
-
-class ProjectSpinnerOption(SpinnerOption):
-    """ Extending the SpinnerOption widget allows for customization of the drawing of the widget.
-    """
-    def __init__(self, **kwargs):
-        super(ProjectSpinnerOption, self).__init__(**kwargs)
-        self.height = 60
-        # TODO: Display Projects Selected Colors
-
+# PROJECT POPUP CONTROLLERS
 
 class ProjectPopup(Popup):
     """ ProjectPopup is the controller for most of the logic for the project selection and editing.
@@ -244,6 +265,8 @@ class ColorSelectionButton(ToggleButton):
         self.parent.popup.update_project_color(self.name, self.background_color)
 
 
+# MAIN POPUP CONTROLLERS
+
 class TaskScreen(Popup, Themeable):
     """ This is the parent class for both the new task screen and the task creation screen.
     It contains controller logic that is shared between both types of popups.
@@ -253,6 +276,8 @@ class TaskScreen(Popup, Themeable):
     list_selection = NumericProperty(0)
     notes = ObjectProperty(None)
     project_popup = ObjectProperty(None)
+    project_open = BooleanProperty(False)
+    selector_open = BooleanProperty(False)
 
     # Theme Properties
     bg_shade_color = ListProperty()
@@ -267,6 +292,9 @@ class TaskScreen(Popup, Themeable):
         self.project_popup = ProjectPopup()
         self.ids.project_selection_section.ids.selector.set_project(__projects__.default)
         self.ids.project_selection_section.ids.selector.load_projects(__projects__())
+        self.bind(height=self._set_max_height)
+        self._set_max_height(self, self.height)
+        self.project_popup.bind(on_open=self._project_popup_opened)
         self.project_popup.bind(on_dismiss=self.project_updated)
 
         # Theme Initialization
@@ -282,8 +310,20 @@ class TaskScreen(Popup, Themeable):
         self.label_color = self.theme.text
 
     def project_updated(self, popup):
-        self._set_spinner_height(self, self.height)
+        self.project_open = False
+        self._set_max_height(self, self.height)
         self.ids.project_selection_section.ids.selector.set_project(__projects__.selected_project)
+
+    def _project_popup_opened(self, popup):
+        self.project_open = True
+        self._set_max_height(self, self.height)
+
+    def _set_max_height(self, this, height):
+        if self.project_open:
+            offset = 145  # Drop down stops at bottom of text input
+        else:
+            offset = 215  # Drop down stops at bottom of color buttons
+        self.ids.project_selection_section.ids.selector.set_drop_down_height(height, offset)
 
 
 class TaskCreationScreen(TaskScreen):
@@ -293,15 +333,16 @@ class TaskCreationScreen(TaskScreen):
     def __init__(self, **kwargs):
         super(TaskCreationScreen, self).__init__(**kwargs)
 
-    def create_task(self):
-        t_list = self.parent.children[1].children[0].screen_controller.tasks  # todo: can this be done better?
-        new_task_index = t_list.get_list_length(self.list_selection)
-        task_id = DB.add_new_task(self.task_name.text, self.notes.text, self.list_selection,
-                                  new_task_index, __projects__.selected_project.db_id)
-        task = Task(task_id, self.task_name.text, self.notes.text)
-        t_list.add_task_to_list(task, self.list_selection)
-        task.project = __projects__.selected_project
-        self.dismiss()
+    def create_task(self, selector_open):
+        if not selector_open:
+            t_list = self.parent.children[-1].children[0].screen_controller.tasks  # todo: can this be done better?
+            new_task_index = t_list.get_list_length(self.list_selection)
+            task_id = DB.add_new_task(self.task_name.text, self.notes.text, self.list_selection,
+                                      new_task_index, __projects__.selected_project.db_id)
+            task = Task(task_id, self.task_name.text, self.notes.text)
+            t_list.add_task_to_list(task, self.list_selection)
+            task.project = __projects__.selected_project
+            self.dismiss()
 
 
 class TaskEditScreen(TaskScreen):
@@ -335,22 +376,23 @@ class TaskEditScreen(TaskScreen):
 
         self.bind(list_selection=self.updated_list_flag)
 
-    def update_task(self):
-        if self.list_changed_flag:
-            task_list_screen = self.task.parent.parent.parent.parent
-            self.task.parent.remove_widget(self.task)
-            task_list_screen.add_task_to_list(self.task, self.list_selection)
-            DB.task_switch(self.task.uuid, self.list_selection)
-            self.task.parent.update_list_positions()
+    def update_task(self, selector_open):
+        if not selector_open:
+            if self.list_changed_flag:
+                task_list_screen = self.task.parent.parent.parent.parent
+                self.task.parent.remove_widget(self.task)
+                task_list_screen.add_task_to_list(self.task, self.list_selection)
+                DB.task_switch(self.task.uuid, self.list_selection)
+                self.task.parent.update_list_positions()
 
-        # Update task in the database
-        DB.update_task(self.task.uuid, self.task_name.text, self.notes.text, __projects__.selected_project.db_id)
-        # Update task in the current session
-        self.task.set_text(self.task_name.text)
-        self.task.notes = self.notes.text
-        self.task.project = __projects__.selected_project
+            # Update task in the database
+            DB.update_task(self.task.uuid, self.task_name.text, self.notes.text, __projects__.selected_project.db_id)
+            # Update task in the current session
+            self.task.set_text(self.task_name.text)
+            self.task.notes = self.notes.text
+            self.task.project = __projects__.selected_project
 
-        self.dismiss()
+            self.dismiss()
 
     def updated_list_flag(self, *args):
         self.list_changed_flag = True
@@ -387,6 +429,8 @@ class TaskListSelectionButton(ToggleButton, Themeable):
         if self.state == 'normal':
             ToggleButtonBehavior._do_press(self)
 
+
+# THEMED EXTRAS
 
 class ThemedButton(Button, Themeable):
     button_texture = StringProperty(themes.ALL_BEV_CORNERS)

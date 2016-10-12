@@ -12,17 +12,6 @@
     size_hint_y: None
     size_hint_x: .99
 
-#    canvas.before:
-#        Color:
-#            rgba: [1, 1, 0, .5]
-#        Rectangle:
-#            pos: root.pos
-#            size: root.size
-#
-#    Label:
-#        pos: root.x, root.y
-#        text: str(root.size)
-
 <TaskList>:
     pos_hint: {'top': 1}
     size_hint_y: None
@@ -127,10 +116,10 @@
             padding: 0, 3
             ThemedButton:
                 text: 'Cancel'
-                on_press: root.dismiss()
+                on_press: root.dismiss() if not project_selection_section.ids.selector.is_open else None
             ThemedButton:
                 text: 'Create'
-                on_press: root.create_task()
+                on_press: root.create_task(project_selection_section.ids.selector.is_open)
 
 <TaskEditScreen>:
     id: task_screen
@@ -190,10 +179,10 @@
 
             ThemedButton:
                 text: 'Cancel'
-                on_press: root.dismiss()
+                on_press: root.dismiss() if not project_selection_section.ids.selector.is_open else None
             ThemedButton:
                 text: 'Update'
-                on_press: root.update_task()
+                on_press: root.update_task(project_selection_section.ids.selector.is_open)
 
 
 
@@ -211,7 +200,6 @@
             border: [1, 1, 1, 1]
             pos: self.x - 3, self.y - 3
             size: self.width + 3 , self.height + 3
-
 
 
 <TaskListSelectionButton>:
@@ -232,6 +220,7 @@
             pos: self.x - 3, self.y - 3
             size: self.width + 3 , self.height + 3
 
+
 <TaskTitle@ThemedTextInput>:
     multiline: False
     size_hint_y: None
@@ -239,19 +228,21 @@
     hint_text: '//Task Title'
     # Do styling here
 
+
 <ProjectSelectionSection>:
     # Layout information for the project selection section!
     orientation: 'horizontal'
     size_hint_y: None
     height: 31
     padding: 0, 2, 0, 2
+    spacing: 2
     ProjectSelector:
         id: selector
         selection_section: self
         size_hint_x: .9
         size_hint_y: None
         height: 30
-    Button:
+    ThemedButton:
         id: new_project
         text: '+'
         size_hint_x: .1
@@ -259,4 +250,16 @@
         height: 30
         on_press: root.open_project_screen()
 
+
 <ProjectSelector>:
+
+
+<ThemedDropdown>:
+    canvas.before:
+        Color:
+            rgba: root.bg_color
+        BorderImage:
+            source: root.bg_texture
+            border: [1, 1, 1, 1]
+            pos: self.x, self.y
+            size: self.width, self.height
