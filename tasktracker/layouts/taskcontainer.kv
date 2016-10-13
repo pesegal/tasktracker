@@ -233,15 +233,14 @@
     # Layout information for the project selection section!
     orientation: 'horizontal'
     size_hint_y: None
-    height: 31
+    height: 33
     padding: 0, 2, 0, 2
-    spacing: 2
+    spacing: 4
     ProjectSelector:
         id: selector
         selection_section: self
         size_hint_x: .9
         size_hint_y: None
-        height: 30
     ThemedButton:
         id: new_project
         text: '+'
@@ -252,6 +251,22 @@
 
 
 <ProjectSelector>:
+    height: 30
+    color: self.text_color
+    border: [2, 2, 2, 2]
+    color: self.text_color
+    background_color: self.button_color
+    background_normal: self.button_texture
+    background_down: self.button_texture
+    canvas.before:
+        Color:
+            rgba: root.shadow_color
+        BorderImage:
+            source: root.shadow_texture
+            border: [1, 1, 1, 1]
+            pos: self.x - 3, self.y - 3
+            size: self.width + 3 , self.height + 3
+
 
 
 <ThemedDropdown>:

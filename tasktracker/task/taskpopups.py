@@ -99,6 +99,12 @@ class ProjectSelector(Spinner, Themeable):
     widget that is on the main task screen. The view logic is contained inside
     the taskcontainer.kv layout file.
     """
+    button_texture = StringProperty(themes.ALL_BEV_CORNERS)
+    shadow_texture = StringProperty(themes.SHADOW_TEXTURE)
+    text_color = ListProperty()
+    button_color = ListProperty()
+    shadow_color = ListProperty()
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.values = list()
@@ -106,8 +112,15 @@ class ProjectSelector(Spinner, Themeable):
         self.dropdown_cls = ThemedDropdown
         self.option_cls = 'project_spinner_option'
 
+        # Theme Stuff
+        self.text_color = self.theme.text
+        self.text_color[3] = .8
+        self.button_color = self.theme.tasks
+        self.shadow_color = themes.SHADOW_COLOR
+
     def theme_update(self):
-        pass
+        self.text_color = self.theme.text
+        self.button_color = self.theme.tasks
 
     def set_project(self, project):
         self.text = project.name
@@ -122,6 +135,12 @@ class ProjectSelector(Spinner, Themeable):
 
     def set_drop_down_height(self, height, offset):
         self.dropdown_cls.max_height = height - offset
+
+    def on_state(self, widget, value):
+        if self.state == 'down':
+            self.button_color = self.theme.selected
+        else:
+            self.button_color = self.theme.tasks
 
 
 class ProjectPopupSelector(ProjectSelector):
