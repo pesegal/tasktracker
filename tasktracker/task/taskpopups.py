@@ -80,18 +80,50 @@ class ThemedDropdown(DropDown, Themeable):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.bg_color = self.theme.list_bg
+        self.container.spacing = 3
 
     def theme_update(self):
         self.bg_color = self.theme.list_bg
 
 
-class ProjectSpinnerOption(SpinnerOption):
+class ProjectSpinnerOption(SpinnerOption, Themeable):
     """ Extending the SpinnerOption widget allows for customization of the drawing of the widget.
     """
+    button_texture = StringProperty(themes.NO_BEV_CORNERS)
+    project_texture = StringProperty(themes.NO_BEV_CORNERS)
+    button_color = ListProperty([0, 0, 0, 0])
+    text_color = ListProperty()
+    selected_color = ListProperty()
+    project_color = ListProperty([0, 0, 0, 0])  # Init to a blank to stop error from displaying with the shader
+    project_object = ObjectProperty()
+
     def __init__(self, **kwargs):
         super(ProjectSpinnerOption, self).__init__(**kwargs)
-        self.height = 40
-        # TODO: Display Projects Selected Colors
+        if self.text != 'No Project':
+            self.project_object = __projects__.return_project_by_name(self.text)
+            self.set_project_color(get_color_from_hex(self.project_object.color))
+        else:
+            self.set_project_color([47 / 255., 167 / 255., 212 / 255., 1.])
+
+        self.text_color = self.theme.text
+        self.text_color[3] = .9
+        self.button_color = self.theme.background
+        self.selected_color = self.theme.selected
+
+    def theme_update(self):
+        self.text_color = self.theme.text
+        self.text_color[3] = .9
+        self.button_color = self.theme.background
+        self.selected_color = self.theme.selected
+
+    def set_project_color(self, color):
+        self.project_color = color
+
+    def on_state(self, widget, value):
+        if self.state == 'down':
+            self.button_color = self.theme.selected
+        else:
+            self.button_color = self.theme.background
 
 
 class ProjectSelector(Spinner, Themeable):

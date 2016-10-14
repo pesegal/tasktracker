@@ -267,9 +267,8 @@
             pos: self.x - 3, self.y - 3
             size: self.width + 3 , self.height + 3
 
-
-
 <ThemedDropdown>:
+
     canvas.before:
         Color:
             rgba: root.bg_color
@@ -278,3 +277,18 @@
             border: [1, 1, 1, 1]
             pos: self.x, self.y
             size: self.width, self.height
+
+<ProjectSpinnerOption>:
+    height: 40
+    color: self.text_color
+    background_normal: self.button_texture
+    background_down: self.button_texture
+    background_color: self.button_color
+    canvas:
+        Color:
+            rgba: self.project_color
+        BorderImage:
+            source: root.project_texture
+            border: [1, 1, 1, 1]
+            pos: self.x + 3, self.y + 2
+            size: self.width / 30 - 3, self.height - 4
