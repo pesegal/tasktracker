@@ -74,7 +74,6 @@ class Task(Button, TapAndHold, Themeable):  # TapAndHold
         if project_id != 0:
             self.project = tasktracker.task.taskpopups.__projects__.return_project_by_id(project_id)
         self._update_project_display(self, self.project)
-
         self.bind(project=self._update_project_display)
         self.notes = notes
 
@@ -91,6 +90,9 @@ class Task(Button, TapAndHold, Themeable):  # TapAndHold
     def set_text(self, text):
         self.tasktext.text = text
 
+    def update_project_color(self, value):
+        self.current_project_color = value
+
     def _update_project_display(self, task, project):
         if project is None:
             self.current_project_color = themes.TRANSPARENT  # Make the project rectangle transparent
@@ -100,6 +102,7 @@ class Task(Button, TapAndHold, Themeable):  # TapAndHold
             self.current_project_shadow_color = themes.TRANSPARENT
         else:
             self.project = project
+            self.project.register(self)
             self.current_project_color = get_color_from_hex(project.color)
             self.current_project_shadow_color = themes.SHADOW_COLOR
         self.canvas.ask_update()

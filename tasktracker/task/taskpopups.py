@@ -1,7 +1,7 @@
 """
     Contains all controller logic for the Task Creation/Edit Screens and Project Edit Screens.
 """
-
+import weakref
 from kivy.factory import Factory
 from kivy.properties import ObjectProperty, NumericProperty, BooleanProperty, ListProperty, StringProperty
 from kivy.uix.behaviors import ToggleButtonBehavior
@@ -26,12 +26,38 @@ class Project:
     """ Project class is a data structure that contains project data.
     """
     def __init__(self, id, creation, deletion, name, color, color_name):
+        self._observers = list()
         self.db_id = id
         self.name = name
         self.creation_date = creation
         self.deletion_date = deletion
-        self.color = color
+        self._color = color
         self.color_name = color_name
+
+    @property
+    def color(self):
+        return self._color
+
+    @color.setter
+    def color(self, value):
+        self._color = value
+        self._flush()
+        for observer in self._observers:
+            if hasattr(observer(), 'update_project_color'):
+                observer().update_project_color(get_color_from_hex(self._color))
+
+    def register(self, observer):
+        self._observers.append(weakref.ref(observer))
+
+    def _flush(self):
+        to_remove = []
+
+        for ref in self._observers:
+            if ref() is None:
+                to_remove.append(ref)
+
+        for item in to_remove:
+            self._observers.remove(item)
 
 
 class ProjectList:
@@ -101,6 +127,7 @@ class ProjectSpinnerOption(SpinnerOption, Themeable):
         super(ProjectSpinnerOption, self).__init__(**kwargs)
         if self.text != 'No Project':
             self.project_object = __projects__.return_project_by_name(self.text)
+            self.project_object.register(self)
             self.set_project_color(get_color_from_hex(self.project_object.color))
         else:
             self.set_project_color([47 / 255., 167 / 255., 212 / 255., 1.])
@@ -118,6 +145,9 @@ class ProjectSpinnerOption(SpinnerOption, Themeable):
 
     def set_project_color(self, color):
         self.project_color = color
+
+    def update_project_color(self, value):
+        self.project_color = value
 
     def on_state(self, widget, value):
         if self.state == 'down':
@@ -512,6 +542,8 @@ class ThemedButton(Button, Themeable):
 
 
 class ThemedTextInput(TextInput, Themeable):
+    input_texture = StringProperty(themes.ALL_BEV_CORNERS)
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.background_color = self.theme.background

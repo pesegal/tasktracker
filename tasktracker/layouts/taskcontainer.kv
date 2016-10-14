@@ -197,9 +197,9 @@
             rgba: root.shadow_color
         BorderImage:
             source: root.shadow_texture
-            border: [1, 1, 1, 1]
-            pos: self.x - 3, self.y - 3
-            size: self.width + 3 , self.height + 3
+            border: [3, 3, 3, 3]
+            pos: self.x - 2, self.y - 2
+            size: self.width, self.height
 
 
 <TaskListSelectionButton>:
@@ -216,9 +216,15 @@
             rgba: root.shadow_color
         BorderImage:
             source: root.shadow_texture
-            border: [1, 1, 1, 1]
-            pos: self.x - 3, self.y - 3
-            size: self.width + 3 , self.height + 3
+            border: [3, 3, 3, 3]
+            pos: self.x - 2, self.y - 2
+            size: self.width, self.height
+
+
+
+<ThemedTextInput>:
+    background_normal: self.input_texture
+    background_active: self.input_texture
 
 
 <TaskTitle@ThemedTextInput>:
@@ -233,8 +239,8 @@
     # Layout information for the project selection section!
     orientation: 'horizontal'
     size_hint_y: None
-    height: 33
-    padding: 0, 2, 0, 2
+    height: 35
+    padding: 0, 4, 0, 4
     spacing: 4
     ProjectSelector:
         id: selector
@@ -263,18 +269,17 @@
             rgba: root.shadow_color
         BorderImage:
             source: root.shadow_texture
-            border: [1, 1, 1, 1]
-            pos: self.x - 3, self.y - 3
-            size: self.width + 3 , self.height + 3
+            border: [3, 3, 3, 3]
+            pos: self.x - 2, self.y -2
+            size: self.width , self.height
 
 <ThemedDropdown>:
-
     canvas.before:
         Color:
             rgba: root.bg_color
         BorderImage:
             source: root.bg_texture
-            border: [1, 1, 1, 1]
+            border: [3, 3, 3, 3]
             pos: self.x, self.y
             size: self.width, self.height
 
@@ -289,6 +294,6 @@
             rgba: self.project_color
         BorderImage:
             source: root.project_texture
-            border: [1, 1, 1, 1]
+            border: [3, 3, 3, 3]
             pos: self.x + 3, self.y + 2
             size: self.width / 30 - 3, self.height - 4

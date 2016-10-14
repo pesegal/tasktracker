@@ -20,6 +20,7 @@ NO_BEV_CORNERS = './themes/gfx/all_white.png'
 ALL_BEV_CORNERS = './themes/gfx/all_white2.png'
 LEFT_BEV_CORNERS = './themes/gfx/all_white3.png'
 SHADOW_TEXTURE = './themes/gfx/shadow.png'
+BEV_SHADOW_TEXTURE = './themes/gfx/beveled_shadow.png'
 TRANSPARENT_TEXTURE = './themes/gfx/transparent.png'
 
 # Config Setup
