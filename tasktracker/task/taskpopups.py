@@ -245,11 +245,19 @@ class ProjectSelectionSection(BoxLayout):
 
 # PROJECT POPUP CONTROLLERS
 
-class ProjectPopup(Popup):
+class ProjectPopup(Popup, Themeable):
     """ ProjectPopup is the controller for most of the logic for the project selection and editing.
     popup. This contains the function to trigger creating and updating project records in the database.
     """
     edit = BooleanProperty(False)
+
+    # Theme Properties
+    bg_shade_color = ListProperty()
+    bg_popup_color = ListProperty()
+    label_color = ListProperty()
+    transparent_texture = StringProperty(themes.TRANSPARENT_TEXTURE)
+    popup_texture = StringProperty(themes.NO_BEV_CORNERS)
+    shadow_texture = StringProperty(themes.SHADOW_TEXTURE)
 
     def __init__(self, **kwargs):
         super(ProjectPopup, self).__init__(**kwargs)
@@ -261,6 +269,18 @@ class ProjectPopup(Popup):
         self.current_selected_color = None
         self.current_selected_color_name = None
         self.bind(edit=self.create_update_button_update)
+
+        # Theme Initialization
+        self.bg_shade_color = self.theme.list_bg
+        self.bg_shade_color[3] = .7
+        self.bg_popup_color = self.theme.list_bg
+        self.label_color = self.theme.text
+
+    def theme_update(self):
+        self.bg_shade_color = self.theme.list_bg
+        self.bg_shade_color[3] = .7
+        self.bg_popup_color = self.theme.list_bg
+        self.label_color = self.theme.text
 
     def set_project_list(self, projects):
         self.project_list = projects
@@ -330,9 +350,11 @@ class ColorSelectionWindow(GridLayout):
                 self.popup.update_project_color(child.name, child.background_color)
 
 
-class ColorSelectionButton(ToggleButton):
+class ColorSelectionButton(ToggleButton, Themeable):
     """ Contains controller functionality for the buttons that show color selection.
     """
+    button_texture = StringProperty(themes.NO_BEV_CORNERS)
+
     def __init__(self, name, color, **kwargs):
         super(ColorSelectionButton, self).__init__(**kwargs)
         self.name = name
@@ -340,6 +362,9 @@ class ColorSelectionButton(ToggleButton):
         self.hex = color
         self.background_normal = ''
         self.background_color = get_color_from_hex(color)
+
+    def theme_update(self):
+        pass
 
     def on_press(self):
         self.parent.popup.current_selected_color = self.hex

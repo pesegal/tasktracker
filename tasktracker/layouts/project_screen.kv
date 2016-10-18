@@ -5,10 +5,31 @@
     size: app.root.width/1.1, app.root.height/1.1
     separator_height: 4
 
+    background_color: self.bg_shade_color
+    background: self.transparent_texture
+    title_color: self.label_color
+
+    canvas.before:
+        Color:
+            rgba: [0, 0, 0, .9]
+        BorderImage:
+            source: root.shadow_texture
+            border: [3, 3, 3, 3]
+            pos: self.x - 4, self.y - 4
+            size: self.width + 8, self.height + 8
+        Color:
+            rgba: root.bg_popup_color
+        BorderImage:
+            source: root.popup_texture
+            border: [3, 3, 3, 3]
+            pos: root.pos
+            size: root.size
+
     BoxLayout:
         orientation: 'vertical'
         pos_hint_y: 1
         padding: 0, 3, 0, 0
+        spacing: 4
 
         ProjectPopupSelector:
             id: popup_selector
@@ -16,7 +37,7 @@
             size_hint_y: None
             height: 30
 
-        TextInput:
+        ThemedTextInput:
             id: project_title
             size_hint_y: None
             height: 30
@@ -27,23 +48,25 @@
             popup: root
             size_hint_x: 1
             size_hint_y: 1
-            padding: 2, 5
 
         BoxLayout:
             orientation: 'horizontal'
             size_hint_y:  None
             height: 50
             pos_hint_y: 0
+            spacing: 4
 
-            Button:
+            ThemedButton:
                 id: cancel_button
                 text: 'Cancel'
                 on_press: root.dismiss()
 
-            Button:
+            ThemedButton:
                 id: create_update_button
                 text: 'New' # Look into auto changing this text.
                 on_press: root.create_project()
 
-
-
+<ColorSelectionButton>:
+    background_normal: self.button_texture
+    background_down: self.button_texture
+    border: [3, 3, 3, 3]
