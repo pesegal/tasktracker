@@ -29,7 +29,7 @@ import tasktracker.task.taskpopups
 # Todo: Task widget should be able to be categorized in larger project groupings.
 
 
-class Task(Button, TapAndHold, Themeable):  # TapAndHold
+class Task(Button, TapAndHold, Themeable):
     """ Contains all controller information for the task objects. Visual layout is contained in
     task.kv file that is in ./layouts. Note that due to how the label dynamic layout works all
     label attribute access should go through self.tasktext
@@ -49,13 +49,11 @@ class Task(Button, TapAndHold, Themeable):  # TapAndHold
 
     def __init__(self, id, name, notes, project_id=0, **kwargs):
         super(Task, self).__init__(**kwargs)
-
         self.drop_type = 'task'
         self.uuid = id
 
         # Tap Hold Length (Seconds)
         self._hold_length = .3
-
         self.task_height_limit = 60
 
         # Init self.tasktext
@@ -64,7 +62,6 @@ class Task(Button, TapAndHold, Themeable):  # TapAndHold
         self.tasktext.text = name
 
         self.theme_update()
-
         self.tasktext.halign = 'left'
         self.tasktext.valign = 'middle'
         self.tasktext.shorten_from = 'right'
@@ -127,13 +124,17 @@ class Task(Button, TapAndHold, Themeable):  # TapAndHold
         self.tasktext.y = self.y
 
     def on_tap_hold(self, touch):
-        CLICK_DRAG_CONTROLLER.start_click_drag(self, touch)
+        if 'button' in touch.profile and touch.button == 'right':
+            CLICK_DRAG_CONTROLLER.open_quick_task_menu(self, touch)
+            # Note here is where you would do a double tap func replacement for touch screens.
+        else:
+            CLICK_DRAG_CONTROLLER.start_click_drag(self, touch)
 
     def on_touch_down(self, touch):
         if self.collide_point(touch.x, touch.y):  # filter touch events
             self.triggered = False
             self._release_event()
-            self._point = copy(touch)         # Touch events share an instance
+            self._point = copy(touch)  # Touch events share an instance
             self._event = Clock.schedule_once(self._long_hold, self._hold_length)
 
     def on_touch_up(self, touch):

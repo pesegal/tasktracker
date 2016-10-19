@@ -7,6 +7,7 @@ import os
 from kivy.app import App
 from kivy.lang import Builder
 from tasktracker.screencontroller import ScreenClickDragWindow
+from kivy.config import Config
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
@@ -25,4 +26,6 @@ if __name__ == '__main__':
     for file in os.listdir(layout_path):
         Builder.load_file(os.path.join(layout_path, file))
     # Load configurations
+    # Disable Multi-touch for mouse
+    Config.set('input', 'mouse', 'mouse,disable_multitouch')
     TaskApp().run()

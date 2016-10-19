@@ -1,10 +1,10 @@
-from tasktracker.settings import Borg
-from tasktracker.database.db_interface import DB
-
 from kivy.animation import Animation
 
+from tasktracker.settings import Borg
+from tasktracker.database.db_interface import DB
+from tasktracker.task.bubblemenu import TaskQuickMenu
 
-import time
+
 class ClickDragController(Borg):
     """ This controller object is the better way of handling click drag related functionality.
         On program start the ScreenClickDragWindow registers itself with this class.
@@ -23,6 +23,8 @@ class ClickDragController(Borg):
         self.height = None
         self.last_parent = None
         self.last_index = None
+
+        self.open_quick_menu = None
 
     def start_click_drag(self, task, touch):
         # task.state = 'down'
@@ -62,6 +64,14 @@ class ClickDragController(Borg):
         self.click_drag_window.remove_list_names(self.last_parent)
         touch.ungrab(task)
 
-    # TODO: Improve dropping check to reduce walking of child widgets.
+    def open_quick_task_menu(self, task, touch):
+        print("Opening quick task menu!", task, touch)
+        self.click_drag_window.add_widget(TaskQuickMenu())
+
+    def close_quick_task_menu(self):
+        pass
+        # Todo: Develop tiggers of how to remove the bubble popup.
+
+
 
 CLICK_DRAG_CONTROLLER = ClickDragController()
