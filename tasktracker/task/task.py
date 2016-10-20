@@ -125,7 +125,7 @@ class Task(Button, TapAndHold, Themeable):
 
     def on_tap_hold(self, touch):
         if 'button' in touch.profile and touch.button == 'right':
-            CLICK_DRAG_CONTROLLER.open_quick_task_menu(self, touch)
+            CLICK_DRAG_CONTROLLER.open_quick_task_menu(self, self.to_window(self.center_x, self.center_y))
             # Note here is where you would do a double tap func replacement for touch screens.
         else:
             CLICK_DRAG_CONTROLLER.start_click_drag(self, touch)

@@ -16,6 +16,8 @@ from tasktracker.task.taskpopups import TaskEditScreen
 from tasktracker.timer.timer import TimerScreen
 from tasktracker.themes.themes import Themeable
 from tasktracker.task.clickdragcontrol import CLICK_DRAG_CONTROLLER
+from tasktracker.task.bubblemenu import TaskQuickMenu
+
 
 
 class ScreenController(ScreenManager, Broadcast, Themeable):
@@ -87,6 +89,8 @@ class ScreenClickDragWindow(FloatLayout, Broadcast):
         # Label
         self.task_list_screen = self.screen_menu.screen_controller.tasks
         self.labels = list()
+        self.quick_menu = None
+        self.bind(size=self._remove_quick_menu)
 
     def drag_scroll_check(self, touch_pos):
         """ This function triggers the switching of lists when a task object is moved with in
@@ -164,6 +168,18 @@ class ScreenClickDragWindow(FloatLayout, Broadcast):
 
         self.screen_menu.menu_bar.release_drag_menu_button_text()
         return t_list, task
+
+    def show_quick_menu(self, task, pos):
+        self.quick_menu = TaskQuickMenu(task)
+        self.quick_menu.pos = (pos[0] - self.quick_menu.center_x), pos[1]
+        self.add_widget(self.quick_menu)
+
+    def _remove_quick_menu(self, *args):
+        if self.quick_menu:
+            self.remove_widget(self.quick_menu)
+            self.quick_menu = None
+
+
 
 
 

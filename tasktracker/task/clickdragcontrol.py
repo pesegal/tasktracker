@@ -2,7 +2,6 @@ from kivy.animation import Animation
 
 from tasktracker.settings import Borg
 from tasktracker.database.db_interface import DB
-from tasktracker.task.bubblemenu import TaskQuickMenu
 
 
 class ClickDragController(Borg):
@@ -64,9 +63,8 @@ class ClickDragController(Borg):
         self.click_drag_window.remove_list_names(self.last_parent)
         touch.ungrab(task)
 
-    def open_quick_task_menu(self, task, touch):
-        print("Opening quick task menu!", task, touch)
-        self.click_drag_window.add_widget(TaskQuickMenu())
+    def open_quick_task_menu(self, task, pos):
+        self.click_drag_window.show_quick_menu(task, pos)
 
     def close_quick_task_menu(self):
         pass

@@ -1,13 +1,37 @@
 <TaskQuickMenu>:
-    size_hint: (None, None)
-    size: (160, 120)
+
+    show_arrow: False
+    background_image: self.bg_texture
+    background_color: self.bg_color
+
+    border: [4, 4, 4, 4]
+    size_hint: (None,None)
+
+    canvas.before:
+        Color:
+            rgba: [0, 0, 0, .5]
+        BorderImage:
+            source: root.shadow_texture
+            border: [3, 3, 3, 3]
+            pos: self.content.x - 2 , self.content.y - 2
+            size: self.content.width + 4, self.content.height + 4
+
     QuickMenuButton:
-        text: "Test 1"
+        text: "Edit"
     QuickMenuButton:
-        text: "Test 2"
+        text: "Work"
     QuickMenuButton:
-        text: "Test 3"
+        text: "Stats"
+    QuickMenuButton:
+        size_hint_x: None
+        width: 40
+        text: "X"
 
 
 <QuickMenuButton>:
+    border: [2, 2, 2, 2]
+    color: self.text_color
+    background_color: self.button_color
+    background_normal: self.button_texture
+    background_down: self.button_texture
 
