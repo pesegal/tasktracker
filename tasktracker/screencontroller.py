@@ -1,13 +1,12 @@
 from kivy.properties import NumericProperty
-from kivy.uix.label import Label
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.screenmanager import FallOutTransition, SlideTransition,\
     SwapTransition, FadeTransition, WipeTransition, RiseInTransition
+from kivy.animation import Animation
 from kivy.clock import Clock
 
-import time
 
 from tasktracker.mixins import Broadcast
 from tasktracker.menubar import MenuBar
@@ -17,6 +16,7 @@ from tasktracker.timer.timer import TimerScreen
 from tasktracker.themes.themes import Themeable
 from tasktracker.task.clickdragcontrol import CLICK_DRAG_CONTROLLER
 from tasktracker.task.bubblemenu import TaskQuickMenu
+
 
 
 
@@ -171,8 +171,14 @@ class ScreenClickDragWindow(FloatLayout, Broadcast):
 
     def show_quick_menu(self, task, pos):
         self.quick_menu = TaskQuickMenu(task)
-        self.quick_menu.pos = (pos[0] - self.quick_menu.center_x), pos[1]
+        self.quick_menu.pos = pos[0] + 15, pos[1]
+        qm_animation = Animation(size=(self.quick_menu.task.width - 30, 45),
+                                 pos=(pos[0] + 15, pos[1]),
+                                 duration=.6,
+                                 t='out_elastic')
+
         self.add_widget(self.quick_menu)
+        qm_animation.start(self.quick_menu)
 
     def _remove_quick_menu(self, *args):
         if self.quick_menu:

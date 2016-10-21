@@ -14,7 +14,7 @@ class TaskQuickMenu(Bubble, Themeable):
     def __init__(self, task, **kwargs):
         super().__init__(**kwargs)
         self.task = task
-        self.size = (self.task.width - 30, 45)
+        self.size = (self.task.width - 30, 10)
         self.bg_color = self.theme.status
         self.content.padding = 2
         self.content.spacing = 2
