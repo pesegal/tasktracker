@@ -2,6 +2,7 @@ from kivy.uix.button import Button
 from kivy.uix.bubble import Bubble, BubbleButton
 from kivy.properties import ListProperty, StringProperty
 
+from tasktracker.task.taskpopups import TaskEditScreen
 from tasktracker.themes.themes import Themeable
 from tasktracker.themes import themes
 
@@ -24,6 +25,10 @@ class TaskQuickMenu(Bubble, Themeable):
 
     def _close_menu(self):
         self.parent.remove_widget(self)
+
+    def _open_edit_screen(self):
+        TaskEditScreen(self.task).open()
+        self._close_menu()
 
     def on_touch_down(self, touch):
         if not self.collide_point(touch.x, touch.y):

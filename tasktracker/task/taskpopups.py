@@ -485,7 +485,7 @@ class TaskEditScreen(TaskScreen):
     def update_task(self, selector_open):
         if not selector_open:
             if self.list_changed_flag:
-                task_list_screen = self.task.parent.parent.parent.parent
+                task_list_screen =  #todo: get reference to Task list screen.
                 self.task.parent.remove_widget(self.task)
                 task_list_screen.add_task_to_list(self.task, self.list_selection)
                 DB.task_switch(self.task.uuid, self.list_selection)

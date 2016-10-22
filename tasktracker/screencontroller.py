@@ -18,8 +18,6 @@ from tasktracker.task.clickdragcontrol import CLICK_DRAG_CONTROLLER
 from tasktracker.task.bubblemenu import TaskQuickMenu
 
 
-
-
 class ScreenController(ScreenManager, Broadcast, Themeable):
     def __init__(self, **kwargs):
         super(ScreenController, self).__init__(**kwargs)
@@ -39,7 +37,7 @@ class ScreenController(ScreenManager, Broadcast, Themeable):
         self.transition.duration = .08
 
 
-class StatsScreen(Screen): # TODO: Break this out into it's own module eventually.
+class StatsScreen(Screen):  # TODO: Break this out into it's own module eventually.
     pass
 
 
