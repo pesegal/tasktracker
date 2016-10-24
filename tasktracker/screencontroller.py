@@ -16,6 +16,7 @@ from tasktracker.timer.timer import TimerScreen
 from tasktracker.themes.themes import Themeable
 from tasktracker.task.clickdragcontrol import CLICK_DRAG_CONTROLLER
 from tasktracker.task.bubblemenu import TaskQuickMenu
+from tasktracker.settings import APP_CONTROL
 
 
 class ScreenController(ScreenManager, Broadcast, Themeable):
@@ -30,6 +31,8 @@ class ScreenController(ScreenManager, Broadcast, Themeable):
         self.add_widget(self.tasks)
         self.add_widget(self.timer)
         self.add_widget(self.stats)
+
+        APP_CONTROL.screen_controller = self
 
     def theme_update(self):
         self.transition = WipeTransition()
@@ -82,7 +85,9 @@ class ScreenClickDragWindow(FloatLayout, Broadcast):
         self.add_widget(self.screen_menu)
         self.direction = 'left'
         self._event = None
+
         CLICK_DRAG_CONTROLLER.click_drag_window = self  # create reference in the controller
+        APP_CONTROL.click_drag_screen = self
 
         # Label
         self.task_list_screen = self.screen_menu.screen_controller.tasks
@@ -154,7 +159,7 @@ class ScreenClickDragWindow(FloatLayout, Broadcast):
                 elif widget.drop_type == 'task_edit':
                     TaskEditScreen(selected_task).open()
                 elif widget.drop_type == 'timer':
-                    self.screen_menu.screen_controller.timer.ids.task_manager.load_task(selected_task)
+                    APP_CONTROL.timer_task_manager.load_task(selected_task)
                     self.screen_menu.menu_bar.current_screen = 'timer'
                     self.screen_menu.screen_controller.current = 'timer'
                 elif widget.drop_type == 'settings':

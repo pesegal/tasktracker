@@ -14,6 +14,7 @@ from tasktracker.themes import themes
 from tasktracker.themes.themes import Themeable
 from tasktracker.task.task import Task
 from tasktracker.database.db_interface import DB
+from tasktracker.settings import APP_CONTROL
 
 # TODO: Break these out to the settings module
 
@@ -59,6 +60,7 @@ class TimerScreen(Screen, Themeable):
         self.current_timer_function = None
         self.current_task_action = None
         self.task_action_type = 1
+        APP_CONTROL.timer_screen = self
 
     def theme_update(self):
         self.text_color = self.theme.text
@@ -157,6 +159,7 @@ class TimerTaskDisplayManager(BoxLayout):
         self.default = NoProjectSelectedButton()
         self.selected = self.default
         self.add_widget(self.selected)
+        APP_CONTROL.timer_task_manager = self
 
     def load_task(self, task):
         self.clear_widgets()

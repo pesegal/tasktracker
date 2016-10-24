@@ -14,6 +14,7 @@ from tasktracker.mixins import Broadcast
 from tasktracker.task.taskpopups import TaskCreationScreen
 from tasktracker.themes import themes
 from tasktracker.themes.themes import Themeable
+from tasktracker.settings import APP_CONTROL
 
 
 class MenuBar(BoxLayout, Broadcast, Themeable):
@@ -36,6 +37,8 @@ class MenuBar(BoxLayout, Broadcast, Themeable):
         self.settings_text = self.ids.settings_button.text
 
         self.delete_color = get_color_from_hex('#e53935')
+
+        APP_CONTROL.menu_bar = self
 
     def theme_update(self):
         self.menu_bar_bg_color = self.theme.status
@@ -68,7 +71,7 @@ class MenuBar(BoxLayout, Broadcast, Themeable):
     def print_stuff(self, *args):
         print('test:', self.get_root_window().children)
 
-    def switch_screens(self, name, direction):
+    def switch_screens(self, name, direction='right'):
         self.current_screen = name
         self.parent.screen_controller.transition.direction = direction
         self.parent.screen_controller.current = name

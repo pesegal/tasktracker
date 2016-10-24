@@ -5,6 +5,7 @@ from kivy.properties import ListProperty, StringProperty
 from tasktracker.task.taskpopups import TaskEditScreen
 from tasktracker.themes.themes import Themeable
 from tasktracker.themes import themes
+from tasktracker.settings import APP_CONTROL
 
 
 class TaskQuickMenu(Bubble, Themeable):
@@ -28,6 +29,11 @@ class TaskQuickMenu(Bubble, Themeable):
 
     def _open_edit_screen(self):
         TaskEditScreen(self.task).open()
+        self._close_menu()
+
+    def _work_timer(self):
+        APP_CONTROL.timer_task_manager.load_task(self.task)
+        APP_CONTROL.menu_bar.switch_screens('timer')
         self._close_menu()
 
     def on_touch_down(self, touch):

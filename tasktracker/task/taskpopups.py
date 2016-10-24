@@ -16,7 +16,7 @@ from kivy.uix.togglebutton import ToggleButton
 from kivy.utils import get_color_from_hex, get_hex_from_color
 
 from tasktracker.database.db_interface import DB
-from tasktracker.settings import __project_colors__
+from tasktracker.settings import PROJECT_COLORS, APP_CONTROL
 from tasktracker.task.task import Task
 from tasktracker.themes.themes import Themeable
 from tasktracker.themes import themes
@@ -130,7 +130,8 @@ class ProjectSpinnerOption(SpinnerOption, Themeable):
             self.project_object.register(self)
             self.set_project_color(get_color_from_hex(self.project_object.color))
         else:
-            self.set_project_color([47 / 255., 167 / 255., 212 / 255., 1.])
+            # kivy default: [47 / 255., 167 / 255., 212 / 255., 1.]
+            self.set_project_color(self.theme.selected)
 
         self.text_color = self.theme.text
         self.text_color[3] = .9
@@ -262,7 +263,7 @@ class ProjectPopup(Popup, Themeable):
     def __init__(self, **kwargs):
         super(ProjectPopup, self).__init__(**kwargs)
         # self.project = project
-        self.default_color = [47 / 255., 167 / 255., 212 / 255., 1.]
+        self.default_color = self.theme.selected
         self.selected_project = __projects__.default
         self.project_list = None
         self.ids.color_selector.load_color_buttons()
@@ -340,7 +341,7 @@ class ColorSelectionWindow(GridLayout):
 
     def load_color_buttons(self):
         self.cols = 11
-        for name, color in __project_colors__.get_name_and_hex_values():
+        for name, color in PROJECT_COLORS.get_name_and_hex_values():
             self.add_widget(ColorSelectionButton(name, color))
 
     def find_and_select_button(self, hex):
@@ -408,6 +409,7 @@ class TaskScreen(Popup, Themeable):
         self.bg_shade_color[3] = .7
         self.bg_popup_color = self.theme.list_bg
         self.label_color = self.theme.text
+        self.separator_color = self.theme.selected
 
     def theme_update(self):
         self.bg_shade_color = self.theme.list_bg
@@ -485,7 +487,7 @@ class TaskEditScreen(TaskScreen):
     def update_task(self, selector_open):
         if not selector_open:
             if self.list_changed_flag:
-                task_list_screen =  #todo: get reference to Task list screen.
+                task_list_screen = APP_CONTROL.task_list_screen
                 self.task.parent.remove_widget(self.task)
                 task_list_screen.add_task_to_list(self.task, self.list_selection)
                 DB.task_switch(self.task.uuid, self.list_selection)

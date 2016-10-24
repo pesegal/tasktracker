@@ -48,7 +48,22 @@ class Colors(Borg):
                 yield color, get_color_from_hex(self.colors[key][color])
 
 
-__project_colors__ = Colors('colors.conf')
+class AppController(Borg):
+    def __init__(self):
+        super().__init__()
+        self.click_drag_screen = None
+        self.task_list_screen = None
+        self.timer_screen = None
+        self.screen_controller = None
+        self.timer_screen = None
+        self.timer_task_manager = None
+        self.menu_bar = None
+
+# Global Instance Init
+APP_CONTROL = AppController()
+PROJECT_COLORS = Colors('colors.conf')
+
+
 
 """ FUTURE SETTINGS MENU FEATURES
 

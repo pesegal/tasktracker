@@ -7,7 +7,7 @@ from tasktracker.task.taskcontainer import TaskScrollContainer
 from tasktracker.mixins import Broadcast
 from tasktracker.database.db_interface import DB
 from tasktracker.task.task import Task
-
+from tasktracker.settings import APP_CONTROL
 
 class TaskListView(FloatLayout, Broadcast):
     """
@@ -98,6 +98,9 @@ class TaskListScreen(Screen, Broadcast):
 
         # current size of screen
         self.width_state = 0
+
+        # Register reference in app control singleton
+        APP_CONTROL.task_list_screen = self
 
         self.current_display = TaskListView(self.today_list)
         self.add_widget(self.current_display)
