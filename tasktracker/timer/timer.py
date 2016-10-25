@@ -165,7 +165,12 @@ class TimerTaskDisplayManager(BoxLayout):
         self.clear_widgets()
         # TODO: Add in parts to write to the database when a task is switched in mid session.
         # TODO: What is the behavior when switching out a task mid timer session?
-        self.selected = TaskDisplay(task.uuid, task.tasktext.text, task.notes, task.project.db_id)
+        project_id = task.project
+        if not task.project:
+            project_id = 0
+        else:
+            project_id = task.project.db_id
+        self.selected = TaskDisplay(task.uuid, task.tasktext.text, task.notes, project_id)
         self.add_widget(self.selected)
         print(self.selected.uuid)
         print(self.selected.tasktext.text)

@@ -131,11 +131,11 @@ class MenuButton(Button, Themeable):
         self.press_color[3] = .4
         self.text_color[3] = .88
 
-    def on_press(self):
-        self.background_color = self.press_color
-
-    def on_release(self):
-        self.background_color = self.bg_color
+    def on_state(self, widget, value):
+        if self.state == 'down':
+            self.background_color = self.press_color
+        else:
+            self.background_color = self.bg_color
 
     def execute_function(self, function):
         pass

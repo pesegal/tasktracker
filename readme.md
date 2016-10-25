@@ -54,5 +54,5 @@ This includes a timer to help keep focus and statistical tracking to see how muc
 + Crash when project selector spinner is open and the edit button is pressed.
 + Fix Multi Touch Task repositioning.
 + Make sure that swapping lists is multi-touch protected.
-+ Menu Button color not reset to transparent with clicking dragging away.
++ ~~Menu Button color not reset to transparent with clicking dragging away.~~
 + ~~Tasklist Label jumping incorrect amount when scroll view active on release of task~~
