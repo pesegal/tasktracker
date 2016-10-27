@@ -8,6 +8,8 @@ import sqlite3
 from datetime import datetime
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
+from tasktracker.settings import TIMER
+
 
 class Database:
     """
@@ -55,7 +57,9 @@ class Database:
 
     def update_task_list_index(self, index, task_id):
         self.cursor.execute('UPDATE tasks SET list_pos = ? WHERE id = ?', (index, task_id))
-        self.connection.commit()
+
+    def commit(self):
+        self.connection.commit()  # TODO: Figure out why update_task_list_index is so slow on windows.
 
     def update_task(self, task_id, name, notes, project_id):
         print(name, notes, project_id, task_id)
