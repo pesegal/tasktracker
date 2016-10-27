@@ -12,7 +12,6 @@ from kivy.animation import Animation
 
 from tasktracker.database.db_interface import DB
 
-from tasktracker.settings import TIMER
 
 class ListLabels(Label, Themeable):
     shadow_texture = StringProperty(ALL_BEV_CORNERS)

@@ -6,9 +6,8 @@ import os
 import os.path
 import sqlite3
 from datetime import datetime
-__location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
-from tasktracker.settings import TIMER
+__location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
 
 class Database:
