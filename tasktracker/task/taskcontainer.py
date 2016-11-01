@@ -124,9 +124,10 @@ class TaskList(GridLayout):
 
     def update_list_positions(self):
         print(self.parent.name)
-        for index, child in enumerate(self.children): #
-            DB.update_task_list_index(index, child.uuid)
-        DB.commit()
+        tasks_to_update = list()
+        for index, child in enumerate(self.children):
+            tasks_to_update.append((index, child.uuid))
+        DB.execute_statement(DB.update_task_list_index, tasks_to_update)
 
     def _update_parent_height(self, widget, height):
         self.parent.resize_height(widget, height)

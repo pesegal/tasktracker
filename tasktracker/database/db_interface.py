@@ -6,6 +6,8 @@ import os
 import os.path
 import sqlite3
 from datetime import datetime
+from threading import Thread
+import time
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
@@ -25,11 +27,26 @@ class Database:
         elif not os.access(self.path, os.R_OK):
             raise PermissionError("File not readable.", self.path)
 
-        self.open_connection()
+        self._open_connection()
         self.cursor.execute('PRAGMA foreign_keys = ON')
 
-    def open_connection(self):
+        self._db_run = True
+
+        self.db_thread = Thread(target=self._data_base_access_loop)
+        self.db_thread.start()
+
+    def _data_base_access_loop(self):
+        while self._db_run:
+            print("Database Thread running, id:", self.db_thread.ident)
+            time.sleep(1)
+        print('process_ending')
+
+    def thread_shutdown(self):
+        self._db_run = False
+
+    def _open_connection(self):
         self.connection = sqlite3.connect(self.path)
+        self.connection2 = sqlite3.connect(self.path)
         self.cursor = self.connection.cursor()
 
     def load_all_tasks(self):
@@ -54,8 +71,9 @@ class Database:
         self.connection.commit()
         return task_id
 
-    def update_task_list_index(self, index, task_id):
-        self.cursor.execute('UPDATE tasks SET list_pos = ? WHERE id = ?', (index, task_id))
+    def update_task_list_index(self, list_of_tasks):
+        self.cursor.executemany('UPDATE tasks SET list_pos = ? WHERE id = ?', list_of_tasks)
+        self.connection.commit()
 
     def commit(self):
         self.connection.commit()  # TODO: Figure out why update_task_list_index is so slow on windows.
