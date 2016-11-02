@@ -7,6 +7,7 @@ import os.path
 import sqlite3
 from datetime import datetime
 from threading import Thread
+from queue import Queue
 import time
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
@@ -32,14 +33,17 @@ class Database:
 
         self._db_run = True
 
-        self.db_thread = Thread(target=self._data_base_access_loop)
+        self.db_thread = Thread(target=self._database_writer)
         self.db_thread.start()
 
-    def _data_base_access_loop(self):
+    def _database_writer(self):
         while self._db_run:
             print("Database Thread running, id:", self.db_thread.ident)
             time.sleep(1)
         print('process_ending')
+
+    def _database_reader(self):
+        pass
 
     def thread_shutdown(self):
         self._db_run = False
