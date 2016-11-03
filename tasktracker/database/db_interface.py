@@ -12,6 +12,10 @@ import time
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
+class SqlTask:
+    def __init__(self, function,  ):
+        self.function = None
+        self.statements = []
 
 class Database:
     """
@@ -21,35 +25,40 @@ class Database:
 
     def __init__(self, path):
         self.path = path
-        self.connection = None
-        self.cursor = None
+
         if not os.path.isfile(self.path):
             raise FileExistsError("File not found.", self.path)
         elif not os.access(self.path, os.R_OK):
             raise PermissionError("File not readable.", self.path)
 
         self._open_connection()
-        self.cursor.execute('PRAGMA foreign_keys = ON')
+        self.action_queue = Queue()
 
-        self._db_run = True
 
-        self.db_thread = Thread(target=self._database_writer)
+        self.db_thread = Thread(target=self._database_loop, args=(self.path,))
         self.db_thread.start()
 
-    def _database_writer(self):
-        while self._db_run:
-            print("Database Thread running, id:", self.db_thread.ident)
-            time.sleep(1)
-        print('process_ending')
+    def _database_loop(self, path):
+        connection = sqlite3.connect(self.path)
+        cursor = self.connection.cursor()
+        cursor.execute('PRAGMA foreign_keys = ON')
+
+        while True:
+            item = self.writer_queue.get()
+            if not function:
+                break
+        print('Thread Shutting Down')
+
 
     def _database_reader(self):
         pass
 
     def thread_shutdown(self):
-        self._db_run = False
+
+
+
 
     def _open_connection(self):
-        self.connection = sqlite3.connect(self.path)
         self.connection2 = sqlite3.connect(self.path)
         self.cursor = self.connection.cursor()
 
