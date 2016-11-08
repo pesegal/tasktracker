@@ -114,11 +114,10 @@ class TaskListScreen(Screen, Broadcast):
 
         self.current_touch_pos = None
 
-        # loading tasks from database
-        self.load_tasks_on_startup()
+        # Init loading tasks from database
+        DB.load_all_tasks(self._tasks_loaded)
 
-    def load_tasks_on_startup(self):
-        loaded_tasks = DB.load_all_tasks()
+    def _tasks_loaded(self, loaded_tasks, dt):
         for record in loaded_tasks:
             self.add_task_to_list(Task(record[0], record[6], record[7], record[3]), record[4] - 1)
 

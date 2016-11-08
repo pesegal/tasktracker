@@ -8,14 +8,27 @@ import sqlite3
 from datetime import datetime
 from threading import Thread
 from queue import Queue
+from kivy.clock import Clock
+from functools import partial
 import time
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
+
 class SqlTask:
-    def __init__(self, function,  ):
-        self.function = None
-        self.statements = []
+    def __init__(self, statement, args=None, function=None, callback=None):
+        self.function = function  # The function to call when returning sql data. E.G. 'fetchone()
+        self.statement = statement
+        self.args = args
+        self.callback = callback
+
+    def __str__(self):
+        return """SqlTask Object: -----------------------------------------------------------
+                  Statement: %s
+                  Arguments: %s
+                  Function:  %s
+                  Callback:  %s""" % (self.statement, self.args, self.function, self.callback)
+
 
 class Database:
     """
@@ -31,44 +44,85 @@ class Database:
         elif not os.access(self.path, os.R_OK):
             raise PermissionError("File not readable.", self.path)
 
-        self._open_connection()
         self.action_queue = Queue()
-
-
         self.db_thread = Thread(target=self._database_loop, args=(self.path,))
         self.db_thread.start()
 
     def _database_loop(self, path):
-        connection = sqlite3.connect(self.path)
-        cursor = self.connection.cursor()
+        connection = sqlite3.connect(path)
+        cursor = connection.cursor()
         cursor.execute('PRAGMA foreign_keys = ON')
 
         while True:
-            item = self.writer_queue.get()
-            if not function:
+            item = self.action_queue.get()
+            print(item)
+            if item.statement == 'shutdown':
                 break
-        print('Thread Shutting Down')
+            print('Running Statement:', item.statement)
 
+            if item.args:
+                cursor.execute(item.statement, item.args)
+            else:
+                cursor.execute(item.statement)
 
-    def _database_reader(self):
-        pass
+            if item.function and item.callback:
+                result = getattr(cursor, item.function)()
+                print("RETURNING RESULT:", result)
+                Clock.schedule_once(partial(item.callback, result))
+
+            if self.action_queue.empty() or item.function == 'force_commit':
+                connection.commit()
+
+            print('Finishing Task')
+            self.action_queue.task_done()
+
+        print('Thread Shutting Down', self.db_thread.ident)
+        connection.close()
 
     def thread_shutdown(self):
+        self.action_queue.put(SqlTask('shutdown'))
 
+    def load_all_tasks(self, callback):
+        self.action_queue.put(
+            SqlTask("SELECT * FROM tasks ORDER BY list_id, list_pos ASC;",
+                    function='fetchall',
+                    callback=callback)
+        )
 
+    def load_all_projects(self, callback):
+        self.action_queue.put(
+            SqlTask('SELECT * FROM projects;',
+                    function='fetchall',
+                    callback=callback)
+            )
+        self.action_queue.join()
 
+    def update_task_list_index(self, index, task_id):
+        self.action_queue.put(
+            SqlTask('UPDATE tasks SET list_pos = ? WHERE id = ?;',
+                    args=(index, task_id))
+        )
+        # self.action_queue.join()  # Uncomment this to see the advantage of multi-threading!
 
-    def _open_connection(self):
-        self.connection2 = sqlite3.connect(self.path)
-        self.cursor = self.connection.cursor()
+    def task_switch(self, task_id, list_id):
+        print("Task List Switching: ", list_id)
+        list_id += 1
+        self.action_queue.put(
+            SqlTask('INSERT INTO column_history(creation_date, task_id, column_id) VALUES (?,?,?);',
+                    args=(datetime.now(), task_id, list_id))
+        )
+        self.action_queue.put(
+            SqlTask(
+                'UPDATE tasks SET list_id = ? WHERE id = ?;',
+                args=(list_id, task_id))
+        )
 
-    def load_all_tasks(self):
-        self.cursor.execute("SELECT * FROM tasks ORDER BY list_id, list_pos ASC;")
-        return self.cursor.fetchall()
+    # TODO: Functions Below Need Update with multi-threading
 
     def load_task_data(self, task_id):
         self.cursor.execute('SELECT * FROM tasks WHERE id = ?;', (task_id,))
         return self.cursor.fetchone()
+
 
     def add_new_task(self, task_name, task_notes, list_id, list_pos, project_id=0):
         now = datetime.now()
@@ -83,10 +137,6 @@ class Database:
 
         self.connection.commit()
         return task_id
-
-    def update_task_list_index(self, list_of_tasks):
-        self.cursor.executemany('UPDATE tasks SET list_pos = ? WHERE id = ?', list_of_tasks)
-        self.connection.commit()
 
     def commit(self):
         self.connection.commit()  # TODO: Figure out why update_task_list_index is so slow on windows.
@@ -104,22 +154,11 @@ class Database:
                             (now, list_id, task_id))
         self.connection.commit()
 
-    def task_switch(self, task_id, list_id):
-        print("Task List Switching: ", list_id)
-        list_id += 1
-        self.cursor.execute('INSERT INTO column_history(creation_date, task_id, column_id) VALUES (?,?,?);',
-                            (datetime.now(), task_id, list_id))
-        self.cursor.execute('UPDATE tasks SET list_id = ? WHERE id = ?;', (list_id, task_id))
-        self.connection.commit()
 
     def write_task_action(self, action):
         self.cursor.execute('INSERT INTO task_actions(task_id, creation_date, finish_date, action_id) VALUES (?,?,?,?);',
                             (action.task_id, action.start_time, action.finish_time, action.type))
         self.connection.commit()
-
-    def load_all_projects(self):
-        self.cursor.execute('SELECT * FROM projects;')
-        return self.cursor.fetchall()
 
     def new_project(self, name, color, color_name):
         self.cursor.execute('INSERT INTO projects(creation_date, name, color, color_name) VALUES (?,?,?,?);',

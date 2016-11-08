@@ -68,17 +68,21 @@ class ProjectList:
         super(ProjectList, self).__init__()
         self.project_list = list()
         self.load_all_projects()
-        self.default = self.project_list[0]
-        self.selected_project = self.default
 
     def __call__(self):
         return self.project_list
 
     def load_all_projects(self):
+        DB.load_all_projects(self._loaded_all_projects)
+
+    def _loaded_all_projects(self, projects, dt):
         self.project_list = list()
-        projects = DB.load_all_projects()
         for project in projects:
             self.project_list.append(Project(*project))
+
+            # TODO: DO THESE TWO LINES CAUSE AN ISSUE?
+        self.default = self.project_list[0]
+        self.selected_project = self.default
 
     def change_project_by_id(self, project_id):
         self.selected_project = self.return_project_by_id(project_id)
