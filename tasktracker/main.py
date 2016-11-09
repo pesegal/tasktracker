@@ -18,8 +18,9 @@ layout_path = os.path.join(__location__, 'layouts')
 
 
 def exception_shutdown(exctype, value, tb):
-    print(exctype, value, tb)
     DB.thread_shutdown()
+    tb.print_tb()
+    print(exctype, value, tb)
 
 
 class TaskApp(App):
@@ -31,7 +32,6 @@ class TaskApp(App):
 
     def on_stop(self):
         DB.thread_shutdown()
-
 
 
 if __name__ == '__main__':

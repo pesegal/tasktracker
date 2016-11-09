@@ -329,10 +329,12 @@ class ProjectPopup(Popup, Themeable):
             name, color = self.ids.project_title.text, self.current_selected_color
             color_name = self.current_selected_color_name
             if name != "" and color:
-                pid = DB.new_project(name, color, color_name)
-                __projects__.load_all_projects()
-                __projects__.change_project_by_id(pid)
+                DB.new_project(name, color, color_name, self._new_project_finished)
         self.dismiss()
+
+    def _new_project_finished(self, pid, td):
+        __projects__.load_all_projects()
+        __projects__.change_project_by_id(pid[0])
 
 
 class ColorSelectionWindow(GridLayout):
@@ -447,14 +449,17 @@ class TaskCreationScreen(TaskScreen):
 
     def create_task(self, selector_open):
         if not selector_open:
-            t_list = self.parent.children[-1].children[0].screen_controller.tasks  # todo: can this be done better?
+            t_list = APP_CONTROL.task_list_screen
             new_task_index = t_list.get_list_length(self.list_selection)
-            task_id = DB.add_new_task(self.task_name.text, self.notes.text, self.list_selection,
-                                      new_task_index, __projects__.selected_project.db_id)
-            task = Task(task_id, self.task_name.text, self.notes.text)
-            t_list.add_task_to_list(task, self.list_selection)
-            task.project = __projects__.selected_project
+            DB.add_new_task(self.task_name.text, self.notes.text, self.list_selection,
+                            new_task_index, __projects__.selected_project.db_id,
+                            self._task_creation_finalization)
             self.dismiss()
+
+    def _task_creation_finalization(self, task_id):
+        task = Task(task_id, self.task_name.text, self.notes.text)
+        APP_CONTROL.task_list_screen.add_task_to_list(task, self.list_selection)
+        task.project = __projects__.selected_project
 
 
 class TaskEditScreen(TaskScreen):
@@ -463,12 +468,11 @@ class TaskEditScreen(TaskScreen):
     def __init__(self, task, **kwargs):
         super(TaskEditScreen, self).__init__(**kwargs)
         self.list_changed_flag = False
-        self._load_task_data(task.uuid)
+        DB.load_task_data(task.uuid, self._load_task_data)
         self.task = task
         # Todo: Look into setting the separator bar to the selected projects color!
 
-    def _load_task_data(self, task_id):
-        task_data = DB.load_task_data(task_id)
+    def _load_task_data(self, task_data, td):
         self.task_name.text = task_data[6]
         self.notes.text = task_data[7]
 

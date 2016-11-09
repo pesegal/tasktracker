@@ -10,7 +10,7 @@ from threading import Thread
 from queue import Queue
 from kivy.clock import Clock
 from functools import partial
-import time
+
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
@@ -58,7 +58,6 @@ class Database:
             print(item)
             if item.statement == 'shutdown':
                 break
-            print('Running Statement:', item.statement)
 
             if item.args:
                 cursor.execute(item.statement, item.args)
@@ -67,10 +66,12 @@ class Database:
 
             if item.function and item.callback:
                 result = getattr(cursor, item.function)()
-                print("RETURNING RESULT:", result)
+
+                print('returning result', result)
                 Clock.schedule_once(partial(item.callback, result))
 
             if self.action_queue.empty() or item.function == 'force_commit':
+                print('Commit')
                 connection.commit()
 
             print('Finishing Task')
@@ -102,81 +103,87 @@ class Database:
             SqlTask('UPDATE tasks SET list_pos = ? WHERE id = ?;',
                     args=(index, task_id))
         )
-        # self.action_queue.join()  # Uncomment this to see the advantage of multi-threading!
+        # Uncomment this to see the advantage of multi-threading!
 
     def task_switch(self, task_id, list_id):
-        print("Task List Switching: ", list_id)
         list_id += 1
         self.action_queue.put(
             SqlTask('INSERT INTO column_history(creation_date, task_id, column_id) VALUES (?,?,?);',
                     args=(datetime.now(), task_id, list_id))
         )
         self.action_queue.put(
-            SqlTask(
-                'UPDATE tasks SET list_id = ? WHERE id = ?;',
-                args=(list_id, task_id))
+            SqlTask('UPDATE tasks SET list_id = ? WHERE id = ?;', args=(list_id, task_id))
         )
 
-    # TODO: Functions Below Need Update with multi-threading
+    def load_task_data(self, task_id, callback):
+        self.action_queue.put(
+            SqlTask('SELECT * FROM tasks WHERE id = ?;',
+                    args=(task_id,),
+                    function='fetchone',
+                    callback=callback)
+        )
 
-    def load_task_data(self, task_id):
-        self.cursor.execute('SELECT * FROM tasks WHERE id = ?;', (task_id,))
-        return self.cursor.fetchone()
-
-
-    def add_new_task(self, task_name, task_notes, list_id, list_pos, project_id=0):
+    def add_new_task(self, task_name, task_notes, list_id, list_pos, project_id, callback):
         now = datetime.now()
         list_id += 1
-        # Insert the task record
-        self.cursor.execute('INSERT INTO tasks(creation_date, project_id, list_id, list_pos, name, notes)' +
-                            ' VALUES (?,?,?,?,?,?);', (now, project_id, list_id, list_pos, task_name, task_notes))
-        task_id = self.cursor.lastrowid
-        # Insert the column history record
-        self.cursor.execute('INSERT INTO column_history(creation_date, task_id, column_id) VALUES (?,?,?);',
-                            (now, task_id, list_id))
 
-        self.connection.commit()
-        return task_id
+        def _return_last_id(row_id, td):
+            self.action_queue.put(
+                SqlTask('INSERT INTO column_history(creation_date, task_id, column_id) VALUES (?,?,?);',
+                        args=(now, row_id[0], list_id))
+            )
+            callback(row_id)
 
-    def commit(self):
-        self.connection.commit()  # TODO: Figure out why update_task_list_index is so slow on windows.
+        self.action_queue.put(
+            SqlTask('INSERT INTO tasks(creation_date, project_id, list_id, list_pos, name, notes) VALUES (?,?,?,?,?,?);',
+                    args=(now, project_id, list_id, list_pos, task_name, task_notes)
+                    )
+        )
+        self.action_queue.put(
+            SqlTask('SELECT max(id) FROM tasks;',
+                    function='fetchone',
+                    callback=_return_last_id
+            )
+        )
 
     def update_task(self, task_id, name, notes, project_id):
-        print(name, notes, project_id, task_id)
-        self.cursor.execute('UPDATE tasks SET name = ?, notes = ?, project_id = ? WHERE id = ?;',
-                            (name, notes, project_id, task_id))
-        self.connection.commit()
+        self.action_queue.put(
+            SqlTask('UPDATE tasks SET name = ?, notes = ?, project_id = ? WHERE id = ?;',
+                    args=(name, notes, project_id, task_id))
+        )
 
     def delete_task(self, task_id, list_id):
         now = datetime.now()
         list_id += 1
-        self.cursor.execute('UPDATE tasks SET deletion_date=?, list_id=? WHERE id=?;',
-                            (now, list_id, task_id))
-        self.connection.commit()
-
+        self.action_queue.put(
+            SqlTask('UPDATE tasks SET deletion_date=?, list_id=? WHERE id=?;',
+                    args=(now, list_id, task_id))
+        )
 
     def write_task_action(self, action):
-        self.cursor.execute('INSERT INTO task_actions(task_id, creation_date, finish_date, action_id) VALUES (?,?,?,?);',
-                            (action.task_id, action.start_time, action.finish_time, action.type))
-        self.connection.commit()
+        self.action_queue.put(
+            SqlTask('INSERT INTO task_actions(task_id, creation_date, finish_date, action_id) VALUES (?,?,?,?);',
+                    args=(action.task_id, action.start_time, action.finish_time, action.type))
+        )
 
-    def new_project(self, name, color, color_name):
-        self.cursor.execute('INSERT INTO projects(creation_date, name, color, color_name) VALUES (?,?,?,?);',
-                            (datetime.now(), name, color, color_name))
-        project_id = self.cursor.lastrowid
-        self.connection.commit()
-        return project_id
+    def new_project(self, name, color, color_name, callback):
+        self.action_queue.put(
+            SqlTask('INSERT INTO projects(creation_date, name, color, color_name) VALUES (?,?,?,?);',
+                    args=(datetime.now(), name, color, color_name))
+        )
+        self.action_queue.put(
+            SqlTask('SELECT max(id) FROM projects;',
+                    function='fetchone',
+                    callback=callback)
+        )
 
     def update_project(self, project):
-        self.cursor.execute('UPDATE projects SET name = ?, color = ?, color_name = ? WHERE id = ?;',
-                            (project.name, project.color, project.color_name, project.db_id))
-        self.connection.commit()
+        self.action_queue.put(
+            SqlTask('UPDATE projects SET name = ?, color = ?, color_name = ? WHERE id = ?;',
+                    args=(project.name, project.color, project.color_name, project.db_id))
+        )
 
     def delete_project(self, project):
         pass
-
-    def close_connection(self):
-        self.connection.close()
-
 
 DB = Database(os.path.join(__location__, 'tt_dev.db'))
