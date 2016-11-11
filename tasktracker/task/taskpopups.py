@@ -130,7 +130,7 @@ class ProjectSpinnerOption(SpinnerOption, Themeable):
     def __init__(self, **kwargs):
         super(ProjectSpinnerOption, self).__init__(**kwargs)
         if self.text != 'No Project':
-            self.project_object = __projects__.return_project_by_name(self.text)
+            self.project_object = PROJECT_LIST.return_project_by_name(self.text)
             self.project_object.register(self)
             self.set_project_color(get_color_from_hex(self.project_object.color))
         else:
@@ -197,8 +197,8 @@ class ProjectSelector(Spinner, Themeable):
             self.values.append(project.name)
 
     def project_change(self, spinner, text):
-        __projects__.change_project(text)
-        self.parent.new_project_button_label_update(__projects__.selected_project)
+        PROJECT_LIST.change_project(text)
+        self.parent.new_project_button_label_update(PROJECT_LIST.selected_project)
 
     def set_drop_down_height(self, height, offset):
         self.dropdown_cls.max_height = height - offset
@@ -218,14 +218,14 @@ class ProjectPopupSelector(ProjectSelector):
 
     def __init__(self, **kwargs):
         super(ProjectPopupSelector, self).__init__(**kwargs)
-        self.set_project(__projects__.selected_project)
-        self.load_projects(__projects__())
+        self.set_project(PROJECT_LIST.selected_project)
+        self.load_projects(PROJECT_LIST())
         self.height_offset = 150
 
     def project_change(self, spinner, text):
-        __projects__.change_project(text)
+        PROJECT_LIST.change_project(text)
         if self.popup:
-            self.popup.set_selected_project(__projects__.selected_project)
+            self.popup.set_selected_project(PROJECT_LIST.selected_project)
 
 
 class ProjectSelectionSection(BoxLayout):
@@ -238,11 +238,11 @@ class ProjectSelectionSection(BoxLayout):
     def open_project_screen(self):
         # send the task project or None
         self.task_screen.project_popup.open()
-        self.task_screen.project_popup.set_project_list(__projects__())
-        self.task_screen.project_popup.set_selected_project(__projects__.selected_project)
+        self.task_screen.project_popup.set_project_list(PROJECT_LIST())
+        self.task_screen.project_popup.set_selected_project(PROJECT_LIST.selected_project)
 
     def new_project_button_label_update(self, project):
-        if project == __projects__.default:
+        if project == PROJECT_LIST.default:
             self.ids.new_project.text = "New"
         else:
             self.ids.new_project.text = "Edit"
@@ -268,7 +268,7 @@ class ProjectPopup(Popup, Themeable):
         super(ProjectPopup, self).__init__(**kwargs)
         # self.project = project
         self.default_color = self.theme.selected
-        self.selected_project = __projects__.default
+        self.selected_project = PROJECT_LIST.default
         self.project_list = None
         self.ids.color_selector.load_color_buttons()
         self.current_selected_color = None
@@ -296,7 +296,7 @@ class ProjectPopup(Popup, Themeable):
         self.current_selected_color = self.selected_project.color
         self.current_selected_color_name = self.selected_project.color_name
 
-        if self.selected_project == __projects__.default:
+        if self.selected_project == PROJECT_LIST.default:
             self.edit = False
             self.title = 'Create a New Project'
             self.ids.project_title.text = ''
@@ -333,8 +333,8 @@ class ProjectPopup(Popup, Themeable):
         self.dismiss()
 
     def _new_project_finished(self, pid, td):
-        __projects__.load_all_projects()
-        __projects__.change_project_by_id(pid[0])
+        PROJECT_LIST.load_all_projects()
+        PROJECT_LIST.change_project_by_id(pid[0])
 
 
 class ColorSelectionWindow(GridLayout):
@@ -403,8 +403,8 @@ class TaskScreen(Popup, Themeable):
     def __init__(self, **kwargs):
         super(TaskScreen, self).__init__(**kwargs)
         self.project_popup = ProjectPopup()
-        self.ids.project_selection_section.ids.selector.set_project(__projects__.default)
-        self.ids.project_selection_section.ids.selector.load_projects(__projects__())
+        self.ids.project_selection_section.ids.selector.set_project(PROJECT_LIST.default)
+        self.ids.project_selection_section.ids.selector.load_projects(PROJECT_LIST())
         self.bind(height=self._set_max_height)
         self._set_max_height(self, self.height)
         self.project_popup.bind(on_open=self._project_popup_opened)
@@ -426,7 +426,7 @@ class TaskScreen(Popup, Themeable):
     def project_updated(self, popup):
         self.project_open = False
         self._set_max_height(self, self.height)
-        self.ids.project_selection_section.ids.selector.set_project(__projects__.selected_project)
+        self.ids.project_selection_section.ids.selector.set_project(PROJECT_LIST.selected_project)
 
     def _project_popup_opened(self, popup):
         self.project_open = True
@@ -452,14 +452,14 @@ class TaskCreationScreen(TaskScreen):
             t_list = APP_CONTROL.task_list_screen
             new_task_index = t_list.get_list_length(self.list_selection)
             DB.add_new_task(self.task_name.text, self.notes.text, self.list_selection,
-                            new_task_index, __projects__.selected_project.db_id,
+                            new_task_index, PROJECT_LIST.selected_project.db_id,
                             self._task_creation_finalization)
             self.dismiss()
 
     def _task_creation_finalization(self, task_id):
         task = Task(task_id, self.task_name.text, self.notes.text)
         APP_CONTROL.task_list_screen.add_task_to_list(task, self.list_selection)
-        task.project = __projects__.selected_project
+        task.project = PROJECT_LIST.selected_project
 
 
 class TaskEditScreen(TaskScreen):
@@ -487,8 +487,8 @@ class TaskEditScreen(TaskScreen):
             self.ids.archive_button.state = 'down'
 
         # Load correct project!
-        __projects__.selected_project = __projects__.return_project_by_id(task_data[3])
-        self.ids.project_selection_section.ids.selector.set_project(__projects__.selected_project)
+        PROJECT_LIST.selected_project = PROJECT_LIST.return_project_by_id(task_data[3])
+        self.ids.project_selection_section.ids.selector.set_project(PROJECT_LIST.selected_project)
 
         self.bind(list_selection=self.updated_list_flag)
 
@@ -502,11 +502,11 @@ class TaskEditScreen(TaskScreen):
                 self.task.parent.update_list_positions()
 
             # Update task in the database
-            DB.update_task(self.task.uuid, self.task_name.text, self.notes.text, __projects__.selected_project.db_id)
+            DB.update_task(self.task.uuid, self.task_name.text, self.notes.text, PROJECT_LIST.selected_project.db_id)
             # Update task in the current session
             self.task.set_text(self.task_name.text)
             self.task.notes = self.notes.text
-            self.task.project = __projects__.selected_project
+            self.task.project = PROJECT_LIST.selected_project
 
             self.dismiss()
 
@@ -590,5 +590,5 @@ class ThemedTextInput(TextInput, Themeable):
         self.background_color = self.theme.background
 
 
-__projects__ = ProjectList()
+PROJECT_LIST = ProjectList()
 Factory.register('project_spinner_option', cls=ProjectSpinnerOption)

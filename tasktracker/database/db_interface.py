@@ -66,15 +66,11 @@ class Database:
 
             if item.function and item.callback:
                 result = getattr(cursor, item.function)()
-
-                print('returning result', result)
                 Clock.schedule_once(partial(item.callback, result))
 
             if self.action_queue.empty() or item.function == 'force_commit':
-                print('Commit')
                 connection.commit()
 
-            print('Finishing Task')
             self.action_queue.task_done()
 
         print('Thread Shutting Down', self.db_thread.ident)

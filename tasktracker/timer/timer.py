@@ -122,6 +122,7 @@ class TimerScreen(Screen, Themeable):
     def _complete_task_action(self):
         self.current_task_action.finish_time = datetime.now()
         if not self.current_task_action.task_id == 0:  # TODO: Should no-task timer actions be recorded?
+            print('Writing Task Action. Type: %s' % self.current_task_action)
             DB.write_task_action(self.current_task_action)
         self.current_task_action = None
 

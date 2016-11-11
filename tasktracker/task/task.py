@@ -69,7 +69,7 @@ class Task(Button, TapAndHold, Themeable):
         self.bind(pos=self._label_position_update)
 
         if project_id != 0:
-            self.project = tasktracker.task.taskpopups.__projects__.return_project_by_id(project_id)
+            self.project = tasktracker.task.taskpopups.PROJECT_LIST.return_project_by_id(project_id)
         self._update_project_display(self, self.project)
         self.bind(project=self._update_project_display)
         self.notes = notes
