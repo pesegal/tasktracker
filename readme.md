@@ -10,7 +10,7 @@ This includes a timer to help keep focus and statistical tracking to see how muc
 #### Functionality:
 + Deletion of projects
 + ~~Deletion of tasks~~
-+ Right click bubble popup
++ ~~Right click bubble popup~~
 + Visualization of task selected for work and visual indicator of progress.
 + Sorting capabilities. (Alphabetical, By Project, Age, ect..) 
 
@@ -28,8 +28,8 @@ This includes a timer to help keep focus and statistical tracking to see how muc
 + Adding in the ability to check if a timer has been forgotten.
 
 #### Theme:
-+ Task holder slot empty view.
-+ Buttons, up state and down state.
++ ~~Task holder slot empty view.~~
++ ~~Buttons, up state and down state.~~
 + Clock font
 
 ### Stats Screen
@@ -49,10 +49,10 @@ This includes a timer to help keep focus and statistical tracking to see how muc
 + Ability to log-in and store data in the cloud.
 
 ## Bug List:
-+ Windows sqlite3 database write speed slowdown causing UX issues when click-drag.
++ ~~Windows sqlite3 database write speed slowdown causing UX issues when click-drag.~~
 + Task screen not resizing correctly when not focused on task screen.
-+ Crash when project selector spinner is open and the edit button is pressed.
-+ Fix Multi Touch Task repositioning.
++ ~~Crash when project selector spinner is open and the edit button is pressed.~~
++ ~~Fix Multi Touch Task repositioning.~~
 + Make sure that swapping lists is multi-touch protected.
 + ~~Menu Button color not reset to transparent with clicking dragging away.~~
 + ~~Tasklist Label jumping incorrect amount when scroll view active on release of task~~
