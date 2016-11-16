@@ -1,7 +1,7 @@
 from kivy.properties import NumericProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.floatlayout import FloatLayout
-from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.uix.screenmanager import ScreenManager
 from kivy.uix.screenmanager import FallOutTransition, SlideTransition,\
     SwapTransition, FadeTransition, WipeTransition, RiseInTransition
 from kivy.animation import Animation
@@ -16,6 +16,7 @@ from tasktracker.timer.timer import TimerScreen
 from tasktracker.themes.themes import Themeable
 from tasktracker.task.clickdragcontrol import CLICK_DRAG_CONTROLLER
 from tasktracker.task.bubblemenu import TaskQuickMenu
+from tasktracker.stats.statscontroller import StatsScreen
 from tasktracker.settings import APP_CONTROL
 
 
@@ -38,10 +39,6 @@ class ScreenController(ScreenManager, Broadcast, Themeable):
         self.transition = WipeTransition()
         self.transition.clearcolor = self.theme.background
         self.transition.duration = .08
-
-
-class StatsScreen(Screen):  # TODO: Break this out into it's own module eventually.
-    pass
 
 
 class ScreenMenuAndDisplay(BoxLayout, Broadcast):
