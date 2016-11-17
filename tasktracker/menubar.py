@@ -40,6 +40,7 @@ class MenuBar(BoxLayout, Broadcast, Themeable):
 
         APP_CONTROL.menu_bar = self
 
+
     def theme_update(self):
         self.menu_bar_bg_color = self.theme.status
 
