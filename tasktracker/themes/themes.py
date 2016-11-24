@@ -13,7 +13,7 @@ from kivy.utils import get_color_from_hex
 
 from tasktracker.settings import Borg
 
-__theme_config_path__ = './tasktracker/themes/themes.conf'
+__theme_config_path__ = './themes/themes.conf'
 
 # Texture Paths todo: replace with atlas
 NO_BEV_CORNERS = './themes/gfx/all_white.png'

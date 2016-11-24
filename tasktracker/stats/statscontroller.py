@@ -3,7 +3,7 @@ from kivy.garden.timeline import Timeline, TimeTick, selected_time_ticks
 from kivy.properties import ObjectProperty
 from kivy.metrics import dp
 
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 from tasktracker.settings import APP_CONTROL
 from tasktracker.themes import themes
@@ -14,7 +14,14 @@ class TaskTimeLine(Timeline):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.max_time = datetime.now(timezone.utc)
+
+        now = datetime.now(timezone.utc)
+        past_hour = now - timedelta(hours=1)
+
+        self.max_time = now
+
+        # Todo: Look into having to date selectors attached the screen to view work periods.
+        self.center_on_timeframe(past_hour, now)
 
     def redraw_(self, *args):
         super().redraw_(*args)

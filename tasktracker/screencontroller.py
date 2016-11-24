@@ -52,7 +52,7 @@ class ScreenMenuAndDisplay(BoxLayout, Broadcast):
         self.screen_controller = ScreenController()
         self.menu_bar = MenuBar()
 
-        # TODO: REMOVE THIS WHEN DONE MESSING WITH THE STATS SCREEN
+        # TODO: REMOVE THIS WHEN DONE DEVELOPING WITH THE STATS SCREEN
         self.screen_controller.current = 'stats'
 
         # This is where you transmit
