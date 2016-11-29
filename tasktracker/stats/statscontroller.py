@@ -25,7 +25,7 @@ class TaskTimeLine(Timeline):
 
     def redraw_(self, *args):
         super().redraw_(*args)
-        print(self.time_0, self.time_1)
+        print(self.time_0, self.time_1, 'Scale:', self.scale)
 
     def _print_stuff(self, *args):
         print(*args)

@@ -4,6 +4,7 @@
 """
 
 import weakref
+import os
 from configparser import ConfigParser
 from collections import namedtuple
 from kivy.uix.widget import Widget
@@ -13,15 +14,16 @@ from kivy.utils import get_color_from_hex
 
 from tasktracker.settings import Borg
 
-__theme_config_path__ = './themes/themes.conf'
+_theme_path = os.path.dirname(__file__)
+__theme_config_path__ = _theme_path + '/themes.conf'
 
 # Texture Paths todo: replace with atlas
-NO_BEV_CORNERS = './themes/gfx/all_white.png'
-ALL_BEV_CORNERS = './themes/gfx/all_white2.png'
-LEFT_BEV_CORNERS = './themes/gfx/all_white3.png'
-SHADOW_TEXTURE = './themes/gfx/shadow.png'
-BEV_SHADOW_TEXTURE = './themes/gfx/beveled_shadow.png'
-TRANSPARENT_TEXTURE = './themes/gfx/transparent.png'
+NO_BEV_CORNERS = _theme_path + '/gfx/all_white.png'
+ALL_BEV_CORNERS = _theme_path + '/gfx/all_white2.png'
+LEFT_BEV_CORNERS = _theme_path + '/gfx/all_white3.png'
+SHADOW_TEXTURE = _theme_path + '/gfx/shadow.png'
+BEV_SHADOW_TEXTURE = _theme_path + '/gfx/beveled_shadow.png'
+TRANSPARENT_TEXTURE = _theme_path + '/gfx/transparent.png'
 
 # Config Setup
 
