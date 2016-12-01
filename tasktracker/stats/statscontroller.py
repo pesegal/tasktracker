@@ -1,5 +1,5 @@
 from kivy.uix.screenmanager import Screen
-from kivy.garden.timeline import Timeline, TimeTick, selected_time_ticks
+from kivy.garden.timeline import Timeline, TimeTick, selected_time_ticks, round_time
 from kivy.properties import ObjectProperty
 from kivy.metrics import dp
 
@@ -21,7 +21,7 @@ class TaskTimeLine(Timeline):
         self.max_time = now
 
         # Todo: Look into having to date selectors attached the screen to view work periods.
-        self.center_on_timeframe(past_hour, now)
+        #self.center_on_timeframe(past_hour, now)
 
     def redraw_(self, *args):
         super().redraw_(*args)
@@ -31,6 +31,10 @@ class TaskTimeLine(Timeline):
         print(*args)
 
 
+class TaskTimeTicks(TimeTick):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.tick_color = [1, .5, 1, 1]
 
 
 class StatsScreen(Screen):  # TODO: Break this out into it's own module eventually.
@@ -38,6 +42,7 @@ class StatsScreen(Screen):  # TODO: Break this out into it's own module eventual
         super().__init__(**kwargs)
 
         time_ticks = [TimeTick(mode=TimeTick.mode.options[i], valign='line_top') for i in [0, 3, 5, 7, 9, 10, 12, 14, 15]]
+        time_ticks.append(TaskTimeTicks(valign='line_top'))
 
         test_timeline = TaskTimeLine(orientation='horizontal', ticks=time_ticks, line_width=1.)
 
