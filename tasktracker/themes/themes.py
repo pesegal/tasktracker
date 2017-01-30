@@ -28,7 +28,7 @@ TRANSPARENT_TEXTURE = _theme_path + '/gfx/transparent.png'
 # Config Setup
 
 # Global Color Helpers
-TRANSPARENT = [1, 1, 1, 0]
+TRANSPARENT  = [1, 1, 1, 0]
 SHADOW_COLOR = [0, 0, 0, .5]
 
 # Theme Object Definitions

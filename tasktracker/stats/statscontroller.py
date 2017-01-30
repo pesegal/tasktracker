@@ -9,6 +9,27 @@ from tasktracker.settings import APP_CONTROL
 from tasktracker.themes import themes
 
 
+class RecordPeriod:
+    """ A data structure that contains the period data.
+    """
+    def __init__(self, action_type, start_time, end_time, project_id=None):
+        self.action_type = action_type
+        self.start_time = start_time
+        self.end_time = end_time
+        self.project_id = project_id
+
+# TODO: Load task action history data based on specific date range.
+# Todo: Develop custom time line class that is like data list tick but for time periods.
+
+class PeriodDisplayTick(TimeTick):
+    pass
+
+    # Todo: Tie scale to a slider.
+    # Todo: Figure out how to do labeling correctly
+
+# Todo: Figure out what the default date range is.
+
+
 class TaskTimeLine(Timeline):
     testview = ObjectProperty(None)
 
@@ -45,15 +66,7 @@ class StatsScreen(Screen):  # TODO: Break this out into it's own module eventual
         time_ticks.append(TaskTimeTicks(valign='line_top'))
 
         test_timeline = TaskTimeLine(orientation='horizontal', ticks=time_ticks, line_width=1.)
-
         test_timeline.cover_background = False
 
         self.add_widget(test_timeline)
-
-
-
-
-
-
-
 

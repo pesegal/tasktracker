@@ -5,7 +5,7 @@
 import os
 import os.path
 import sqlite3
-from datetime import datetime
+from datetime import datetime, timezone
 from threading import Thread
 from queue import Queue
 from kivy.clock import Clock
@@ -105,7 +105,7 @@ class Database:
         list_id += 1
         self.action_queue.put(
             SqlTask('INSERT INTO column_history(creation_date, task_id, column_id) VALUES (?,?,?);',
-                    args=(datetime.now(), task_id, list_id))
+                    args=(datetime.now(timezone.utc), task_id, list_id))
         )
         self.action_queue.put(
             SqlTask('UPDATE tasks SET list_id = ? WHERE id = ?;', args=(list_id, task_id))
@@ -120,7 +120,7 @@ class Database:
         )
 
     def add_new_task(self, task_name, task_notes, list_id, list_pos, project_id, callback):
-        now = datetime.now()
+        now = datetime.now(timezone.utc)
         list_id += 1
 
         def _return_last_id(row_id, td):
@@ -149,7 +149,7 @@ class Database:
         )
 
     def delete_task(self, task_id, list_id):
-        now = datetime.now()
+        now = datetime.now(timezone.utc)
         list_id += 1
         self.action_queue.put(
             SqlTask('UPDATE tasks SET deletion_date=?, list_id=? WHERE id=?;',
@@ -165,7 +165,7 @@ class Database:
     def new_project(self, name, color, color_name, callback):
         self.action_queue.put(
             SqlTask('INSERT INTO projects(creation_date, name, color, color_name) VALUES (?,?,?,?);',
-                    args=(datetime.now(), name, color, color_name))
+                    args=(datetime.now(timezone.utc), name, color, color_name))
         )
         self.action_queue.put(
             SqlTask('SELECT max(id) FROM projects;',
