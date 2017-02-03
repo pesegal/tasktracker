@@ -30,44 +30,41 @@ class PeriodDisplayTick(TimeTick):
         self.data_list = data
 
     def tick_iter(self, tl):
+        """ Override :meth: 'TimeTick.tick_iter'
+            Returns RecordPeriod object's that fall within the current min and max display times.
+        """
         if self.scale(tl.scale) < self.min_space:
             raise StopIteration
 
         time_min, time_max = self.time_min_max(tl, extended=True)
 
         try:
-            # return the index of the first record that has a beginning or end time that is greater then min_time
+            data_index = self._starting_index(time_min, time_max)
+            if data_index is None:
+                raise StopIteration
 
-
-            # while condition()
-                # continue to return RecordPeriod Objects until either there are no more objects
-                # or the start time of the object is > then the time_max!
-
+            while self.data_list[data_index].start_time < time_max:
+                yield self.data_list[data_index]
+                data_index += 1
 
         except IndexError:
             raise StopIteration
 
-
-
-
-
-        # time = round_time(time_min, self.mode, 'up')
-        #
-        # delta = timedelta(seconds=self.granularity(self.mode))
-        #
-        # if self.mode == 'day' and tl.backward:
-        #     yield time - timedelta(days=1)
-        # while time <= time_max:
-        #     yield time
-        #     time += delta
-        # if self.mode == 'day' and not tl.backward:
-        #     yield time
-        # raise StopIteration
-
-
+    def _starting_index(self, time_min, time_max):
+        """ This function will return the index of the first record that falls within the display screen. If no
+        records match this then it will return None.
+        """
+        for record in self.data_list:
+            if record.start_time > time_min:
+                if not record.start_time > time_max:
+                    return self.data_list.index(record)
+                else:
+                    return None
+        return None
 
     def draw(self, tickline, time):
         # This needs to be over written so that it draws the data instead. To draw_tick
+        # TODO: Overwrite the draw method so that is correctly draws data from the record period object.
         pass
 
 
