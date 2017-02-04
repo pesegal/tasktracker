@@ -1,6 +1,6 @@
 from kivy.uix.screenmanager import Screen
 from kivy.garden.timeline import Timeline, TimeTick, selected_time_ticks, round_time
-from kivy.properties import ObjectProperty, ListProperty
+from kivy.properties import ObjectProperty, ListProperty, NumericProperty
 from kivy.metrics import dp
 
 from datetime import datetime, timezone, timedelta
@@ -24,10 +24,12 @@ class RecordPeriod:
 
 class PeriodDisplayTick(TimeTick):
     data_list = ListProperty([])
+    tick_height = NumericProperty(30)
 
-    def __init__(self, data, *args, **kw):
+    def __init__(self, data, tick_height=30, *args, **kw):
         super(PeriodDisplayTick, self).__init__(*args, **kw)
         self.data_list = data
+        self.tick_height = tick_height
 
     def tick_iter(self, tl):
         """ Override :meth: 'TimeTick.tick_iter'
@@ -62,13 +64,65 @@ class PeriodDisplayTick(TimeTick):
                     return None
         return None
 
-    def draw(self, tickline, time):
+    def draw(self, tickline, record, return_only=False):
         # This needs to be over written so that it draws the data instead. To draw_tick
+        # This function will be sent record objects to be displayed.
         # TODO: Overwrite the draw method so that is correctly draws data from the record period object.
-        pass
+
+        # Convert start time and end time to.
+        tick_pos, record_index = self.pos_index_of(tickline, record.start_time)
+        end_pos = self.pos_of(tickline, record.end_time)
+
+        tw, th = (end_pos - tick_pos, self.tick_height)
+        if tickline.is_vertical():
+            halign = self.halign
+            if halign == 'left':
+                x = tickline.x
+            elif halign == 'line_left':
+                x = tickline.line_pos - th
+            elif halign == 'line_right':
+                x = tickline.line_pos
+            else:
+                x = tickline.right - th
+            y = tick_pos - tw / 2
+            height, width = tw, th
+            if not return_only:
+                self._vertices.extend([x, y, 0, 0,
+                                       x, y + height, 0, 0,
+                                       x + width, y + height, 0, 0,
+                                       x + width, y, 0, 0,
+                                       x, y, 0, 0,
+                                       x, y + height, 0, 0])
+        else:
+            valign = self.valign
+            if valign == 'top':
+                y = tickline.top - th
+            elif valign == 'line_top':
+                y = tickline.line_pos
+            elif valign == 'line_bottom':
+                y = tickline.line_pos - th
+            else:
+                y = tickline.y
+            x = tick_pos - tw / 2
+            width, height = tw, th
+            if not return_only:
+                self._vertices.extend([x, y, 0, 0,
+                                       x + width, y, 0, 0,
+                                       x + width, y + height, 0, 0,
+                                       x, y + height, 0, 0,
+                                       x, y, 0, 0,
+                                       x + width, y, 0, 0])
+
+        tick_rect = (x, y, width, height)
+        tickline.labeller.regester(self, record_index, tick_rect)
+
+    def get_label_texture(self, index, succeinct=True, return_kw=False, return_lable=False, **kw):
+        # TODO: Look into what might be the best way to display this information. Project or task or total time?
+        # Todo: Figure out how to do labeling correctly
+        return None
 
 
-    # Todo: Figure out how to do labeling correctly
+# TODO: Develop test data to do the display correctly.
 
 # Todo: Figure out what the default date range is. For Testing make it all time?
 # TODO: Look into figuring out how to return more data when clicking on a specific item.Create a bubble popup with data.
