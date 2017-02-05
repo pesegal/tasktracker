@@ -53,7 +53,7 @@ class ScreenMenuAndDisplay(BoxLayout, Broadcast):
         self.menu_bar = MenuBar()
 
         # TODO: REMOVE THIS WHEN DONE DEVELOPING WITH THE STATS SCREEN
-        self.screen_controller.current = 'stats'
+        self.screen_controller.current = 'tasks'
 
         # This is where you transmit
         self.bind(screen_size=self.broadcast_window_resize)
@@ -148,7 +148,7 @@ class ScreenClickDragWindow(FloatLayout, Broadcast):
 
         widget_list = []
 
-        for widget in self.walk():  # Todo Try setting to true?
+        for widget in self.walk():
             widget_list.append(widget)
             if widget in self.children:  # Skip currently selected task.
                 continue

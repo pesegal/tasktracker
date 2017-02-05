@@ -1,7 +1,7 @@
 """ The Timer module contains all of the controller logic for the timer In the system.
 """
 
-from datetime import datetime
+from datetime import datetime, timezone
 
 from kivy.clock import Clock
 from kivy.uix.screenmanager import Screen
@@ -59,7 +59,7 @@ class TimerScreen(Screen, Themeable):
         self._timer_display_update()
         self.current_timer_function = None
         self.current_task_action = None
-        self.task_action_type = 1
+        self.task_action_type = 2
         APP_CONTROL.timer_screen = self
 
     def theme_update(self):
@@ -97,7 +97,7 @@ class TimerScreen(Screen, Themeable):
             Clock.unschedule(self._clock_event)
             if self.timer_in_progress:
                 self._complete_task_action()
-                self.current_task_action = TaskAction(task_id, 3, datetime.now())
+                self.current_task_action = TaskAction(task_id, 3, datetime.now(timezone.utc))
             self.timer_active = False
         else:
             self._clock_event = Clock.schedule_interval(self.current_timer_function, 0.016)
@@ -108,7 +108,7 @@ class TimerScreen(Screen, Themeable):
             self.timer_in_progress = True
 
         if not self.current_task_action:
-            self.current_task_action = TaskAction(task_id, self.task_action_type, datetime.now())
+            self.current_task_action = TaskAction(task_id, self.task_action_type, datetime.now(timezone.utc))
 
     def timer_reset(self):
         if self.timer_active or self.timer_in_progress:
@@ -120,7 +120,7 @@ class TimerScreen(Screen, Themeable):
             self.switch_timer_type(self.timer_type_selection)
 
     def _complete_task_action(self):
-        self.current_task_action.finish_time = datetime.now()
+        self.current_task_action.finish_time = datetime.now(timezone.utc)
         if not self.current_task_action.task_id == 0:  # TODO: Should no-task timer actions be recorded?
             print('Writing Task Action. Type: %s' % self.current_task_action)
             DB.write_task_action(self.current_task_action)

@@ -121,6 +121,8 @@ class PeriodDisplayTick(TimeTick):
         # Todo: Figure out how to do labeling correctly
         return None
 
+    # TODO: Develop a function that will return the current displayed period on a click.
+
 
 # TODO: Develop test data to do the display correctly.
 
@@ -163,5 +165,5 @@ class StatsScreen(Screen):  # TODO: Break this out into it's own module eventual
         # test_timeline.cover_background = False
         # self.add_widget(test_timeline)
 
-        PeriodDisplayTick(data=[1,2,3,4,5])
+
 

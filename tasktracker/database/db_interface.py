@@ -179,6 +179,9 @@ class Database:
                     args=(project.name, project.color, project.color_name, project.db_id))
         )
 
+    def load_task_actions(self, start_time, end_time):
+        pass
+
     def delete_project(self, project):
         pass
 

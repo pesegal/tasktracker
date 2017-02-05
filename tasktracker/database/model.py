@@ -7,12 +7,12 @@ import sqlite3
 from datetime import datetime
 from sqlite3 import OperationalError
 
-RESET_DATABASE = True
+RESET_DATABASE = False
 
 print(sqlite3.sqlite_version)
 
 if RESET_DATABASE:
-    os.remove('tt_dev.DB')
+    os.remove('tt_dev.db')
 
 
 def execute_scripts_from_file(filename):
@@ -28,7 +28,7 @@ def execute_scripts_from_file(filename):
         except OperationalError as msg:
             print('Command Skipped: ', msg)
 
-db = sqlite3.connect('tt_dev.DB')
+db = sqlite3.connect('tt_dev.db')
 cursor = db.cursor()
 
 execute_scripts_from_file('tt_schema.sql')
@@ -38,7 +38,8 @@ columns = (
     'Today',
     'Tomorrow',
     'Future',
-    'Done'
+    'Done',
+    'Deleted'
 )
 
 for data in columns:
