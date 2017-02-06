@@ -65,11 +65,6 @@ class PeriodDisplayTick(TimeTick):
         return None
 
     def draw(self, tickline, record, return_only=False):
-        # This needs to be over written so that it draws the data instead. To draw_tick
-        # This function will be sent record objects to be displayed.
-        # TODO: Overwrite the draw method so that is correctly draws data from the record period object.
-
-        # Convert start time and end time to.
         tick_pos, record_index = self.pos_index_of(tickline, record.start_time)
         end_pos = self.pos_of(tickline, record.end_time)
 

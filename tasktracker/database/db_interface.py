@@ -128,7 +128,7 @@ class Database:
                 SqlTask('INSERT INTO column_history(creation_date, task_id, column_id) VALUES (?,?,?);',
                         args=(now, row_id[0], list_id))
             )
-            callback(row_id)
+            callback(row_id[0])
 
         self.action_queue.put(
             SqlTask('INSERT INTO tasks(creation_date, project_id, list_id, list_pos, name, notes) VALUES (?,?,?,?,?,?);',
