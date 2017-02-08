@@ -179,8 +179,13 @@ class Database:
                     args=(project.name, project.color, project.color_name, project.db_id))
         )
 
-    def load_task_actions(self, start_time, end_time):
-        pass
+    def load_task_actions(self, start_time, end_time, callback):
+        self.action_queue.put(
+            SqlTask('SELECT * FROM task_actions WHERE creation_date >= ? AND finish_date <= ?;',
+                    args=(start_time, end_time),
+                    function='fetchall',
+                    callback=callback)
+        )
 
     def delete_project(self, project):
         pass

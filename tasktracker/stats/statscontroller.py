@@ -3,7 +3,10 @@ from kivy.garden.timeline import Timeline, TimeTick, selected_time_ticks, round_
 from kivy.properties import ObjectProperty, ListProperty, NumericProperty
 from kivy.metrics import dp
 
+from tasktracker.database.db_interface import DB
+
 from datetime import datetime, timezone, timedelta
+from tasktracker.settings import to_datetime, to_local_time
 
 from tasktracker.settings import APP_CONTROL
 from tasktracker.themes import themes
@@ -12,11 +15,22 @@ from tasktracker.themes import themes
 class RecordPeriod:
     """ A data structure that contains the period data.
     """
-    def __init__(self, action_type, start_time, end_time, project_id=None):
+    def __init__(self, record_id, action_type, start_time, end_time, task_id, project_id=None):
+        self.record_id = record_id
         self.action_type = action_type
         self.start_time = start_time
         self.end_time = end_time
+        self.task_id = task_id
         self.project_id = project_id
+
+    def __str__(self):
+        print("""RecordPeriod ID# %s
+                  Task_ID:     %s
+                  Project_ID:  %s
+                  Start_Time:  %s
+                  End_Time:    %s
+                  Action_Type: %s
+              """)
 
 # TODO: Load task action history data based on specific date range.
 # Todo: Develop custom time line class that is like data list tick but for time periods.
@@ -116,6 +130,9 @@ class PeriodDisplayTick(TimeTick):
         # Todo: Figure out how to do labeling correctly
         return None
 
+    def on_touch_down(self, touch):
+        pass
+
     # TODO: Develop a function that will return the current displayed period on a click.
 
 
@@ -153,12 +170,27 @@ class StatsScreen(Screen):  # TODO: Break this out into it's own module eventual
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
+        test_time_start = datetime(year=2017, month=2, day=7, hour=1, minute=50, tzinfo=timezone.utc)
+        test_time_end = datetime(year=2017, month=2, day=7, hour=2, minute=2, second=6, tzinfo=timezone.utc)
+
+        print(test_time_start, test_time_end)
+
+        DB.load_task_actions(test_time_start, test_time_end, self._test_load_projects)
+
         # time_ticks = [TimeTick(mode=TimeTick.mode.options[i], valign='line_top') for i in [0, 3, 5, 7, 9, 10, 12, 14, 15]]
         # time_ticks.append(TaskTimeTicks(valign='line_top'))
         #
-        # test_timeline = TaskTimeLine(orientation='horizontal', ticks=time_ticks, line_width=1.)
+        #test_timeline = TaskTimeLine(orientation='horizontal', ticks=time_ticks, line_width=1.)
+        #test_timeline.time_0 =
         # test_timeline.cover_background = False
         # self.add_widget(test_timeline)
+
+    def _test_load_projects(self, data, tb):
+        # Function callback to test the database interface for loading projects.
+        for item in data:
+            #TODO: Need to get the project ID from the task ID.
+            print(RecordPeriod(item[4], to_local_time(to_datetime(item[2])), to_local_time(to_datetime(item[3])),
+                               item[1]))
 
 
 

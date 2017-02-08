@@ -3,8 +3,25 @@
     variables will live.
 """
 import os
+import pytz
+import tzlocal
+
 from configparser import ConfigParser
 from kivy.utils import get_color_from_hex
+from datetime import datetime
+
+# Timezone conversion functionality
+
+timezone_local = tzlocal.get_localzone()
+
+
+def to_datetime(datetime_string):
+    return datetime.strptime(datetime_string.replace(':', ''), '%Y-%m-%d %H%M%S.%f%z')
+
+
+def to_local_time(dt):
+    return dt.replace(tzinfo=pytz.utc).astimezone(timezone_local)
+
 
 
 class Borg:
