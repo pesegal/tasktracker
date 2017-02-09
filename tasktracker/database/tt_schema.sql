@@ -21,7 +21,8 @@ CREATE TABLE task_actions (
     finish_date DATETIME,
     action_id INTEGER,
     FOREIGN KEY(task_id) REFERENCES tasks(id),
-    FOREIGN KEY(action_id) REFERENCES action_type(id)
+    FOREIGN KEY(action_id) REFERENCES action_type(id),
+    FOREIGN KEY(project_id) REFERENCES projects(id)
 );
 
 CREATE TABLE projects (

@@ -32,11 +32,12 @@ LONG_BREAK = 15 * 60
 
 
 class TaskAction:
-    def __init__(self, task_id, action_type, start_time):
+    def __init__(self, task_id, start_time, action_type, project_id):
         self.task_id = task_id
         self.type = action_type
         self.start_time = start_time
         self.finish_time = None
+        self.project_id = project_id
 
 
 class TimerScreen(Screen, Themeable):
@@ -86,6 +87,11 @@ class TimerScreen(Screen, Themeable):
 
     def start_pause_trigger(self):
         task_id = self.ids.task_manager.selected.uuid
+        if self.ids.task_manager.selected.project:
+            project_id = self.ids.task_manager.selected.project.db_id
+        else:
+            project_id = 0
+
         if not self.timer_in_progress:
             if self.timer_type_selection == 3:
                 self.current_timer_function = self._update
@@ -97,7 +103,7 @@ class TimerScreen(Screen, Themeable):
             Clock.unschedule(self._clock_event)
             if self.timer_in_progress:
                 self._complete_task_action()
-                self.current_task_action = TaskAction(task_id, 3, datetime.now(timezone.utc))
+                self.current_task_action = TaskAction(task_id, 3, datetime.now(timezone.utc), project_id)
             self.timer_active = False
         else:
             self._clock_event = Clock.schedule_interval(self.current_timer_function, 0.016)
@@ -108,7 +114,8 @@ class TimerScreen(Screen, Themeable):
             self.timer_in_progress = True
 
         if not self.current_task_action:
-            self.current_task_action = TaskAction(task_id, self.task_action_type, datetime.now(timezone.utc))
+            self.current_task_action = TaskAction(task_id, self.task_action_type,
+                                                  datetime.now(timezone.utc), project_id)
 
     def timer_reset(self):
         if self.timer_active or self.timer_in_progress:

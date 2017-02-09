@@ -158,8 +158,9 @@ class Database:
 
     def write_task_action(self, action):
         self.action_queue.put(
-            SqlTask('INSERT INTO task_actions(task_id, creation_date, finish_date, action_id) VALUES (?,?,?,?);',
-                    args=(action.task_id, action.start_time, action.finish_time, action.type))
+            SqlTask("""INSERT INTO task_actions(task_id, creation_date, finish_date, action_id, project_id)
+                    VALUES (?,?,?,?,?);""",
+                    args=(action.task_id, action.start_time, action.finish_time, action.type, action.project_id))
         )
 
     def new_project(self, name, color, color_name, callback):
@@ -184,6 +185,14 @@ class Database:
             SqlTask('SELECT * FROM task_actions WHERE creation_date >= ? AND finish_date <= ?;',
                     args=(start_time, end_time),
                     function='fetchall',
+                    callback=callback)
+        )
+
+    def get_action_type(self, type_id, callback):
+        self.action_queue.put(
+            SqlTask('SELECT action_description FROM action_type WHERE id = ?;',
+                    args=(type_id,),
+                    function='fetchone',
                     callback=callback)
         )
 

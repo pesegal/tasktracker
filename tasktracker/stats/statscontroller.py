@@ -15,22 +15,25 @@ from tasktracker.themes import themes
 class RecordPeriod:
     """ A data structure that contains the period data.
     """
-    def __init__(self, record_id, action_type, start_time, end_time, task_id, project_id=None):
+    def __init__(self, record_id, task_id, start_time, end_time, action_type, project_id=None):
         self.record_id = record_id
         self.action_type = action_type
-        self.start_time = start_time
-        self.end_time = end_time
+        self.start_time = to_local_time(to_datetime(start_time))
+        self.end_time = to_local_time(to_datetime(end_time))
         self.task_id = task_id
         self.project_id = project_id
 
     def __str__(self):
-        print("""RecordPeriod ID# %s
+        time_display = '%Y-%m-%d %H:%M:%S.%f %Z'
+        return """RecordPeriod ID# %s ----------------------------------------------
                   Task_ID:     %s
                   Project_ID:  %s
                   Start_Time:  %s
                   End_Time:    %s
                   Action_Type: %s
-              """)
+              """ % (self.record_id, self.task_id, self.project_id,
+                     self.start_time.strftime(time_display), self.end_time.strftime(time_display),
+                     self.action_type)
 
 # TODO: Load task action history data based on specific date range.
 # Todo: Develop custom time line class that is like data list tick but for time periods.
@@ -171,7 +174,7 @@ class StatsScreen(Screen):  # TODO: Break this out into it's own module eventual
         super().__init__(**kwargs)
 
         test_time_start = datetime(year=2017, month=2, day=7, hour=1, minute=50, tzinfo=timezone.utc)
-        test_time_end = datetime(year=2017, month=2, day=7, hour=2, minute=2, second=6, tzinfo=timezone.utc)
+        test_time_end = datetime(year=2017, month=2, day=8, hour=2, minute=2, second=6, tzinfo=timezone.utc)
 
         print(test_time_start, test_time_end)
 
@@ -189,8 +192,7 @@ class StatsScreen(Screen):  # TODO: Break this out into it's own module eventual
         # Function callback to test the database interface for loading projects.
         for item in data:
             #TODO: Need to get the project ID from the task ID.
-            print(RecordPeriod(item[4], to_local_time(to_datetime(item[2])), to_local_time(to_datetime(item[3])),
-                               item[1]))
+            print(RecordPeriod(*item))
 
 
 

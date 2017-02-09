@@ -25,9 +25,6 @@ from tasktracker.mixins import TapAndHold
 from tasktracker.task.clickdragcontrol import CLICK_DRAG_CONTROLLER
 import tasktracker.task.taskpopups
 
-# Todo: Task widget should be able to be clicked and opens up a editing screen.
-# Todo: Task widget should be able to be categorized in larger project groupings.
-
 
 class Task(Button, TapAndHold, Themeable):
     """ Contains all controller information for the task objects. Visual layout is contained in
