@@ -176,6 +176,8 @@ class StatsScreen(Screen):  # TODO: Break this out into it's own module eventual
         test_time_start = datetime(year=2017, month=2, day=7, hour=1, minute=50, tzinfo=timezone.utc)
         test_time_end = datetime(year=2017, month=2, day=8, hour=2, minute=2, second=6, tzinfo=timezone.utc)
 
+
+
         print(test_time_start, test_time_end)
 
         DB.load_task_actions(test_time_start, test_time_end, self._test_load_projects)

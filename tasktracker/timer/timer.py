@@ -87,9 +87,10 @@ class TimerScreen(Screen, Themeable):
 
     def start_pause_trigger(self):
         task_id = self.ids.task_manager.selected.uuid
-        if self.ids.task_manager.selected.project:
+
+        try:
             project_id = self.ids.task_manager.selected.project.db_id
-        else:
+        except AttributeError:
             project_id = 0
 
         if not self.timer_in_progress:
