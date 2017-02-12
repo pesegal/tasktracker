@@ -1,7 +1,10 @@
 from kivy.uix.screenmanager import Screen
 from kivy.garden.timeline import Timeline, TimeTick, selected_time_ticks, round_time
 from kivy.properties import ObjectProperty, ListProperty, NumericProperty
-from kivy.metrics import dp
+
+
+# from kivy.graphics import InstructionGroup, Mesh
+# from kivy.graphics.context_instructions import Color
 
 from tasktracker.database.db_interface import DB
 
@@ -43,10 +46,12 @@ class PeriodDisplayTick(TimeTick):
     data_list = ListProperty([])
     tick_height = NumericProperty(30)
 
-    def __init__(self, data, tick_height=30, *args, **kw):
+    def __init__ (self, data, tick_height=30, *args, **kw):
         super(PeriodDisplayTick, self).__init__(*args, **kw)
+
         self.data_list = data
         self.tick_height = tick_height
+
 
     def tick_iter(self, tl):
         """ Override :meth: 'TimeTick.tick_iter'
@@ -126,7 +131,7 @@ class PeriodDisplayTick(TimeTick):
                                        x + width, y, 0, 0])
 
         tick_rect = (x, y, width, height)
-        tickline.labeller.regester(self, record_index, tick_rect)
+        #tickline.labeller.register(self, record_index, tick_rect)
 
     def get_label_texture(self, index, succeinct=True, return_kw=False, return_lable=False, **kw):
         # TODO: Look into what might be the best way to display this information. Project or task or total time?
@@ -151,11 +156,6 @@ class TaskTimeLine(Timeline):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        now = datetime.now(timezone.utc)
-        past_hour = now - timedelta(hours=1)
-
-        self.max_time = now
-
         # Todo: Look into having to date selectors attached the screen to view work periods.
         #self.center_on_timeframe(past_hour, now)
 
@@ -173,28 +173,55 @@ class StatsScreen(Screen):  # TODO: Break this out into it's own module eventual
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        test_time_start = datetime(year=2017, month=2, day=7, hour=1, minute=50, tzinfo=timezone.utc)
-        test_time_end = datetime(year=2017, month=2, day=8, hour=2, minute=2, second=6, tzinfo=timezone.utc)
+        self.test_time_start = datetime(year=2017, month=2, day=7, hour=1, minute=50, tzinfo=timezone.utc)
+        self.test_time_end = datetime(year=2017, month=2, day=7, hour=3, minute=2, second=6, tzinfo=timezone.utc)
+        self.time_buffer = timedelta(hours=1)
 
+        DB.load_task_actions(self.test_time_start, self.test_time_end, self._test_load_projects)
 
+        self.time_ticks = [TimeTick(mode=TimeTick.mode.options[i], valign='line_bottom') for i in
+                           [0, 3, 5, 7, 9, 10, 12, 14, 15]]
 
-        print(test_time_start, test_time_end)
-
-        DB.load_task_actions(test_time_start, test_time_end, self._test_load_projects)
-
-        # time_ticks = [TimeTick(mode=TimeTick.mode.options[i], valign='line_top') for i in [0, 3, 5, 7, 9, 10, 12, 14, 15]]
-        # time_ticks.append(TaskTimeTicks(valign='line_top'))
-        #
-        #test_timeline = TaskTimeLine(orientation='horizontal', ticks=time_ticks, line_width=1.)
-        #test_timeline.time_0 =
-        # test_timeline.cover_background = False
-        # self.add_widget(test_timeline)
+        print(self.time_ticks)
 
     def _test_load_projects(self, data, tb):
         # Function callback to test the database interface for loading projects.
+
+        # TODO: Split Records by Project Type and Action Type
+        project_dict = dict()
+
         for item in data:
-            #TODO: Need to get the project ID from the task ID.
-            print(RecordPeriod(*item))
+            record = RecordPeriod(*item)
+            print(record)
+
+            if record.project_id in project_dict.keys():
+                if record.action_type in project_dict[record.project_id].keys():
+                    project_dict[record.project_id][record.action_type].append(record)
+                else:
+                    project_dict[record.project_id][record.action_type] = [record]
+            else:
+                project_dict[record.project_id] = {record.action_type: [record]}
+
+        for key, value in project_dict.items():
+            print(key, value)
+            for t_key, t_value in value.items():
+                if t_key == 2:
+                    self.time_ticks.append(PeriodDisplayTick(data=t_value, valign='line_top'))
+
+                else:
+                    self.time_ticks.append(PeriodDisplayTick(data=t_value, valign='line_bottom'))
+
+
+
+        self.test_timeline = TaskTimeLine(orientation='horizontal', ticks=self.time_ticks, line_width=1.)
+        self.test_timeline.center_on_timeframe(self.test_time_start - self.time_buffer,
+                                               self.test_time_end + self.time_buffer)
+        self.test_timeline.cover_background = False
+        self.add_widget(self.test_timeline)
+
+
+
+
 
 
 

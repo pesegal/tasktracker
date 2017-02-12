@@ -53,7 +53,7 @@ class ScreenMenuAndDisplay(BoxLayout, Broadcast):
         self.menu_bar = MenuBar()
 
         # TODO: REMOVE THIS WHEN DONE DEVELOPING WITH THE STATS SCREEN
-        self.screen_controller.current = 'tasks'
+        self.screen_controller.current = 'stats'
 
         # This is where you transmit
         self.bind(screen_size=self.broadcast_window_resize)

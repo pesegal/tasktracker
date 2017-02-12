@@ -40,5 +40,5 @@ if __name__ == '__main__':
         Builder.load_file(os.path.join(layout_path, file))
     # Load configurations
     # Disable Multi-touch for mouse
-    Config.set('input', 'mouse', 'mouse,disable_multitouch')
+    #Config.set('input', 'mouse', 'mouse,disable_multitouch')
     TaskApp().run()
