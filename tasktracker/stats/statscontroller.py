@@ -46,12 +46,11 @@ class PeriodDisplayTick(TimeTick):
     data_list = ListProperty([])
     tick_height = NumericProperty(30)
 
-    def __init__ (self, data, tick_height=30, *args, **kw):
+    def __init__(self, data, tick_height=30, *args, **kw):
         super(PeriodDisplayTick, self).__init__(*args, **kw)
 
         self.data_list = data
         self.tick_height = tick_height
-
 
     def tick_iter(self, tl):
         """ Override :meth: 'TimeTick.tick_iter'
@@ -79,18 +78,20 @@ class PeriodDisplayTick(TimeTick):
         records match this then it will return None.
         """
         for record in self.data_list:
-            if record.start_time > time_min:
+            if record.start_time > time_min or record.end_time > time_min:
                 if not record.start_time > time_max:
                     return self.data_list.index(record)
                 else:
                     return None
         return None
 
-    def draw(self, tickline, record, return_only=False):
+    def draw(self, tickline, record, return_only=False, offset=10):
         tick_pos, record_index = self.pos_index_of(tickline, record.start_time)
         end_pos = self.pos_of(tickline, record.end_time)
 
         tw, th = (end_pos - tick_pos, self.tick_height)
+
+        # Figure out why we have the display issue.
         if tickline.is_vertical():
             halign = self.halign
             if halign == 'left':
@@ -101,7 +102,7 @@ class PeriodDisplayTick(TimeTick):
                 x = tickline.line_pos
             else:
                 x = tickline.right - th
-            y = tick_pos - tw / 2
+            y = tick_pos
             height, width = tw, th
             if not return_only:
                 self._vertices.extend([x, y, 0, 0,
@@ -115,12 +116,12 @@ class PeriodDisplayTick(TimeTick):
             if valign == 'top':
                 y = tickline.top - th
             elif valign == 'line_top':
-                y = tickline.line_pos
+                y = tickline.line_pos + offset
             elif valign == 'line_bottom':
-                y = tickline.line_pos - th
+                y = tickline.line_pos - th - offset
             else:
                 y = tickline.y
-            x = tick_pos - tw / 2
+            x = tick_pos
             width, height = tw, th
             if not return_only:
                 self._vertices.extend([x, y, 0, 0,
@@ -131,7 +132,8 @@ class PeriodDisplayTick(TimeTick):
                                        x + width, y, 0, 0])
 
         tick_rect = (x, y, width, height)
-        #tickline.labeller.register(self, record_index, tick_rect)
+        # tickline.labeller.register(self, record_index, tick_rect)  # TODO: Figure out what is wrong here.
+        #
 
     def get_label_texture(self, index, succeinct=True, return_kw=False, return_lable=False, **kw):
         # TODO: Look into what might be the best way to display this information. Project or task or total time?
@@ -157,14 +159,6 @@ class TaskTimeLine(Timeline):
         super().__init__(**kwargs)
 
         # Todo: Look into having to date selectors attached the screen to view work periods.
-        #self.center_on_timeframe(past_hour, now)
-
-    def redraw_(self, *args):
-        super().redraw_(*args)
-        # print(self.time_0, self.time_1, 'Scale:', self.scale)
-
-    def _print_stuff(self, *args):
-        print(*args)
 
     # Todo: Tie scale to a slider.
 
@@ -174,11 +168,12 @@ class StatsScreen(Screen):  # TODO: Break this out into it's own module eventual
         super().__init__(**kwargs)
 
         self.test_time_start = datetime(year=2017, month=2, day=7, hour=1, minute=50, tzinfo=timezone.utc)
-        self.test_time_end = datetime(year=2017, month=2, day=7, hour=3, minute=2, second=6, tzinfo=timezone.utc)
-        self.time_buffer = timedelta(hours=1)
+        self.test_time_end = datetime(year=2017, month=2, day=7, hour=2, minute=18, second=6, tzinfo=timezone.utc)
+        self.time_buffer = timedelta(minutes=1)
 
         DB.load_task_actions(self.test_time_start, self.test_time_end, self._test_load_projects)
 
+        # self.time_ticks = []
         self.time_ticks = [TimeTick(mode=TimeTick.mode.options[i], valign='line_bottom') for i in
                            [0, 3, 5, 7, 9, 10, 12, 14, 15]]
 
@@ -211,9 +206,8 @@ class StatsScreen(Screen):  # TODO: Break this out into it's own module eventual
                 else:
                     self.time_ticks.append(PeriodDisplayTick(data=t_value, valign='line_bottom'))
 
-
-
-        self.test_timeline = TaskTimeLine(orientation='horizontal', ticks=self.time_ticks, line_width=1.)
+        self.test_timeline = TaskTimeLine(orientation='horizontal', ticks=self.time_ticks,
+                                          line_width=0.1)
         self.test_timeline.center_on_timeframe(self.test_time_start - self.time_buffer,
                                                self.test_time_end + self.time_buffer)
         self.test_timeline.cover_background = False
