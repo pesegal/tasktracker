@@ -1,12 +1,15 @@
 from kivy.uix.screenmanager import Screen
 from kivy.garden.timeline import Timeline, TimeTick, selected_time_ticks, round_time
 from kivy.properties import ObjectProperty, ListProperty, NumericProperty
+from numbers import Number
+from kivy.metrics import dp
 
 
 # from kivy.graphics import InstructionGroup, Mesh
 # from kivy.graphics.context_instructions import Color
 
 from tasktracker.database.db_interface import DB
+from tasktracker.themes.themes import Themeable
 
 from datetime import datetime, timezone, timedelta
 from tasktracker.settings import to_datetime, to_local_time
@@ -42,11 +45,66 @@ class RecordPeriod:
 # Todo: Develop custom time line class that is like data list tick but for time periods.
 
 
+class VisualTimeTick(TimeTick, Themeable):
+
+    size_dict = \
+        {'day': [dp(1), dp(48)],
+         '12 hours': [dp(1), dp(25)],
+         '6 hours': [dp(1), dp(25)],
+         '4 hours': [dp(1), dp(20)],
+         '2 hours': [dp(1), dp(20)],
+         'hour': [dp(1), dp(20)],
+         '30 minutes': [dp(1), dp(12)],
+         '15 minutes': [dp(1), dp(12)],
+         '10 minutes': [dp(1), dp(8)],
+         '5 minutes': [dp(1), dp(8)],
+         'minute': [dp(1), dp(8)],
+         '30 seconds': [dp(1), dp(7)],
+         '15 seconds': [dp(1), dp(7)],
+         '10 seconds': [dp(1), dp(4)],
+         '5 seconds': [dp(1), dp(4)],
+         'second': [dp(1), dp(4)]}
+
+    def theme_update(self):
+        self.tick_color = self.theme.text
+
+    def get_label_texture(self, index, succinct=True, return_kw=False,
+                          return_label=False, **kw):
+        if isinstance(index, Number):
+            t = self.datetime_of(index)
+        else:
+            t = index
+        if self.mode == 'second':
+            return None
+        if self.mode == 'day':
+            # need to get the datetime of the previous day
+            text = (t - timedelta(seconds=1)).strftime('%a\n%m-%d-%y')
+            kw.setdefault('height', 50)
+        elif 'second' not in self.mode and succinct:
+            text = str(t.time())[:-3]
+        else:
+            text = str(t.time())
+        kw.setdefault('height', 20)
+        kw['text'] = text
+        kw['color'] = self.tick_color
+        if return_kw:
+            return kw
+        if not return_label:
+            return CoreLabel(**kw).texture
+        label = AutoSizeLabel(**kw)
+        label.texture_update()
+        return label
+
+        # TODO Figure out how to redraw the labels when the theme is changed.
+
+
+
+
 class PeriodDisplayTick(TimeTick):
     data_list = ListProperty([])
     tick_height = NumericProperty(30)
 
-    def __init__(self, data, tick_height=30, *args, **kw):
+    def __init__(self, data, tick_height=35, *args, **kw):
         super(PeriodDisplayTick, self).__init__(*args, **kw)
 
         self.data_list = data
@@ -85,7 +143,7 @@ class PeriodDisplayTick(TimeTick):
                     return None
         return None
 
-    def draw(self, tickline, record, return_only=False, offset=10):
+    def draw(self, tickline, record, return_only=False, line_offset=10):
         tick_pos, record_index = self.pos_index_of(tickline, record.start_time)
         end_pos = self.pos_of(tickline, record.end_time)
 
@@ -116,9 +174,9 @@ class PeriodDisplayTick(TimeTick):
             if valign == 'top':
                 y = tickline.top - th
             elif valign == 'line_top':
-                y = tickline.line_pos + offset
+                y = tickline.line_pos + line_offset
             elif valign == 'line_bottom':
-                y = tickline.line_pos - th - offset
+                y = tickline.line_pos - (th + line_offset)
             else:
                 y = tickline.y
             x = tick_pos
@@ -152,13 +210,11 @@ class PeriodDisplayTick(TimeTick):
 # TODO: Look into figuring out how to return more data when clicking on a specific item.Create a bubble popup with data.
 
 
-class TaskTimeLine(Timeline):
-    testview = ObjectProperty(None)
+class TaskTimeLine(Timeline, Themeable):
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-        # Todo: Look into having to date selectors attached the screen to view work periods.
+    def theme_update(self):
+        self.line_color = self.theme.text
+        self.redraw()
 
     # Todo: Tie scale to a slider.
 
@@ -168,14 +224,17 @@ class StatsScreen(Screen):  # TODO: Break this out into it's own module eventual
         super().__init__(**kwargs)
 
         self.test_time_start = datetime(year=2017, month=2, day=7, hour=1, minute=50, tzinfo=timezone.utc)
-        self.test_time_end = datetime(year=2017, month=2, day=7, hour=2, minute=18, second=6, tzinfo=timezone.utc)
+        self.test_time_end = datetime(year=2017, month=2, day=7, hour=4, minute=18, second=6, tzinfo=timezone.utc)
         self.time_buffer = timedelta(minutes=1)
 
         DB.load_task_actions(self.test_time_start, self.test_time_end, self._test_load_projects)
 
         # self.time_ticks = []
-        self.time_ticks = [TimeTick(mode=TimeTick.mode.options[i], valign='line_bottom') for i in
-                           [0, 3, 5, 7, 9, 10, 12, 14, 15]]
+        self.time_ticks = [VisualTimeTick(mode=TimeTick.mode.options[i], valign='line_bottom') for i in
+                           [0, 2, 5, 6, 7, 9, 10]]
+
+        self.time_ticks.extend([VisualTimeTick(mode=TimeTick.mode.options[i], valign='line_top') for i in
+                               [0, 2, 5, 6, 7, 9, 10]])
 
         print(self.time_ticks)
 
@@ -206,8 +265,8 @@ class StatsScreen(Screen):  # TODO: Break this out into it's own module eventual
                 else:
                     self.time_ticks.append(PeriodDisplayTick(data=t_value, valign='line_bottom'))
 
-        self.test_timeline = TaskTimeLine(orientation='horizontal', ticks=self.time_ticks,
-                                          line_width=0.1)
+        self.test_timeline = TaskTimeLine(orientation='horizontal', ticks=self.time_ticks, line_width=1)
+
         self.test_timeline.center_on_timeframe(self.test_time_start - self.time_buffer,
                                                self.test_time_end + self.time_buffer)
         self.test_timeline.cover_background = False
