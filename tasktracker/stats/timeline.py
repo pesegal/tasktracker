@@ -67,6 +67,8 @@ class VisualTimeTick(TimeTick, Themeable):
     def theme_update(self):
         self.tick_color = self.theme.text
 
+
+    # TODO: Figure how how to correctly theme the labels.
     def get_label_texture(self, index, succinct=True, return_kw=False,
                           return_label=False, **kw):
         if isinstance(index, Number):
@@ -100,6 +102,7 @@ class VisualTimeTick(TimeTick, Themeable):
 class PeriodDisplayTick(TimeTick):
     data_list = ListProperty([])
     tick_height = NumericProperty(30)
+    line_offset = NumericProperty(0)
 
     def __init__(self, data, tick_height=35, *args, **kw):
         super(PeriodDisplayTick, self).__init__(*args, **kw)
@@ -140,7 +143,7 @@ class PeriodDisplayTick(TimeTick):
                     return None
         return None
 
-    def draw(self, tickline, record, return_only=False, line_offset=10):
+    def draw(self, tickline, record, return_only=False):
         tick_pos, record_index = self.pos_index_of(tickline, record.start_time)
         end_pos = self.pos_of(tickline, record.end_time)
 
@@ -152,9 +155,9 @@ class PeriodDisplayTick(TimeTick):
             if halign == 'left':
                 x = tickline.x
             elif halign == 'line_left':
-                x = tickline.line_pos - th
+                x = tickline.line_pos - (th + self.line_offset)
             elif halign == 'line_right':
-                x = tickline.line_pos
+                x = tickline.line_pos + self.line_offset
             else:
                 x = tickline.right - th
             y = tick_pos
@@ -171,9 +174,9 @@ class PeriodDisplayTick(TimeTick):
             if valign == 'top':
                 y = tickline.top - th
             elif valign == 'line_top':
-                y = tickline.line_pos + line_offset
+                y = tickline.line_pos + self.line_offset
             elif valign == 'line_bottom':
-                y = tickline.line_pos - (th + line_offset)
+                y = tickline.line_pos - (th + self.line_offset)
             else:
                 y = tickline.y
             x = tick_pos

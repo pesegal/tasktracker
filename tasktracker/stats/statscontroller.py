@@ -4,9 +4,12 @@ from kivy.uix.screenmanager import Screen
 from tasktracker.database.db_interface import DB
 from tasktracker.stats.timeline import TaskTimeLine, VisualTimeTick, PeriodDisplayTick, RecordPeriod
 from datetime import datetime, timezone, timedelta
+from tasktracker.task.taskpopups import PROJECT_LIST
+from tasktracker.themes.themes import THEME_CONTROLLER
+from kivy.utils import get_color_from_hex
 
-# TODO: Load task action history data based on specific date range.
-# Todo: Develop custom time line class that is like data list tick but for time periods.
+
+# TODO: DEFAULT COLORS FOR SHORT BREAK, LONG BREAK, & PAUSE (MAKE THESE CONFIGURABLE IN SETTINGS?)
 
 
 class StatsScreen(Screen):  # TODO: Break this out into it's own module eventually.
@@ -23,7 +26,8 @@ class StatsScreen(Screen):  # TODO: Break this out into it's own module eventual
         self.time_ticks = [VisualTimeTick(mode=VisualTimeTick.mode.options[i], valign='line_bottom') for i in
                            [0, 2, 5, 6, 7, 9, 10]]
 
-        self.time_ticks.extend([VisualTimeTick(mode=VisualTimeTick.mode.options[i], valign='line_top') for i in
+        self.time_ticks.extend([VisualTimeTick(mode=VisualTimeTick.mode.options[i], valign='line_top',
+                                               tick_color=[1,1,1,1]) for i in
                                [0, 2, 5, 6, 7, 9, 10]])
 
         print(self.time_ticks)
@@ -48,12 +52,24 @@ class StatsScreen(Screen):  # TODO: Break this out into it's own module eventual
 
         for key, value in project_dict.items():
             print(key, value)
+
+            # Get Project Color Else Default
+            project = PROJECT_LIST.return_project_by_id(key)
+            if project.color is None:
+                p_color = THEME_CONTROLLER.selected
+            else:
+                p_color = get_color_from_hex(project.color)
+
+            p_color[3] = .7 # Add some transparency to the timeline.
+
             for t_key, t_value in value.items():
                 if t_key == 2:
-                    self.time_ticks.append(PeriodDisplayTick(data=t_value, valign='line_top'))
-
+                    self.time_ticks.append(PeriodDisplayTick(data=t_value, valign='line_top',
+                                                             tick_color=p_color))
                 else:
-                    self.time_ticks.append(PeriodDisplayTick(data=t_value, valign='line_bottom'))
+                    self.time_ticks.append(PeriodDisplayTick(data=t_value, valign='line_bottom',
+                                                             tick_color=THEME_CONTROLLER.selected,
+                                                             tick_height=20, line_offset=1))
 
         self.test_timeline = TaskTimeLine(orientation='horizontal', ticks=self.time_ticks, line_width=1)
 
