@@ -18,6 +18,9 @@ class DateTimeLabel(Label):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
+    # TODO: Build out clickable date time input.
+    # TODO: Label display is directly tied current max mins display time of the timeline.
+
 
 class TimelineContainer(BoxLayout):
     def __init__(self, **kwargs):
