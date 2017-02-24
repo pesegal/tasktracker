@@ -18,6 +18,8 @@ class DateTimeLabel(Label):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
+
+
     # TODO: Build out clickable date time input.
     # TODO: Label display is directly tied current max mins display time of the timeline.
 
@@ -25,8 +27,17 @@ class DateTimeLabel(Label):
 class TimelineContainer(BoxLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.time_ticks = [VisualTimeTick(mode=VisualTimeTick.mode.options[i], valign='line_bottom') for i in
+                           [0, 2, 5, 6, 7, 9, 10]]
 
-    def _test_load_projects(self, data, tb):
+        self.time_ticks.extend([VisualTimeTick(mode=VisualTimeTick.mode.options[i], valign='line_top',
+                                               tick_color=[1,1,1,1]) for i in [0, 2, 5, 6, 7, 9, 10]])
+        self.test_time_start = datetime(year=2017, month=2, day=7, hour=1, minute=50, tzinfo=timezone.utc)
+        self.test_time_end = datetime(year=2017, month=2, day=20, hour=4, minute=18, second=6, tzinfo=timezone.utc)
+        self.time_buffer = timedelta(minutes=1)
+        DB.load_task_actions(self.test_time_start, self.test_time_end, self._display_timeline)
+
+    def _display_timeline(self, data, tb):
         # Function callback to test the database interface for loading projects.
 
         # TODO: Split Records by Project Type and Action Type
@@ -70,16 +81,13 @@ class TimelineContainer(BoxLayout):
         self.test_timeline.center_on_timeframe(self.test_time_start - self.time_buffer,
                                                self.test_time_end + self.time_buffer)
         self.test_timeline.cover_background = False
-        self.add_widget(self.test_timeline)
+        self.add_widget(self.test_timeline, index=1)
 
 
 class StatsScreen(Screen):  # TODO: Break this out into it's own module eventually.
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        self.test_time_start = datetime(year=2017, month=2, day=7, hour=1, minute=50, tzinfo=timezone.utc)
-        self.test_time_end = datetime(year=2017, month=2, day=20, hour=4, minute=18, second=6, tzinfo=timezone.utc)
-        self.time_buffer = timedelta(minutes=1)
 
 
 
