@@ -5,22 +5,26 @@
             id: timeline_display
             orientation: "vertical"
 
-
             BoxLayout:
+                id: time_controls
                 orientation: 'horizontal'
                 size_hint_y: None
                 height: 50
 
                 DateTimeLabel:
-                    text: "Date Time Start"
+                    id: label_time_start
+                    display_time: timeline_display.display_time_start
                 Slider:
 
                 DateTimeLabel:
-                    text: "Date Time End"
+                    id: label_time_end
+                    display_time: timeline_display.display_time_end
 
 
 <DateTimeLabel>:
-    size_hint_y: None
+    size_hint: None, 1
+
     height: 50
+    markup: True
 
 
