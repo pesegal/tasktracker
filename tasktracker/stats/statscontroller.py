@@ -34,7 +34,6 @@ class DateTimeLabel(Label, Themeable):
 
     def update_label(self, date, dt):
         local_datetime = to_local_time(dt)
-        print("SET TIMES ", local_datetime)
         self.text = "[b]{}[/b]\n{}".format(local_datetime.strftime("%d %B"), local_datetime.strftime("%I:%M %p"))
 
     # TODO: Label display is directly tied current max mins display time of the timeline.
@@ -112,7 +111,7 @@ class TimelineContainer(BoxLayout):
                                                              tick_color=THEME_CONTROLLER.selected,
                                                              tick_height=20, line_offset=1))
 
-        self.timeline = TaskTimeLine(orientation='horizontal', ticks=self.time_ticks, line_width=1)
+        self.timeline = TaskTimeLine(self, orientation='horizontal', ticks=self.time_ticks, line_width=1)
 
         self.timeline.center_on_timeframe(self.display_time_start,
                                           self.display_time_end)

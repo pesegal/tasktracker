@@ -67,7 +67,6 @@ class VisualTimeTick(TimeTick, Themeable):
     def theme_update(self):
         self.tick_color = self.theme.text
 
-
     # TODO: Figure how how to correctly theme the labels.
     def get_label_texture(self, index, succinct=True, return_kw=False,
                           return_label=False, **kw):
@@ -212,8 +211,18 @@ class PeriodDisplayTick(TimeTick):
 
 class TaskTimeLine(Timeline, Themeable):
 
+    def __init__(self, container, **kw):
+        super(TaskTimeLine, self).__init__(**kw)
+        self.bind(time_0=self._timeline_display_change)
+        self.container = container
+
+
     def theme_update(self):
         self.line_color = self.theme.text
         self.redraw()
+
+    def _timeline_display_change(self, *args):
+        self.container.display_time_start = self.time_0
+        self.container.display_time_end = self.time_1
 
     # Todo: Tie scale to a slider.
