@@ -33,7 +33,8 @@ class DateTimeLabel(Label, Themeable):
             # TODO: Open time setter bubble
 
     def update_label(self, date, dt):
-        local_datetime = to_local_time(dt)
+        local_datetime = dt
+        print(local_datetime)
         self.text = "[b]{}[/b]\n{}".format(local_datetime.strftime("%d %B"), local_datetime.strftime("%I:%M %p"))
 
     # TODO: Label display is directly tied current max mins display time of the timeline.
