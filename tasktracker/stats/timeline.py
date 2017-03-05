@@ -222,6 +222,7 @@ class TaskTimeLine(Timeline, Themeable):
         self.redraw()
 
     def _timeline_display_change(self, *args):
+        print("scale", self.scale)
         self.container.display_time_start = self.time_0
         self.container.display_time_end = self.time_1
 

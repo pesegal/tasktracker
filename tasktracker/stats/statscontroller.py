@@ -16,6 +16,7 @@ from tasktracker.settings import to_local_time
 
 # TODO: DEFAULT COLORS FOR SHORT BREAK, LONG BREAK, & PAUSE (MAKE THESE CONFIGURABLE IN SETTINGS?)
 
+# Todo: write a helper function that takes start and end datetimes and returns the number of months, weeks, days
 
 class DateTimeLabel(Label, Themeable):
     display_time = ObjectProperty()
@@ -34,10 +35,27 @@ class DateTimeLabel(Label, Themeable):
 
     def update_label(self, date, dt):
         local_datetime = dt
-        print(local_datetime)
         self.text = "[b]{}[/b]\n{}".format(local_datetime.strftime("%d %B"), local_datetime.strftime("%I:%M %p"))
 
     # TODO: Label display is directly tied current max mins display time of the timeline.
+
+
+class TimelineSlider(Slider):
+    time_line_container = ObjectProperty()
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.min = 10
+        self.max = 500000
+        self.value = 1000
+        self.bind(value=self._print_value)
+
+    def _print_value(self, *args):
+        print(args)
+        if self.time_line_container:
+            # TODO: Convert this into a stepped time.
+            self.time_line_container.timeline.scale = args[1]
+
 
 
 class TimelineContainer(BoxLayout):
@@ -62,13 +80,15 @@ class TimelineContainer(BoxLayout):
                                                tick_color=[1,1,1,1]) for i in [0, 2, 5, 6, 7, 9, 10]])
 
         today = datetime.now(tz=timezone.utc)
+        t_buffer = timedelta(days=60)
 
         self.display_time_start = datetime(year=today.year, month=today.month, day=today.day,
                                            hour=0, minute=0, tzinfo=timezone.utc)
         self.display_time_end = datetime(year=today.year, month=today.month, day=today.day,
                                          hour=23, minute=0, tzinfo=timezone.utc)
 
-        DB.load_task_actions(self.display_time_start, self.display_time_end, self._display_timeline)
+        DB.load_task_actions(self.display_time_start - t_buffer,
+                             self.display_time_end + t_buffer, self._display_timeline)
         print(self.ids)
 
 
