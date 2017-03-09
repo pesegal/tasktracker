@@ -1,5 +1,4 @@
 <TaskQuickMenu>:
-
     show_arrow: False
     background_image: self.bg_texture
     background_color: self.bg_color
@@ -36,4 +35,34 @@
     background_color: self.button_color
     background_normal: self.button_texture
     background_down: self.button_texture
+
+
+<StatsTimeSelectionMenu>:
+    show_arrow: True
+    size_hint: None, None
+
+    BoxLayout:
+        orientation: "vertical"
+        BoxLayout:
+            orientation: "horizontal"
+            Label:
+                text: "Date"
+            TextInput:
+                hint_text: "MM/DD/YYYY"
+        BoxLayout:
+            orientation: "horizontal"
+            Label:
+                text: "Time"
+            TextInput:
+                hint_text: "HH:MM"
+
+            ToggleButton:
+                group: "am_pm"
+                text: 'AM'
+
+            ToggleButton:
+                group: "am_pm"
+                text: 'PM'
+
+
 

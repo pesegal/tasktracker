@@ -13,19 +13,24 @@
 
                 DateTimeLabel:
                     id: label_time_start
+                    name: "label_time_start"
                     display_time: timeline_display.display_time_start
+                    time_line_container: timeline_display
+
                 TimelineSlider:
                     time_line_container: timeline_display
 
                 DateTimeLabel:
                     id: label_time_end
+                    name: "label_time_end"
                     display_time: timeline_display.display_time_end
-
+                    time_line_container: timeline_display
 
 <DateTimeLabel>:
     size_hint: None, 1
-
     height: 50
     markup: True
+
+
 
 

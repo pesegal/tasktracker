@@ -1,8 +1,9 @@
 from kivy.uix.screenmanager import Screen
-from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.slider import Slider
+from kivy.uix.bubble import Bubble
 from kivy.uix.label import Label
-from kivy.properties import ObjectProperty
+from kivy.properties import ObjectProperty, StringProperty
 from kivy.utils import get_color_from_hex
 
 
@@ -20,6 +21,8 @@ from tasktracker.settings import to_local_time
 
 class DateTimeLabel(Label, Themeable):
     display_time = ObjectProperty()
+    time_line_container = ObjectProperty()
+    name = StringProperty()
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -29,15 +32,43 @@ class DateTimeLabel(Label, Themeable):
         pass
 
     def on_touch_up(self, touch):
-        if self.collide_point(touch.x, touch.y):  # filter touch events
+        if self.collide_point(touch.x, touch.y) :  # filter touch events
             print(self, "was touched!")
-            # TODO: Open time setter bubble
+            self.time_line_container.open_dt_selection_menu(self.display_time, self)
 
     def update_label(self, date, dt):
         local_datetime = dt
         self.text = "[b]{}[/b]\n{}".format(local_datetime.strftime("%d %B"), local_datetime.strftime("%I:%M %p"))
 
     # TODO: Label display is directly tied current max mins display time of the timeline.
+
+
+# TODO: Work on themeing the bubble and getting proper datetime input built.
+class StatsTimeSelectionMenu(Bubble):
+    def __init__(self, dt, label, **kwargs):
+        super().__init__(**kwargs)
+        self.datetime = dt
+        self.label = label
+        self.size = (300, 100)
+
+        print(self.label.name)
+        if self.label.name == "label_time_start":
+            self.pos = self.label.x, self.label.height + 5
+            self.arrow_pos = "bottom_left"
+        else:
+            self.pos = self.label.x + self.label.width - self.width, self.label.height + 5
+            self.arrow_pos = "bottom_right"
+
+    def _close_menu(self):
+        self.parent.remove_widget(self)
+
+    def on_touch_down(self, touch):
+        if not self.collide_point(touch.x, touch.y):
+            self._close_menu()
+        elif 'button' in touch.profile and touch.button != 'left':
+            self._close_menu()
+        else:
+            return super().on_touch_down(touch)
 
 
 class TimelineSlider(Slider):
@@ -57,8 +88,7 @@ class TimelineSlider(Slider):
             self.time_line_container.timeline.scale = args[1]
 
 
-
-class TimelineContainer(BoxLayout):
+class TimelineContainer(FloatLayout):
     """ TimelineContainer object contains all functionality related to the display and manipulation
         of the timeline.
     """
@@ -90,6 +120,9 @@ class TimelineContainer(BoxLayout):
         DB.load_task_actions(self.display_time_start - t_buffer,
                              self.display_time_end + t_buffer, self._display_timeline)
         print(self.ids)
+
+    def open_dt_selection_menu(self, dt, label):
+        self.add_widget(StatsTimeSelectionMenu(dt, label))
 
 
 
