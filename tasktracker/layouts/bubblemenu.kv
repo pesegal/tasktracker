@@ -40,6 +40,18 @@
 <StatsTimeSelectionMenu>:
     show_arrow: True
     size_hint: None, None
+    background_image: self.bg_texture
+    background_color: self.bg_color
+    border: [4, 4, 4, 4]
+
+    canvas.before:
+        Color:
+            rgba: [0, 0, 0, .5]
+        BorderImage:
+            source: root.shadow_texture
+            border: [3, 3, 3, 3]
+            pos: self.content.x - 2 , self.content.y - 2
+            size: self.content.width + 4, self.content.height + 4
 
     BoxLayout:
         orientation: "vertical"
@@ -49,8 +61,8 @@
                 size_hint_x: None
                 width: 50
                 text: "Date"
-            TextInput:
-                hint_text: "MM/DD/YYYY"
+            TextInput: # TODO: Replace this with themed text input widget.
+                # hint_text: "MM/DD/YYYY"
         BoxLayout:
             orientation: "horizontal"
             Label:
@@ -58,7 +70,7 @@
                 width: 50
                 text: "Time"
             TextInput:
-                hint_text: "HH:MM"
+                # hint_text: "HH:MM"
 
             ToggleButton:
                 group: "am_pm"

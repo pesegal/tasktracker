@@ -3,7 +3,7 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.slider import Slider
 from kivy.uix.bubble import Bubble
 from kivy.uix.label import Label
-from kivy.properties import ObjectProperty, StringProperty
+from kivy.properties import ObjectProperty, StringProperty, ListProperty
 from kivy.utils import get_color_from_hex
 
 
@@ -12,6 +12,7 @@ from tasktracker.stats.timeline import TaskTimeLine, VisualTimeTick, PeriodDispl
 from datetime import datetime, timezone, timedelta
 from tasktracker.task.taskpopups import PROJECT_LIST
 from tasktracker.themes.themes import THEME_CONTROLLER, Themeable
+from tasktracker.themes import themes
 from tasktracker.settings import to_local_time
 
 
@@ -31,8 +32,9 @@ class DateTimeLabel(Label, Themeable):
     def theme_update(self):
         pass
 
-    def on_touch_up(self, touch):
-        if self.collide_point(touch.x, touch.y) :  # filter touch events
+    def on_touch_down(self, touch):
+        # filter touch events
+        if self.collide_point(touch.x, touch.y) and 'button' in touch.profile and touch.button == 'right':
             print(self, "was touched!")
             self.time_line_container.open_dt_selection_menu(self.display_time, self)
 
@@ -44,7 +46,11 @@ class DateTimeLabel(Label, Themeable):
 
 
 # TODO: Work on themeing the bubble and getting proper datetime input built.
-class StatsTimeSelectionMenu(Bubble):
+class StatsTimeSelectionMenu(Bubble, Themeable):
+    shadow_texture = StringProperty(themes.SHADOW_TEXTURE)
+    bg_texture = StringProperty(themes.ALL_BEV_CORNERS)
+    bg_color = ListProperty()
+
     def __init__(self, dt, label, **kwargs):
         super().__init__(**kwargs)
         self.datetime = dt
@@ -58,6 +64,9 @@ class StatsTimeSelectionMenu(Bubble):
         else:
             self.pos = self.label.x + self.label.width - self.width, self.label.height + 5
             self.arrow_pos = "bottom_right"
+
+    def theme_update(self):
+        self.bg_color = self.theme.status
 
     def _close_menu(self):
         self.parent.remove_widget(self)
