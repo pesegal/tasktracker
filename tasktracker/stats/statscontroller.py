@@ -1,83 +1,20 @@
 from kivy.uix.screenmanager import Screen
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.slider import Slider
-from kivy.uix.bubble import Bubble
-from kivy.uix.label import Label
-from kivy.properties import ObjectProperty, StringProperty, ListProperty
+from kivy.properties import ObjectProperty
 from kivy.utils import get_color_from_hex
-
 
 from tasktracker.database.db_interface import DB
 from tasktracker.stats.timeline import TaskTimeLine, VisualTimeTick, PeriodDisplayTick, RecordPeriod
+from tasktracker.stats.datecontrols import StatsTimeSelectionMenu
 from datetime import datetime, timezone, timedelta
 from tasktracker.task.taskpopups import PROJECT_LIST
-from tasktracker.themes.themes import THEME_CONTROLLER, Themeable
-from tasktracker.themes import themes
-from tasktracker.settings import to_local_time
+from tasktracker.themes.themes import THEME_CONTROLLER
 
 
 # TODO: DEFAULT COLORS FOR SHORT BREAK, LONG BREAK, & PAUSE (MAKE THESE CONFIGURABLE IN SETTINGS?)
 
 # Todo: write a helper function that takes start and end datetimes and returns the number of months, weeks, days
-
-class DateTimeLabel(Label, Themeable):
-    display_time = ObjectProperty()
-    time_line_container = ObjectProperty()
-    name = StringProperty()
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.bind(display_time=self.update_label)
-
-    def theme_update(self):
-        pass
-
-    def on_touch_down(self, touch):
-        # filter touch events
-        if self.collide_point(touch.x, touch.y) and 'button' in touch.profile and touch.button == 'right':
-            print(self, "was touched!")
-            self.time_line_container.open_dt_selection_menu(self.display_time, self)
-
-    def update_label(self, date, dt):
-        local_datetime = dt
-        self.text = "[b]{}[/b]\n{}".format(local_datetime.strftime("%d %B"), local_datetime.strftime("%I:%M %p"))
-
-    # TODO: Label display is directly tied current max mins display time of the timeline.
-
-
-# TODO: Work on themeing the bubble and getting proper datetime input built.
-class StatsTimeSelectionMenu(Bubble, Themeable):
-    shadow_texture = StringProperty(themes.SHADOW_TEXTURE)
-    bg_texture = StringProperty(themes.ALL_BEV_CORNERS)
-    bg_color = ListProperty()
-
-    def __init__(self, dt, label, **kwargs):
-        super().__init__(**kwargs)
-        self.datetime = dt
-        self.label = label
-        self.size = (300, 100)
-
-        print(self.label.name)
-        if self.label.name == "label_time_start":
-            self.pos = self.label.x, self.label.height + 5
-            self.arrow_pos = "bottom_left"
-        else:
-            self.pos = self.label.x + self.label.width - self.width, self.label.height + 5
-            self.arrow_pos = "bottom_right"
-
-    def theme_update(self):
-        self.bg_color = self.theme.status
-
-    def _close_menu(self):
-        self.parent.remove_widget(self)
-
-    def on_touch_down(self, touch):
-        if not self.collide_point(touch.x, touch.y):
-            self._close_menu()
-        elif 'button' in touch.profile and touch.button != 'left':
-            self._close_menu()
-        else:
-            return super().on_touch_down(touch)
 
 
 class TimelineSlider(Slider):
@@ -133,8 +70,6 @@ class TimelineContainer(FloatLayout):
     def open_dt_selection_menu(self, dt, label):
         self.add_widget(StatsTimeSelectionMenu(dt, label))
 
-
-
     def _display_timeline(self, data, tb):
         # Function callback to test the database interface for loading projects.
 
@@ -180,9 +115,6 @@ class TimelineContainer(FloatLayout):
                                           self.display_time_end)
         self.timeline.cover_background = False
         self.add_widget(self.timeline, index=1)
-
-
-
 
 
 class StatsScreen(Screen):  # TODO: Break this out into it's own module eventually.
