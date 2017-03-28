@@ -32,14 +32,13 @@ class VDateInput(ValidatedTextInput):
             obj.do_cursor_movement('cursor_right')
 
 
-
-
 class VTimeInput(ValidatedTextInput):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
     def on_text(self, obj, text_value):
         pass
+
 
 class DateTimeLabel(Label, Themeable):
     display_time = ObjectProperty()
@@ -65,7 +64,9 @@ class DateTimeLabel(Label, Themeable):
 
     # TODO: Label display is directly tied current max mins display time of the timeline.
 
-# TODO: Work on themeing the bubble and getting proper datetime input built.
+    # TODO: Auto format (add slashes) text input to match datetime.
+
+    # TODO: Allow both datetime selection boxes to be open at once.
 
 
 class StatsTimeSelectionMenu(Bubble, Themeable):

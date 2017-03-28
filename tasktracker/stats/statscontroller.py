@@ -71,7 +71,37 @@ class TimelineContainer(FloatLayout):
         self.add_widget(StatsTimeSelectionMenu(dt, label))
 
     def _display_timeline(self, data, tb):
-        # Function callback to test the database interface for loading projects.
+        """ Temporary timeline display method.
+
+        :param data:
+        :param tb:
+        :return:
+        """
+
+        # TODO: How many years, months, days, hours and minutes are currently displayed at current scale
+
+        # TODO: Chose the best way to display the data, timeline layout or proportional bar graph.
+
+        # TODO: Allow for filtering on project type, ect.
+
+        # TODO: use factory pattern to properly return the display object list.
+
+        # TODO: Standard Timeline Display
+        """ Standard Timeline Display Features
+            - Display as selected by project color and pause break.
+            - Clicking on a project will bring up that tasks information.
+            - Display the summary for the entire period.
+        """
+
+        # TODO: Proportion Bar Graph:
+        """ Proportional Bar Graph Features
+            - Take a proportion of the height above the line and use that as the max height.
+            - Set the period with the most records to the max height.
+            - All other records are proportionally related to the record with the max height.
+            - Draw the different records stacked by project color.
+            - If the section is clicked on the pop-up will display totals for that day.
+            - Take the same except below the line for pauses and breaks.
+        """
 
         # TODO: Split Records by Project Type and Action Type
         project_dict = dict()
@@ -120,8 +150,6 @@ class TimelineContainer(FloatLayout):
 class StatsScreen(Screen):  # TODO: Break this out into it's own module eventually.
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-
-
 
 
         # DB.load_task_actions(self.test_time_start, self.test_time_end, self._test_load_projects)
