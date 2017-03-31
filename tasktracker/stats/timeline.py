@@ -109,6 +109,7 @@ class PeriodDisplayTick(TimeTick):
         self.data_list = data
         self.tick_height = tick_height
 
+
     def tick_iter(self, tl):
         """ Override :meth: 'TimeTick.tick_iter'
             Returns RecordPeriod object's that fall within the current min and max display times.
@@ -210,20 +211,23 @@ class PeriodDisplayTick(TimeTick):
 
 
 class TaskTimeLine(Timeline, Themeable):
-
     def __init__(self, container, **kw):
         super(TaskTimeLine, self).__init__(**kw)
         self.bind(time_0=self._timeline_display_change)
         self.container = container
-
 
     def theme_update(self):
         self.line_color = self.theme.text
         self.redraw()
 
     def _timeline_display_change(self, *args):
-        print("scale", self.scale)
         self.container.display_time_start = self.time_0
         self.container.display_time_end = self.time_1
+
+
+
+
+
+
 
     # Todo: Tie scale to a slider.

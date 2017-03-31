@@ -2,7 +2,8 @@ from kivy.uix.bubble import Bubble
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 from kivy.metrics import sp
-from kivy.properties import StringProperty, ListProperty, ObjectProperty
+from kivy.properties import StringProperty, ListProperty, ObjectProperty, NumericProperty
+from kivy.clock import Clock
 
 from tasktracker.themes.themes import THEME_CONTROLLER, Themeable
 from tasktracker.themes import themes
@@ -13,8 +14,6 @@ class ValidatedTextInput(TextInput, Themeable):
         super().__init__(**kwargs)
         self.multiline = False
 
-    def on_text(self, *args):
-        raise NotImplementedError
 
     def theme_update(self):
         pass
@@ -23,21 +22,27 @@ class ValidatedTextInput(TextInput, Themeable):
 class VDateInput(ValidatedTextInput):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.max_chars = 10
 
-    def on_text(self, obj, text_value):
-        # Validate Date
-        print(self.cursor_index())
-        if len(text_value) == 2 or len(text_value) == 5:
-            self.text += '/'
-            obj.do_cursor_movement('cursor_right')
+    def insert_text(self, substring, from_undo=False):
+        if self.cursor[0] == 1 or self.cursor[0] == 4:
+            substring += '/'
+        if not from_undo and (len(self.text) + len(substring) > self.max_chars):
+            return
+        super(VDateInput, self).insert_text(substring, from_undo)
 
 
 class VTimeInput(ValidatedTextInput):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.max_chars = 5
 
-    def on_text(self, obj, text_value):
-        pass
+    def insert_text(self, substring, from_undo=False):
+        if self.cursor[0] == 1:
+            substring += ':'
+        if not from_undo and (len(self.text) + len(substring) > self.max_chars):
+            return
+        super(VTimeInput, self).insert_text(substring, from_undo)
 
 
 class DateTimeLabel(Label, Themeable):
