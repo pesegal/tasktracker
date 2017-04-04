@@ -68,7 +68,7 @@ class TimelineContainer(FloatLayout):
         print(self.ids)
 
     def open_dt_selection_menu(self, dt, label):
-        self.add_widget(StatsTimeSelectionMenu(dt, label))
+        self.add_widget(StatsTimeSelectionMenu(dt, label, self.timeline))
 
     def _display_timeline(self, data, tb):
         """ Temporary timeline display method.

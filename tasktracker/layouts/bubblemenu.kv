@@ -61,7 +61,8 @@
                 size_hint_x: None
                 width: 50
                 text: "Date"
-            VDateInput: # TODO: Replace this with themed text input widget.
+            VDateInput:
+                id: date_input
                 hint_text: "MM/DD/YYYY"
         BoxLayout:
             orientation: "horizontal"
@@ -70,6 +71,7 @@
                 width: 50
                 text: "Time"
             VTimeInput:
+                id: time_input
                 hint_text: "HH:MM"
 
             ToggleButton:

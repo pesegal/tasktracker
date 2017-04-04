@@ -24,6 +24,9 @@ class VDateInput(ValidatedTextInput):
         super().__init__(**kwargs)
         self.max_chars = 10
 
+    def update_date(self, dt):
+        self.text = dt.strftime('%m/%d/%Y')
+
     def insert_text(self, substring, from_undo=False):
         if self.cursor[0] == 1 or self.cursor[0] == 4:
             substring += '/'
@@ -31,11 +34,21 @@ class VDateInput(ValidatedTextInput):
             return
         super(VDateInput, self).insert_text(substring, from_undo)
 
+    def on_text_validate(self):
+        try:
+            #TODO: Make the labels set the date.
+        except ValueError:
+            pass
+
 
 class VTimeInput(ValidatedTextInput):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.max_chars = 5
+
+    def update_time(self, dt):
+        self.text = dt.strftime('%I:%M')
+        # TODO: Switch between AM/PM selctions
 
     def insert_text(self, substring, from_undo=False):
         if self.cursor[0] == 1:
@@ -79,11 +92,14 @@ class StatsTimeSelectionMenu(Bubble, Themeable):
     bg_texture = StringProperty(themes.ALL_BEV_CORNERS)
     bg_color = ListProperty([0, 0, 0, .5])
 
-    def __init__(self, dt, label, **kwargs):
+    time_line = ObjectProperty()
+
+    def __init__(self, dt, label, timeline, **kwargs):
         super().__init__(**kwargs)
         self.datetime = dt
         self.label = label
         self.size = (300, 100)
+        self.time_line = timeline
 
         print(self.label.name)
         if self.label.name == "label_time_start":
@@ -93,8 +109,18 @@ class StatsTimeSelectionMenu(Bubble, Themeable):
             self.pos = self.label.x + self.label.width - self.width - sp(5), self.label.height + 5
             self.arrow_pos = "bottom_right"
 
+        self.update_input_datetime()
+
     def theme_update(self):
         self.bg_color = self.theme.status
+
+    def update_input_datetime(self, dt=None):
+        if dt:
+            self.ids.date_input.update_date(dt)
+            self.ids.time_input.update_time(dt)
+        else:
+            self.ids.date_input.update_date(self.datetime)
+            self.ids.time_input.update_time(self.datetime)
 
     def _close_menu(self):
         self.parent.remove_widget(self)
