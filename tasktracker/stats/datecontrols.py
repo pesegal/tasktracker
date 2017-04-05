@@ -6,14 +6,16 @@ from kivy.properties import StringProperty, ListProperty, ObjectProperty, Numeri
 from kivy.clock import Clock
 
 from tasktracker.themes.themes import THEME_CONTROLLER, Themeable
+from tasktracker.settings import to_local_time
 from tasktracker.themes import themes
+
+from datetime import date, datetime, time
 
 
 class ValidatedTextInput(TextInput, Themeable):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.multiline = False
-
 
     def theme_update(self):
         pass
@@ -23,22 +25,38 @@ class VDateInput(ValidatedTextInput):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.max_chars = 10
+        self.error_text = "Incorrect Date Format"
 
     def update_date(self, dt):
         self.text = dt.strftime('%m/%d/%Y')
 
     def insert_text(self, substring, from_undo=False):
+        # TODO: FIGURE OUT HOW TO FIX DATE TIME INPUT
         if self.cursor[0] == 1 or self.cursor[0] == 4:
             substring += '/'
         if not from_undo and (len(self.text) + len(substring) > self.max_chars):
             return
         super(VDateInput, self).insert_text(substring, from_undo)
 
+    def on_focus(self, this, focused):
+        if self.text == self.error_text and focused:  # Auto reset the text box on date input failure
+            self.text = ''
+
     def on_text_validate(self):
+        print("Validating Text")
+
         try:
-            #TODO: Make the labels set the date.
-        except ValueError:
-            pass
+            month, day, year = self.text.split('/')
+            month = int(month)
+            day = int(day)
+            year = int(year)
+
+            d = date(month=month, day=day, year=year)
+
+            self.selection_menu.update_timeline(update_date=d)
+        except ValueError as err:
+            print(err)
+            self.text = self.error_text
 
 
 class VTimeInput(ValidatedTextInput):
@@ -100,6 +118,8 @@ class StatsTimeSelectionMenu(Bubble, Themeable):
         self.label = label
         self.size = (300, 100)
         self.time_line = timeline
+        self.update_date = self.datetime.date()
+        self.update_time = self.datetime.time()
 
         print(self.label.name)
         if self.label.name == "label_time_start":
@@ -113,6 +133,29 @@ class StatsTimeSelectionMenu(Bubble, Themeable):
 
     def theme_update(self):
         self.bg_color = self.theme.status
+
+    def update_timeline(self, update_date=None, update_time=None):
+        """ Takes either a date or a time object and combines them together into a datetime object and
+        updates the timeline displayed time.
+
+        :param update_date: Date object or None
+        :param update_time: Time object or None
+        """
+        if update_date:
+            self.update_date = update_date
+        if update_time:
+            self.update_time = update_time
+
+        print(self.update_date, self.update_time)
+
+        update_datetime = to_local_time(datetime.combine(self.update_date, self.update_time))
+
+        # TODO: Handle larger than index_0 to index_1
+        if self.label.name == 'label_time_start':
+            print(self.time_line.index_of(update_datetime))
+            self.time_line.index_0 = self.time_line.index_of(update_datetime)
+        else:
+            self.time_line.index_1 = self.time_line.index_of(update_datetime)
 
     def update_input_datetime(self, dt=None):
         if dt:
