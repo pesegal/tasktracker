@@ -11,6 +11,10 @@ from tasktracker.themes import themes
 
 from datetime import date, datetime, time
 
+class VInputError(Exception):
+    def __init__(self, message):
+        self.message = message
+
 
 class ValidatedTextInput(TextInput, Themeable):
     def __init__(self, **kwargs):
@@ -19,7 +23,6 @@ class ValidatedTextInput(TextInput, Themeable):
 
     def theme_update(self):
         pass
-
 
 class VDateInput(ValidatedTextInput):
     def __init__(self, **kwargs):
@@ -31,8 +34,8 @@ class VDateInput(ValidatedTextInput):
         self.text = dt.strftime('%m/%d/%Y')
 
     def insert_text(self, substring, from_undo=False):
-        # TODO: FIGURE OUT HOW TO FIX DATE TIME INPUT
-        if self.cursor[0] == 1 or self.cursor[0] == 4:
+        print(substring, self.cursor, len(self.text))
+        if (self.cursor[0] == 1 or self.cursor[0] == 4) and len(self.text) <= self.cursor[0]:
             substring += '/'
         if not from_undo and (len(self.text) + len(substring) > self.max_chars):
             return
@@ -43,20 +46,19 @@ class VDateInput(ValidatedTextInput):
             self.text = ''
 
     def on_text_validate(self):
-        print("Validating Text")
-
         try:
             month, day, year = self.text.split('/')
             month = int(month)
             day = int(day)
             year = int(year)
-
             d = date(month=month, day=day, year=year)
-
             self.selection_menu.update_timeline(update_date=d)
         except ValueError as err:
             print(err)
             self.text = self.error_text
+        except VInputError as err:
+            print(err.message)
+            self.text = err.message
 
 
 class VTimeInput(ValidatedTextInput):
@@ -150,11 +152,13 @@ class StatsTimeSelectionMenu(Bubble, Themeable):
 
         update_datetime = to_local_time(datetime.combine(self.update_date, self.update_time))
 
-        # TODO: Handle larger than index_0 to index_1
         if self.label.name == 'label_time_start':
-            print(self.time_line.index_of(update_datetime))
+            if update_datetime > self.time_line.time_1:
+                raise VInputError('Start date > end date.')
             self.time_line.index_0 = self.time_line.index_of(update_datetime)
         else:
+            if update_datetime < self.time_line.time_0:
+                raise VInputError('End date < start date.')
             self.time_line.index_1 = self.time_line.index_of(update_datetime)
 
     def update_input_datetime(self, dt=None):

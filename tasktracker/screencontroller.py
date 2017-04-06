@@ -42,7 +42,7 @@ class ScreenController(ScreenManager, Broadcast, Themeable):
 
 
 class ScreenMenuAndDisplay(BoxLayout, Broadcast):
-    screen_size = NumericProperty(0)
+    screen_size = NumericProperty(2)
 
     def __init__(self, **kwargs):
         super(ScreenMenuAndDisplay, self).__init__(**kwargs)
@@ -62,15 +62,15 @@ class ScreenMenuAndDisplay(BoxLayout, Broadcast):
         self.add_widget(self.screen_controller)
 
     def screen_width_state(self, *args):
-        if args[1][0] < 360:  # Small width screens where text needs to be icons
+        if self.size[0] < 360:  # Small width screens where text needs to be icons
             self.screen_size = 0
-        elif 360 < args[1][0] < 640:  # Single list
+        elif 360 < self.size[0] < 640:  # Single list
             self.screen_size = 1
-        elif 640 < args[1][0] < 960:
+        elif 640 < self.size[0] < 960:
             self.screen_size = 2
-        elif 960 < args[1][0] < 1280:
+        elif 960 < self.size[0] < 1280:
             self.screen_size = 3
-        elif 1280 < args[1][0]:
+        elif 1280 < self.size[0]:
             self.screen_size = 4
 
     def broadcast_window_resize(self, *args):

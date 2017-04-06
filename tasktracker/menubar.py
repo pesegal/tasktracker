@@ -73,6 +73,10 @@ class MenuBar(BoxLayout, Broadcast, Themeable):
 
     def switch_screens(self, name, direction='right'):
         self.current_screen = name
+
+        if name == 'tasks':  # Temporary corrects display when program doesn't load into task screen.
+            APP_CONTROL.task_list_screen.width_state_change(width_state=APP_CONTROL.click_drag_screen.screen_menu.screen_size)
+
         self.parent.screen_controller.transition.direction = direction
         self.parent.screen_controller.current = name
 
