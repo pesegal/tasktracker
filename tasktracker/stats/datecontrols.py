@@ -11,6 +11,7 @@ from tasktracker.themes import themes
 
 from datetime import date, datetime, time
 
+
 class VInputError(Exception):
     def __init__(self, message):
         self.message = message
@@ -23,6 +24,7 @@ class ValidatedTextInput(TextInput, Themeable):
 
     def theme_update(self):
         pass
+
 
 class VDateInput(ValidatedTextInput):
     def __init__(self, **kwargs):
@@ -65,6 +67,7 @@ class VTimeInput(ValidatedTextInput):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.max_chars = 5
+        self.error_message = "Incorrect Time"
 
     def update_time(self, dt):
         self.text = dt.strftime('%I:%M')
@@ -76,6 +79,20 @@ class VTimeInput(ValidatedTextInput):
         if not from_undo and (len(self.text) + len(substring) > self.max_chars):
             return
         super(VTimeInput, self).insert_text(substring, from_undo)
+
+    def on_text_validate(self):
+        try:
+            hour, minute = self.text.split(':')
+            hour = int(hour)
+            minute = int(minute)
+            t = time(hour=hour, minute=minute)
+            # TODO: Get AM PM
+            self.selection_menu.update_timeline(update_time=t)
+        except ValueError as err:
+            print(err)
+            self.text = self.error_message
+        except VInputError as err:
+            self.text = err.message
 
 
 class DateTimeLabel(Label, Themeable):
