@@ -109,7 +109,6 @@ class PeriodDisplayTick(TimeTick):
         self.data_list = data
         self.tick_height = tick_height
 
-
     def tick_iter(self, tl):
         """ Override :meth: 'TimeTick.tick_iter'
             Returns RecordPeriod object's that fall within the current min and max display times.
@@ -193,6 +192,7 @@ class PeriodDisplayTick(TimeTick):
         # tickline.labeller.register(self, record_index, tick_rect)  # TODO: Figure out what is wrong here.
         #
 
+
     def get_label_texture(self, index, succeinct=True, return_kw=False, return_lable=False, **kw):
         # TODO: Look into what might be the best way to display this information. Project or task or total time?
         # Todo: Figure out how to do labeling correctly
@@ -223,11 +223,6 @@ class TaskTimeLine(Timeline, Themeable):
     def _timeline_display_change(self, *args):
         self.container.display_time_start = self.time_0
         self.container.display_time_end = self.time_1
-
-
-
-
-
 
 
     # Todo: Tie scale to a slider.

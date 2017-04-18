@@ -71,7 +71,7 @@ class VTimeInput(ValidatedTextInput):
 
     def update_time(self, dt):
         self.text = dt.strftime('%I:%M')
-        # TODO: Switch between AM/PM selctions
+        # TODO: Switch between AM/PM selections
 
     def insert_text(self, substring, from_undo=False):
         if self.cursor[0] == 1:
@@ -85,8 +85,8 @@ class VTimeInput(ValidatedTextInput):
             hour, minute = self.text.split(':')
             hour = int(hour)
             minute = int(minute)
+            # Handling AM/PM
             t = time(hour=hour, minute=minute)
-            # TODO: Get AM PM
             self.selection_menu.update_timeline(update_time=t)
         except ValueError as err:
             print(err)
@@ -140,7 +140,6 @@ class StatsTimeSelectionMenu(Bubble, Themeable):
         self.update_date = self.datetime.date()
         self.update_time = self.datetime.time()
 
-        print(self.label.name)
         if self.label.name == "label_time_start":
             self.pos = self.label.x + sp(5), self.label.height + 5
             self.arrow_pos = "bottom_left"
@@ -148,12 +147,20 @@ class StatsTimeSelectionMenu(Bubble, Themeable):
             self.pos = self.label.x + self.label.width - self.width - sp(5), self.label.height + 5
             self.arrow_pos = "bottom_right"
 
+        # Set the am-pm buttons.
+        print(self.datetime.hour)
+        if 0 <= self.datetime.hour < 12:
+            self.set_am_pm(True)
+        else:
+            self.set_am_pm(False)
+
         self.update_input_datetime()
 
     def theme_update(self):
         self.bg_color = self.theme.status
 
     def update_timeline(self, update_date=None, update_time=None):
+        # TODO: REWRITE SO THAT IT PULLS BOTH DATE AND TIME When either is validated or AM PM is switched.
         """ Takes either a date or a time object and combines them together into a datetime object and
         updates the timeline displayed time.
 
@@ -164,6 +171,11 @@ class StatsTimeSelectionMenu(Bubble, Themeable):
             self.update_date = update_date
         if update_time:
             self.update_time = update_time
+            if self.update_time.hour <= 12 and not self.get_am_pm():  # Check to see if PM is selected.
+                self.update_time = time(self.update_time.hour + 11, self.update_time.minute)
+            elif 24 >= self.update_time.hour > 12:  # Set selection button to PM if military time
+                self.set_am_pm(False)
+                self.ids.time_input.text = update_time.hour - 11
 
         print(self.update_date, self.update_time)
 
@@ -171,12 +183,13 @@ class StatsTimeSelectionMenu(Bubble, Themeable):
 
         if self.label.name == 'label_time_start':
             if update_datetime > self.time_line.time_1:
-                raise VInputError('Start date > end date.')
+                raise VInputError('Date range overlap')
             self.time_line.index_0 = self.time_line.index_of(update_datetime)
         else:
             if update_datetime < self.time_line.time_0:
-                raise VInputError('End date < start date.')
+                raise VInputError('Date range overlap')
             self.time_line.index_1 = self.time_line.index_of(update_datetime)
+        self.label.update_label(self, update_datetime)
 
     def update_input_datetime(self, dt=None):
         if dt:
@@ -185,6 +198,24 @@ class StatsTimeSelectionMenu(Bubble, Themeable):
         else:
             self.ids.date_input.update_date(self.datetime)
             self.ids.time_input.update_time(self.datetime)
+
+    def set_am_pm(self, am):
+        """
+        :param am: set to true if you want to set the button state to AM else false for PM
+        """
+        if am:
+            self.ids.am_button.state = 'down'
+        else:
+            self.ids.pm_button.state = 'down'
+
+    def get_am_pm(self):
+        """
+        :return: True if AM / False if PM
+        """
+        if self.ids.am_button.state == 'down':
+            return True
+        else:
+            return False
 
     def _close_menu(self):
         self.parent.remove_widget(self)
