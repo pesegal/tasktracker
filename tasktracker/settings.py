@@ -23,7 +23,6 @@ def to_local_time(dt):
     return dt.replace(tzinfo=pytz.utc).astimezone(timezone_local)
 
 
-
 class Borg:
     """
         The Borg class allows inheritable singleton behavior between all configuration objects.

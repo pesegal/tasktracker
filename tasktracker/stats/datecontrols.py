@@ -6,7 +6,7 @@ from kivy.properties import StringProperty, ListProperty, ObjectProperty, Numeri
 from kivy.clock import Clock
 
 from tasktracker.themes.themes import THEME_CONTROLLER, Themeable
-from tasktracker.settings import to_local_time
+from tasktracker.settings import to_local_time, timezone_local
 from tasktracker.themes import themes
 
 from datetime import date, datetime, time
@@ -31,9 +31,11 @@ class VDateInput(ValidatedTextInput):
         super().__init__(**kwargs)
         self.max_chars = 10
         self.error_text = "Incorrect Date Format"
+        self.current_date = None
 
     def update_date(self, dt):
         self.text = dt.strftime('%m/%d/%Y')
+        self.current_date = dt.date()
 
     def insert_text(self, substring, from_undo=False):
         print(substring, self.cursor, len(self.text))
@@ -53,14 +55,14 @@ class VDateInput(ValidatedTextInput):
             month = int(month)
             day = int(day)
             year = int(year)
-            d = date(month=month, day=day, year=year)
-            self.selection_menu.update_timeline(update_date=d)
+            self.current_date = date(month=month, day=day, year=year)
         except ValueError as err:
             print(err)
             self.text = self.error_text
         except VInputError as err:
             print(err.message)
             self.text = err.message
+        self.selection_menu.update_timeline(update_date=self.current_date)
 
 
 class VTimeInput(ValidatedTextInput):
@@ -68,9 +70,11 @@ class VTimeInput(ValidatedTextInput):
         super().__init__(**kwargs)
         self.max_chars = 5
         self.error_message = "Incorrect Time"
+        self.current_time = None
 
     def update_time(self, dt):
         self.text = dt.strftime('%I:%M')
+        self.current_time = dt.timetz()
         # TODO: Switch between AM/PM selections
 
     def insert_text(self, substring, from_undo=False):
@@ -86,13 +90,13 @@ class VTimeInput(ValidatedTextInput):
             hour = int(hour)
             minute = int(minute)
             # Handling AM/PM
-            t = time(hour=hour, minute=minute)
-            self.selection_menu.update_timeline(update_time=t)
+            self.current_time = time(hour=hour, minute=minute, tzinfo=timezone_local)
         except ValueError as err:
             print(err)
             self.text = self.error_message
         except VInputError as err:
             self.text = err.message
+        self.selection_menu.update_timeline(update_time=self.current_time)
 
 
 class DateTimeLabel(Label, Themeable):
@@ -160,7 +164,6 @@ class StatsTimeSelectionMenu(Bubble, Themeable):
         self.bg_color = self.theme.status
 
     def update_timeline(self, update_date=None, update_time=None):
-        # TODO: REWRITE SO THAT IT PULLS BOTH DATE AND TIME When either is validated or AM PM is switched.
         """ Takes either a date or a time object and combines them together into a datetime object and
         updates the timeline displayed time.
 
@@ -169,18 +172,24 @@ class StatsTimeSelectionMenu(Bubble, Themeable):
         """
         if update_date:
             self.update_date = update_date
+            self.update_time = self.ids.time_input.current_time
         if update_time:
             self.update_time = update_time
+            self.update_date = self.ids.date_input.current_date
             if self.update_time.hour <= 12 and not self.get_am_pm():  # Check to see if PM is selected.
-                self.update_time = time(self.update_time.hour + 11, self.update_time.minute)
+                self.update_time = time(self.update_time.hour + 12, self.update_time.minute,
+                                        tzinfo=self.update_time.tzinfo)
             elif 24 >= self.update_time.hour > 12:  # Set selection button to PM if military time
                 self.set_am_pm(False)
-                self.ids.time_input.text = update_time.hour - 11
+                visual_time = time(self.update_time.hour - 12, self.update_time.minute,
+                                   tzinfo=self.update_time.tzinfo)
+                self.ids.time_input.text = visual_time.strftime('%I:%M')
 
-        print(self.update_date, self.update_time)
+        update_datetime = datetime.combine(self.update_date, self.update_time)
+        print(update_datetime)
 
-        update_datetime = to_local_time(datetime.combine(self.update_date, self.update_time))
-
+        # TODO: Figure out how to handle range selection errors.
+        # TODO: Validate that this pulls correct date when time is adjusted. (Doesn't update date unless entered.)
         if self.label.name == 'label_time_start':
             if update_datetime > self.time_line.time_1:
                 raise VInputError('Date range overlap')
@@ -205,8 +214,10 @@ class StatsTimeSelectionMenu(Bubble, Themeable):
         """
         if am:
             self.ids.am_button.state = 'down'
+            self.ids.pm_button.state = 'normal'
         else:
             self.ids.pm_button.state = 'down'
+            self.ids.am_button.state = 'normal'
 
     def get_am_pm(self):
         """
