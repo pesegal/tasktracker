@@ -87,4 +87,29 @@
                 text: 'PM'
 
 
+<ErrorNotificationPopup>:
+    show_arrow: False
+    size_hint_x: 0.75
+    size_hint_y: None
+    pos_hint_x: {'center_x': .5}
+    pos_hint_y: {'top': 1}
+
+    # TODO: Figure out positioning
+
+    background_image: self.bg_texture
+    background_color: self.bg_color
+    border: [4, 4, 4, 4]
+
+    canvas.before:
+        Color:
+            rgba: [0, 0, 0, .5]
+        BorderImage:
+            source: root.shadow_texture
+            border: [3, 3, 3, 3]
+            pos: self.content.x - 2 , self.content.y - 2
+            size: self.content.width + 4, self.content.height + 4
+
+    Label:
+        id: error_message
+        text: "Placeholder error message here!"
 

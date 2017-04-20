@@ -145,10 +145,10 @@ class StatsTimeSelectionMenu(Bubble, Themeable):
         self.update_time = self.datetime.time()
 
         if self.label.name == "label_time_start":
-            self.pos = self.label.x + sp(5), self.label.height + 5
+            self.pos = self.label.x + sp(5), self.label.height + sp(5)
             self.arrow_pos = "bottom_left"
         else:
-            self.pos = self.label.x + self.label.width - self.width - sp(5), self.label.height + 5
+            self.pos = self.label.x + self.label.width - self.width - sp(5), self.label.height + sp(5)
             self.arrow_pos = "bottom_right"
 
         # Set the am-pm buttons.
@@ -159,6 +159,9 @@ class StatsTimeSelectionMenu(Bubble, Themeable):
             self.set_am_pm(False)
 
         self.update_input_datetime()
+
+    def trigger_error_popup_window(self, error_message):
+        self.parent.add_widget(ErrorNotificationPopup(error_message))
 
     def theme_update(self):
         self.bg_color = self.theme.status
@@ -190,15 +193,19 @@ class StatsTimeSelectionMenu(Bubble, Themeable):
 
         # TODO: Figure out how to handle range selection errors.
         # TODO: Validate that this pulls correct date when time is adjusted. (Doesn't update date unless entered.)
-        if self.label.name == 'label_time_start':
-            if update_datetime > self.time_line.time_1:
-                raise VInputError('Date range overlap')
-            self.time_line.index_0 = self.time_line.index_of(update_datetime)
-        else:
-            if update_datetime < self.time_line.time_0:
-                raise VInputError('Date range overlap')
-            self.time_line.index_1 = self.time_line.index_of(update_datetime)
-        self.label.update_label(self, update_datetime)
+
+        try:
+            if self.label.name == 'label_time_start':
+                if update_datetime > self.time_line.time_1:
+                    raise VInputError('Date range overlap')
+                self.time_line.index_0 = self.time_line.index_of(update_datetime)
+            else:
+                if update_datetime < self.time_line.time_0:
+                    raise VInputError('Date range overlap')
+                self.time_line.index_1 = self.time_line.index_of(update_datetime)
+            self.label.update_label(self, update_datetime)
+        except VInputError as err:
+            self.trigger_error_popup_window(err.message)
 
     def update_input_datetime(self, dt=None):
         if dt:
@@ -238,3 +245,17 @@ class StatsTimeSelectionMenu(Bubble, Themeable):
             self._close_menu()
         else:
             return super().on_touch_down(touch)
+
+
+class ErrorNotificationPopup(Bubble, Themeable):
+    shadow_texture = StringProperty(themes.SHADOW_TEXTURE)
+    bg_texture = StringProperty(themes.ALL_BEV_CORNERS)
+    bg_color = ListProperty([0, 0, 0, .5])
+
+    def __init__(self, message, **kwargs):
+        super().__init__(**kwargs)
+
+    def theme_update(self):
+        self.bg_color = self.theme.status
+
+    # TODO: FIGURE OUT HOW TO TRIGGER THIS TO CLOSE AFTER SET PERIOD
