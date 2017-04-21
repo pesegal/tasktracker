@@ -10,6 +10,7 @@ from tasktracker.stats.datecontrols import StatsTimeSelectionMenu
 from datetime import datetime, timezone, timedelta
 from tasktracker.task.taskpopups import PROJECT_LIST
 from tasktracker.themes.themes import THEME_CONTROLLER
+from tasktracker.stats.datecontrols import ErrorNotificationPopup
 
 
 # TODO: DEFAULT COLORS FOR SHORT BREAK, LONG BREAK, & PAUSE (MAKE THESE CONFIGURABLE IN SETTINGS?)
@@ -48,8 +49,14 @@ class TimelineContainer(FloatLayout):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+
+        # Error notification popup variables
+        self.error_popup = None
+        self.bind(on_size=self.error_popup_reposition, on_pos=self.error_popup_reposition)
+
         # self.bind(display_time_start=self._display_time_update)
         # self.bind(display_time_end=self._display_time_update)
+        # TODO: Figure out a better way to display time ticks based on scale.
         self.time_ticks = [VisualTimeTick(mode=VisualTimeTick.mode.options[i], valign='line_bottom') for i in
                            [0, 2, 5, 6, 7, 9, 10]]
         self.time_ticks.extend([VisualTimeTick(mode=VisualTimeTick.mode.options[i], valign='line_top',
@@ -69,6 +76,15 @@ class TimelineContainer(FloatLayout):
 
     def open_dt_selection_menu(self, dt, label):
         self.add_widget(StatsTimeSelectionMenu(dt, label, self.timeline))
+
+    def open_error_notification_popup(self, message):
+        self.error_popup = ErrorNotificationPopup(message)
+        self.add_widget(self.error_popup)
+
+    def error_popup_reposition(self, *args):
+        print(*args)
+        if self.error_popup:
+            self.error_popup.pos = 400, 200
 
     def _display_timeline(self, data, tb):
         """ Temporary timeline display method.

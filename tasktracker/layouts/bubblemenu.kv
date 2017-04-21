@@ -91,7 +91,7 @@
     show_arrow: False
     size_hint_x: 0.75
     size_hint_y: None
-    pos_hint_x: {'center_x': .5}
+    pos_hint_x: {'x': 1}
     pos_hint_y: {'top': 1}
 
     # TODO: Figure out positioning
@@ -111,5 +111,5 @@
 
     Label:
         id: error_message
-        text: "Placeholder error message here!"
+        text: root.message
 

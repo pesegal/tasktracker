@@ -160,9 +160,6 @@ class StatsTimeSelectionMenu(Bubble, Themeable):
 
         self.update_input_datetime()
 
-    def trigger_error_popup_window(self, error_message):
-        self.parent.add_widget(ErrorNotificationPopup(error_message))
-
     def theme_update(self):
         self.bg_color = self.theme.status
 
@@ -205,7 +202,7 @@ class StatsTimeSelectionMenu(Bubble, Themeable):
                 self.time_line.index_1 = self.time_line.index_of(update_datetime)
             self.label.update_label(self, update_datetime)
         except VInputError as err:
-            self.trigger_error_popup_window(err.message)
+            self.parent.open_error_notification_popup(err.message)
 
     def update_input_datetime(self, dt=None):
         if dt:
@@ -251,9 +248,11 @@ class ErrorNotificationPopup(Bubble, Themeable):
     shadow_texture = StringProperty(themes.SHADOW_TEXTURE)
     bg_texture = StringProperty(themes.ALL_BEV_CORNERS)
     bg_color = ListProperty([0, 0, 0, .5])
+    message = StringProperty('None')
 
     def __init__(self, message, **kwargs):
         super().__init__(**kwargs)
+        self.message = message
 
     def theme_update(self):
         self.bg_color = self.theme.status
