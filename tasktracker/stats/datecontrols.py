@@ -121,7 +121,7 @@ class DateTimeLabel(Label, Themeable):
         local_datetime = dt
         self.text = "[b]{}[/b]\n{}".format(local_datetime.strftime("%d %B"), local_datetime.strftime("%I:%M %p"))
 
-    # TODO: Label display is directly tied current max mins display time of the timeline.
+    # TODO: Label display is directly tied current max/mins display time of the timeline.
 
     # TODO: Auto format (add slashes) text input to match datetime.
 
@@ -253,8 +253,13 @@ class ErrorNotificationPopup(Bubble, Themeable):
     def __init__(self, message, **kwargs):
         super().__init__(**kwargs)
         self.message = message
+        # TODO: Add intro and outro animations.
+        Clock.schedule_once(self.remove_self, 2)
 
     def theme_update(self):
         self.bg_color = self.theme.status
+
+    def remove_self(self, *args):
+        self.parent.remove_widget(self)
 
     # TODO: FIGURE OUT HOW TO TRIGGER THIS TO CLOSE AFTER SET PERIOD
