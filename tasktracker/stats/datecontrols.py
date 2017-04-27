@@ -4,6 +4,7 @@ from kivy.uix.textinput import TextInput
 from kivy.metrics import sp
 from kivy.properties import StringProperty, ListProperty, ObjectProperty, NumericProperty
 from kivy.clock import Clock
+from kivy.animation import Animation
 
 from tasktracker.themes.themes import THEME_CONTROLLER, Themeable
 from tasktracker.settings import to_local_time, timezone_local
@@ -260,6 +261,10 @@ class ErrorNotificationPopup(Bubble, Themeable):
         self.bg_color = self.theme.status
 
     def remove_self(self, *args):
-        self.parent.remove_widget(self)
+        err_animation = Animation(size=(self.width, 10),
+                                  duration=.2, t='in_cubic')
+        err_animation.bind(on_complete=lambda *a: self.parent.remove_widget(self))
+        err_animation.start(self)
+
 
     # TODO: FIGURE OUT HOW TO TRIGGER THIS TO CLOSE AFTER SET PERIOD

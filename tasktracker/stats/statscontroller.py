@@ -3,7 +3,10 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.slider import Slider
 from kivy.properties import ObjectProperty
 from kivy.utils import get_color_from_hex
+from kivy.animation import Animation
 
+
+from copy import copy
 from tasktracker.database.db_interface import DB
 from tasktracker.stats.timeline import TaskTimeLine, VisualTimeTick, PeriodDisplayTick, RecordPeriod
 from tasktracker.stats.datecontrols import StatsTimeSelectionMenu
@@ -79,7 +82,13 @@ class TimelineContainer(FloatLayout):
 
     def open_error_notification_popup(self, message):
         self.error_popup = ErrorNotificationPopup(message)
+        err_original_size = copy(self.error_popup.size)
+        self.error_popup.size = (self.error_popup.width / 1.7, self.error_popup.height / 2)
+        print(err_original_size, self.error_popup.size)
+        err_animation = Animation(size=err_original_size,
+                                  duration=.2, t='out_cubic')
         self.add_widget(self.error_popup)
+        err_animation.start(self.error_popup)
 
     def error_popup_reposition(self, *args):
         print(*args)
