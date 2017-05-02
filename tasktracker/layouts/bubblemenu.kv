@@ -86,6 +86,13 @@
                 group: "am_pm"
                 text: 'PM'
 
+    Button:
+        id: update
+        size_hint_x: .3
+        text: 'Update'
+
+
+
 
 <ErrorNotificationPopup>:
     show_arrow: False
@@ -111,5 +118,9 @@
 
     Label:
         id: error_message
+        text_size: root.size
+        padding_x: 3
+        halign: 'center'
+        valign: 'middle'
         text: root.message
 

@@ -31,7 +31,6 @@ class VDateInput(ValidatedTextInput):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.max_chars = 10
-        self.error_text = "Incorrect Date Format"
         self.current_date = None
 
     def update_date(self, dt):
@@ -46,10 +45,6 @@ class VDateInput(ValidatedTextInput):
             return
         super(VDateInput, self).insert_text(substring, from_undo)
 
-    def on_focus(self, this, focused):
-        if self.text == self.error_text and focused:  # Auto reset the text box on date input failure
-            self.text = ''
-
     def on_text_validate(self):
         try:
             month, day, year = self.text.split('/')
@@ -57,20 +52,15 @@ class VDateInput(ValidatedTextInput):
             day = int(day)
             year = int(year)
             self.current_date = date(month=month, day=day, year=year)
+            self.selection_menu.update_timeline(update_date=self.current_date)
         except ValueError as err:
-            print(err)
-            self.text = self.error_text
-        except VInputError as err:
-            print(err.message)
-            self.text = err.message
-        self.selection_menu.update_timeline(update_date=self.current_date)
+            self.selection_menu.parent.open_error_notification_popup(str(err).capitalize())
 
 
 class VTimeInput(ValidatedTextInput):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.max_chars = 5
-        self.error_message = "Incorrect Time"
         self.current_time = None
 
     def update_time(self, dt):
@@ -79,7 +69,7 @@ class VTimeInput(ValidatedTextInput):
         # TODO: Switch between AM/PM selections
 
     def insert_text(self, substring, from_undo=False):
-        if self.cursor[0] == 1:
+        if self.cursor[0] == 1 and len(self.text) <= self.cursor[0]:
             substring += ':'
         if not from_undo and (len(self.text) + len(substring) > self.max_chars):
             return
@@ -92,12 +82,9 @@ class VTimeInput(ValidatedTextInput):
             minute = int(minute)
             # Handling AM/PM
             self.current_time = time(hour=hour, minute=minute, tzinfo=timezone_local)
+            self.selection_menu.update_timeline(update_time=self.current_time)
         except ValueError as err:
-            print(err)
-            self.text = self.error_message
-        except VInputError as err:
-            self.text = err.message
-        self.selection_menu.update_timeline(update_time=self.current_time)
+            self.selection_menu.parent.open_error_notification_popup(str(err).capitalize())
 
 
 class DateTimeLabel(Label, Themeable):
@@ -265,6 +252,3 @@ class ErrorNotificationPopup(Bubble, Themeable):
                                   duration=.2, t='in_cubic')
         err_animation.bind(on_complete=lambda *a: self.parent.remove_widget(self))
         err_animation.start(self)
-
-
-    # TODO: FIGURE OUT HOW TO TRIGGER THIS TO CLOSE AFTER SET PERIOD
