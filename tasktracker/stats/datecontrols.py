@@ -95,6 +95,7 @@ class DateTimeLabel(Label, Themeable):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.bind(display_time=self.update_label)
+        self.bubble_selection_menu = None
 
     def theme_update(self):
         pass
@@ -131,6 +132,8 @@ class StatsTimeSelectionMenu(Bubble, Themeable):
         self.time_line = timeline
         self.update_date = self.datetime.date()
         self.update_time = self.datetime.time()
+
+        self.label.bubble_selection_menu = self
 
         if self.label.name == "label_time_start":
             self.pos = self.label.x + sp(5), self.label.height + sp(5)
@@ -221,10 +224,14 @@ class StatsTimeSelectionMenu(Bubble, Themeable):
             return False
 
     def _close_menu(self):
+        self.label.bubble_selection_menu = None
         self.parent.remove_widget(self)
 
     def on_touch_down(self, touch):
-        if not self.collide_point(touch.x, touch.y):
+
+        if self.label.time_line_container.touch_label_check(touch) and 'button' in touch.profile and touch.button == 'right':
+            return super().on_touch_down(touch)
+        elif not self.label.time_line_container.touch_label_check(touch):
             self._close_menu()
         elif 'button' in touch.profile and touch.button != 'left':
             self._close_menu()

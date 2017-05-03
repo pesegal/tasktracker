@@ -80,6 +80,29 @@ class TimelineContainer(FloatLayout):
     def open_dt_selection_menu(self, dt, label):
         self.add_widget(StatsTimeSelectionMenu(dt, label, self.timeline))
 
+    def touch_label_check(self, touch):
+        """ Checks if the touch is within any of the areas to keep the StatsTimeSelectionMenu
+        object open. Allow the user to open both time selection menus at the same time.
+
+        :return True if the touch is in any of the proper areas
+        """
+        if self.label_start.bubble_selection_menu:
+            print('LABEL START OPEN')
+            if self.label_start.bubble_selection_menu.collide_point(touch.x, touch.y):
+                print()
+                return True
+        if self.label_end.bubble_selection_menu:
+            print('LABEL END OPEN')
+            if self.label_end.bubble_selection_menu.collide_point(touch.x, touch.y):
+                return True
+        if self.label_start.collide_point(touch.x, touch.y):
+            print('Touching')
+            return True
+        if self.label_end.collide_point(touch.x, touch.y):
+            print('touching')
+            return True
+        return False
+
     def open_error_notification_popup(self, message):
         self.error_popup = ErrorNotificationPopup(message)
         err_original_size = copy(self.error_popup.size)
