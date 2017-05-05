@@ -87,19 +87,14 @@ class TimelineContainer(FloatLayout):
         :return True if the touch is in any of the proper areas
         """
         if self.label_start.bubble_selection_menu:
-            print('LABEL START OPEN')
             if self.label_start.bubble_selection_menu.collide_point(touch.x, touch.y):
-                print()
                 return True
         if self.label_end.bubble_selection_menu:
-            print('LABEL END OPEN')
             if self.label_end.bubble_selection_menu.collide_point(touch.x, touch.y):
                 return True
         if self.label_start.collide_point(touch.x, touch.y):
-            print('Touching')
             return True
         if self.label_end.collide_point(touch.x, touch.y):
-            print('touching')
             return True
         return False
 

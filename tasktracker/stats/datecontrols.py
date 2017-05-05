@@ -228,8 +228,8 @@ class StatsTimeSelectionMenu(Bubble, Themeable):
         self.parent.remove_widget(self)
 
     def on_touch_down(self, touch):
-
-        if self.label.time_line_container.touch_label_check(touch) and 'button' in touch.profile and touch.button == 'right':
+        if not (not self.label.time_line_container.touch_label_check(touch) or not (
+                'button' in touch.profile)) and touch.button == 'right':
             return super().on_touch_down(touch)
         elif not self.label.time_line_container.touch_label_check(touch):
             self._close_menu()
@@ -237,6 +237,12 @@ class StatsTimeSelectionMenu(Bubble, Themeable):
             self._close_menu()
         else:
             return super().on_touch_down(touch)
+
+        # TODO: Get update button to work
+
+        # TODO: Create scrolling zoom bar
+
+        # TODO: Create timeline display logic.
 
 
 class ErrorNotificationPopup(Bubble, Themeable):
@@ -248,7 +254,6 @@ class ErrorNotificationPopup(Bubble, Themeable):
     def __init__(self, message, **kwargs):
         super().__init__(**kwargs)
         self.message = message
-        # TODO: Add intro and outro animations.
         Clock.schedule_once(self.remove_self, 2)
 
     def theme_update(self):
