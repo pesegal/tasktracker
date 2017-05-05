@@ -1,4 +1,5 @@
 from kivy.uix.bubble import Bubble
+from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 from kivy.metrics import sp
@@ -85,6 +86,22 @@ class VTimeInput(ValidatedTextInput):
             self.selection_menu.update_timeline(update_time=self.current_time)
         except ValueError as err:
             self.selection_menu.parent.open_error_notification_popup(str(err).capitalize())
+
+
+class UpdateButton(Button, Themeable):
+    date_input = ObjectProperty()
+    time_input = ObjectProperty()
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    def theme_update(self):
+        pass
+
+    def update(self):
+        self.date_input.on_text_validate()
+        self.time_input.on_text_validate()
+
 
 
 class DateTimeLabel(Label, Themeable):

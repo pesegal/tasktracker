@@ -86,10 +86,14 @@
                 group: "am_pm"
                 text: 'PM'
 
-    Button:
+    UpdateButton:
         id: update
+        date_input: date_input
+        time_input: time_input
         size_hint_x: .3
         text: 'Update'
+        on_press: self.update()
+
 
 
 <ErrorNotificationPopup>:
@@ -98,8 +102,6 @@
     size_hint_y: None
     height: 80
     pos_hint: {'center_x':.5, 'center_y':.9}
-
-    # TODO: Figure out positioning
 
     background_image: self.bg_texture
     background_color: self.bg_color
