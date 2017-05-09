@@ -103,7 +103,6 @@ class UpdateButton(Button, Themeable):
         self.time_input.on_text_validate()
 
 
-
 class DateTimeLabel(Label, Themeable):
     display_time = ObjectProperty()
     time_line_container = ObjectProperty()
@@ -140,6 +139,8 @@ class StatsTimeSelectionMenu(Bubble, Themeable):
     bg_color = ListProperty([0, 0, 0, .5])
 
     time_line = ObjectProperty()
+    dt_toggle_am = ObjectProperty()
+    dt_toggle_pm = ObjectProperty()
 
     def __init__(self, dt, label, timeline, **kwargs):
         super().__init__(**kwargs)
@@ -155,9 +156,13 @@ class StatsTimeSelectionMenu(Bubble, Themeable):
         if self.label.name == "label_time_start":
             self.pos = self.label.x + sp(5), self.label.height + sp(5)
             self.arrow_pos = "bottom_left"
+            self.dt_toggle_am.group = "am_pm_start"
+            self.dt_toggle_pm.group = "am_pm_start"
         else:
             self.pos = self.label.x + self.label.width - self.width - sp(5), self.label.height + sp(5)
             self.arrow_pos = "bottom_right"
+            self.dt_toggle_am.group = "am_pm_end"
+            self.dt_toggle_pm.group = "am_pm_end"
 
         # Set the am-pm buttons.
         print(self.datetime.hour)
@@ -184,8 +189,11 @@ class StatsTimeSelectionMenu(Bubble, Themeable):
         if update_time:
             self.update_time = update_time
             self.update_date = self.ids.date_input.current_date
-            if self.update_time.hour <= 12 and not self.get_am_pm():  # Check to see if PM is selected.
+            if self.update_time.hour < 12 and not self.get_am_pm():  # Check to see if PM is selected.
                 self.update_time = time(self.update_time.hour + 12, self.update_time.minute,
+                                        tzinfo=self.update_time.tzinfo)
+            elif self.update_time.hour == 12 and self.get_am_pm():  # check to see if it is 12 AM
+                self.update_time = time(self.update_time.hour - 12, self.update_time.minute,
                                         tzinfo=self.update_time.tzinfo)
             elif 24 >= self.update_time.hour > 12:  # Set selection button to PM if military time
                 self.set_am_pm(False)
@@ -235,7 +243,7 @@ class StatsTimeSelectionMenu(Bubble, Themeable):
         """
         :return: True if AM / False if PM
         """
-        if self.ids.am_button.state == 'down':
+        if self.dt_toggle_am.state == 'down':
             return True
         else:
             return False
