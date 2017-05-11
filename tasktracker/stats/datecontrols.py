@@ -204,8 +204,7 @@ class StatsTimeSelectionMenu(Bubble, Themeable):
         update_datetime = datetime.combine(self.update_date, self.update_time)
         print(update_datetime)
 
-        # TODO: Figure out how to handle range selection errors.
-        # TODO: Validate that this pulls correct date when time is adjusted. (Doesn't update date unless entered.)
+        # TODO: Check to make sure that the date time selection works correctly.
 
         try:
             if self.label.name == 'label_time_start':
