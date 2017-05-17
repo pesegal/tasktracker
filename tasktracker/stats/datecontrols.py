@@ -2,10 +2,13 @@ from kivy.uix.bubble import Bubble
 from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
+from kivy.uix.slider import Slider
 from kivy.metrics import sp
 from kivy.properties import StringProperty, ListProperty, ObjectProperty, NumericProperty
 from kivy.clock import Clock
 from kivy.animation import Animation
+###from kivy.garden.tickmarker import TickMarker
+
 
 from tasktracker.themes.themes import THEME_CONTROLLER, Themeable
 from tasktracker.settings import to_local_time, timezone_local
@@ -288,3 +291,24 @@ class ErrorNotificationPopup(Bubble, Themeable):
                                   duration=.2, t='in_cubic')
         err_animation.bind(on_complete=lambda *a: self.parent.remove_widget(self))
         err_animation.start(self)
+
+# ToDO Get tickmarker app working by compiling the pyx file with cython.
+# ToDO Create the slider that  will lock to the positions
+# ToDo Figure out the proper Zoom Levels
+# ToDo Create popup that displays the correct zoom level date range
+
+class TimelineSlider(Slider):
+    time_line_container = ObjectProperty()
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.min = 10
+        self.max = 500000
+        self.value = 1000
+        self.bind(value=self._print_value)
+
+    def _print_value(self, *args):
+        print(args)
+        if self.time_line_container:
+            # TODO: Convert this into a stepped time.
+            self.time_line_container.timeline.scale = args[1]

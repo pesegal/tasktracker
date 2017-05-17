@@ -21,23 +21,6 @@ from tasktracker.stats.datecontrols import ErrorNotificationPopup
 # Todo: write a helper function that takes start and end datetimes and returns the number of months, weeks, days
 
 
-class TimelineSlider(Slider):
-    time_line_container = ObjectProperty()
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.min = 10
-        self.max = 500000
-        self.value = 1000
-        self.bind(value=self._print_value)
-
-    def _print_value(self, *args):
-        print(args)
-        if self.time_line_container:
-            # TODO: Convert this into a stepped time.
-            self.time_line_container.timeline.scale = args[1]
-
-
 class TimelineContainer(FloatLayout):
     """ TimelineContainer object contains all functionality related to the display and manipulation
         of the timeline.
