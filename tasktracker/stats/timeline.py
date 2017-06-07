@@ -148,7 +148,6 @@ class PeriodDisplayTick(TimeTick):
 
         tw, th = (end_pos - tick_pos, self.tick_height)
 
-        # Figure out why we have the display issue.
         if tickline.is_vertical():
             halign = self.halign
             if halign == 'left':
@@ -190,8 +189,6 @@ class PeriodDisplayTick(TimeTick):
 
         tick_rect = (x, y, width, height)
         # tickline.labeller.register(self, record_index, tick_rect)  # TODO: Figure out what is wrong here.
-        #
-
 
     def get_label_texture(self, index, succeinct=True, return_kw=False, return_lable=False, **kw):
         # TODO: Look into what might be the best way to display this information. Project or task or total time?

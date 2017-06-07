@@ -7,7 +7,6 @@ from kivy.metrics import sp
 from kivy.properties import StringProperty, ListProperty, ObjectProperty, NumericProperty
 from kivy.clock import Clock
 from kivy.animation import Animation
-###from kivy.garden.tickmarker import TickMarker
 
 
 from tasktracker.themes.themes import THEME_CONTROLLER, Themeable
@@ -222,6 +221,8 @@ class StatsTimeSelectionMenu(Bubble, Themeable):
         except VInputError as err:
             self.parent.open_error_notification_popup(err.message)
 
+        print("Timeline Scale: ", self.time_line.scale)
+
     def update_input_datetime(self, dt=None):
         if dt:
             self.ids.date_input.update_date(dt)
@@ -292,23 +293,56 @@ class ErrorNotificationPopup(Bubble, Themeable):
         err_animation.bind(on_complete=lambda *a: self.parent.remove_widget(self))
         err_animation.start(self)
 
-# ToDO Get tickmarker app working by compiling the pyx file with cython.
 # ToDO Create the slider that  will lock to the positions
 # ToDo Figure out the proper Zoom Levels
 # ToDo Create popup that displays the correct zoom level date range
 
-class TimelineSlider(Slider):
+
+class TimelineSlider(Slider, Themeable):
     time_line_container = ObjectProperty()
+
+    zoom_dict = {
+        # ... index starts at 10 to allow for smaller values in the future
+        10: ['30 minutes', 38400.],
+        11: ['1 hour', 19200.],
+        12: ['2 hours', 9600.],
+        13: ['4 hours', 4800.],
+        14: ['8 hours', 2400.],
+        15: ['12 hours', 1600.],
+        16: ['1 day', 800.],
+        17: ['2 days', 400.],
+        18: ['5 days', 160.],
+        19: ['10 days', 80.],
+        20: ['14 days', 61.5386],
+        21: ['1 month', 26.6666],
+        22: ['2 months', 13.3333],
+        23: ['3 months', 8.9888],
+        24: ['6 months', 4.4444],
+        25: ['1 year', 2.2222]
+        # 26, ['all time', 38400]
+    }
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.zoom_dict = TimelineSlider.zoom_dict
+        self.zoom_levels = []
         self.min = 10
-        self.max = 500000
-        self.value = 1000
-        self.bind(value=self._print_value)
+        self.max = 25
+        self.value = 18
+        self.step = 1
+        self.bind(value=self._adjust_slider)
 
-    def _print_value(self, *args):
-        print(args)
+    def theme_update(self):
+        pass
+
+    def _get_zoom_level_and_title(self, value):
+        return self.zoom_dict[value][0], self.zoom_dict[value][1]
+
+    def _adjust_slider(self, object, value):
+        print(value)
         if self.time_line_container:
             # TODO: Convert this into a stepped time.
-            self.time_line_container.timeline.scale = args[1]
+            timeline = self.time_line_container.timeline
+            desc, scale = self._get_zoom_level_and_title(value)
+            print(desc, scale)
+            timeline.scale = scale
