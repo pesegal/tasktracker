@@ -13,7 +13,7 @@ from tasktracker.themes.themes import THEME_CONTROLLER, Themeable
 from tasktracker.settings import to_local_time, timezone_local
 from tasktracker.themes import themes
 
-from datetime import date, datetime, time
+from datetime import date, datetime, time, timedelta
 
 
 class VInputError(Exception):
@@ -301,24 +301,25 @@ class ErrorNotificationPopup(Bubble, Themeable):
 class TimelineSlider(Slider, Themeable):
     time_line_container = ObjectProperty()
 
+    # Returns the number of minutes for that period.
     zoom_dict = {
         # ... index starts at 10 to allow for smaller values in the future
-        10: ['30 minutes', 38400.],
-        11: ['1 hour', 19200.],
-        12: ['2 hours', 9600.],
-        13: ['4 hours', 4800.],
-        14: ['8 hours', 2400.],
-        15: ['12 hours', 1600.],
-        16: ['1 day', 800.],
-        17: ['2 days', 400.],
-        18: ['5 days', 160.],
-        19: ['10 days', 80.],
-        20: ['14 days', 61.5386],
-        21: ['1 month', 26.6666],
-        22: ['2 months', 13.3333],
-        23: ['3 months', 8.9888],
-        24: ['6 months', 4.4444],
-        25: ['1 year', 2.2222]
+        10: ['30 minutes', 30],
+        11: ['1 hour', 60],
+        12: ['2 hours', 120],
+        13: ['4 hours', 240],
+        14: ['8 hours', 480],
+        15: ['12 hours', 720],
+        16: ['1 day', 1440],
+        17: ['2 days', 2880],
+        18: ['5 days', 7200],
+        19: ['10 days', 14400],
+        20: ['14 days', 20160],
+        21: ['1 month', 43800],
+        22: ['2 months', 87600],
+        23: ['3 months', 131400],
+        24: ['6 months', 262800],
+        25: ['1 year', 525600]
         # 26, ['all time', 38400]
     }
 
@@ -339,10 +340,9 @@ class TimelineSlider(Slider, Themeable):
         return self.zoom_dict[value][0], self.zoom_dict[value][1]
 
     def _adjust_slider(self, object, value):
-        print(value)
         if self.time_line_container:
-            # TODO: Convert this into a stepped time.
             timeline = self.time_line_container.timeline
-            desc, scale = self._get_zoom_level_and_title(value)
-            print(desc, scale)
-            timeline.scale = scale
+            desc, delta_min = self._get_zoom_level_and_title(value)
+            zoom_date = timeline.time_1 - timedelta(minutes=delta_min)
+            # TODO: Trigger bubble popup with date zoom description.
+            timeline.index_0 = timeline.index_of(zoom_date)
