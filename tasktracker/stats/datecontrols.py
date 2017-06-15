@@ -272,11 +272,23 @@ class StatsTimeSelectionMenu(Bubble, Themeable):
 
         # TODO: Create timeline display logic.
 
+class ThemedBubblePopup(Bubble, Themeable):
+    """ This is a parent class that all the notification bubble popups on the stats screen
+    are derived from to share themeing logic.
 
-class ErrorNotificationPopup(Bubble, Themeable):
+    """
     shadow_texture = StringProperty(themes.SHADOW_TEXTURE)
     bg_texture = StringProperty(themes.ALL_BEV_CORNERS)
     bg_color = ListProperty([0, 0, 0, .5])
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    def theme_update(self):
+        self.bg_color = self.theme.status
+
+
+class ErrorNotificationPopup(ThemedBubblePopup):
     message = StringProperty('None')
 
     def __init__(self, message, **kwargs):
@@ -284,18 +296,23 @@ class ErrorNotificationPopup(Bubble, Themeable):
         self.message = message
         Clock.schedule_once(self.remove_self, 2)
 
-    def theme_update(self):
-        self.bg_color = self.theme.status
-
     def remove_self(self, *args):
         err_animation = Animation(size=(self.width, 10),
                                   duration=.2, t='in_cubic')
         err_animation.bind(on_complete=lambda *a: self.parent.remove_widget(self))
         err_animation.start(self)
 
-# ToDO Create the slider that  will lock to the positions
-# ToDo Figure out the proper Zoom Levels
+
 # ToDo Create popup that displays the correct zoom level date range
+class SliderNotificationPopup(ThemedBubblePopup):
+    message = StringProperty('None')
+
+    def __init__(self, message, **kwargs):
+        super().__init__(**kwargs)
+        self.message = message
+
+    def set_message(self, message):
+        self.message = message
 
 
 class TimelineSlider(Slider, Themeable):
@@ -327,10 +344,12 @@ class TimelineSlider(Slider, Themeable):
         super().__init__(**kwargs)
         self.zoom_dict = TimelineSlider.zoom_dict
         self.zoom_levels = []
+        self.current_desc = "None"
         self.min = 10
         self.max = 25
         self.value = 18
         self.step = 1
+        self.moved_flag = False
         self.bind(value=self._adjust_slider)
 
     def theme_update(self):
@@ -342,7 +361,15 @@ class TimelineSlider(Slider, Themeable):
     def _adjust_slider(self, object, value):
         if self.time_line_container:
             timeline = self.time_line_container.timeline
-            desc, delta_min = self._get_zoom_level_and_title(value)
+            self.current_desc, delta_min = self._get_zoom_level_and_title(value)
             zoom_date = timeline.time_1 - timedelta(minutes=delta_min)
-            # TODO: Trigger bubble popup with date zoom description.
+            self.moved_flag = True
             timeline.index_0 = timeline.index_of(zoom_date)
+
+    def on_touch_move(self, touch):
+        super().on_touch_move(touch)
+        if self.moved_flag:
+            self.time_line_container.update_slider_notification_popup(touch, self.current_desc)
+            self.moved_flag = False
+
+

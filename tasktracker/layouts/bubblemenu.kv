@@ -128,3 +128,29 @@
         valign: 'middle'
         text: root.message
 
+<SliderNotificationPopup>:
+    show_arrow: True
+    size_hint_x: .15
+    size_hint_y: None
+    height: 40
+
+    background_image: self.bg_texture
+    background_color: self.bg_color
+    border: [4, 4, 4, 4]
+
+    canvas.before:
+        Color:
+            rgba: [0, 0, 0, .5]
+        BorderImage:
+            source: root.shadow_texture
+            border: [3, 3, 3, 3]
+            pos: self.content.x - 2 , self.content.y - 2
+            size: self.content.width + 4, self.content.height + 4
+
+    Label:
+        id: zoom_message
+        text_size: root.size
+        padding_x: 3
+        halign: 'center'
+        valign: 'middle'
+        text: root.message

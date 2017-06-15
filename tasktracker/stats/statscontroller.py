@@ -13,7 +13,7 @@ from tasktracker.stats.datecontrols import StatsTimeSelectionMenu
 from datetime import datetime, timezone, timedelta
 from tasktracker.task.taskpopups import PROJECT_LIST
 from tasktracker.themes.themes import THEME_CONTROLLER
-from tasktracker.stats.datecontrols import ErrorNotificationPopup
+from tasktracker.stats.datecontrols import ErrorNotificationPopup, SliderNotificationPopup
 
 
 # TODO: DEFAULT COLORS FOR SHORT BREAK, LONG BREAK, & PAUSE (MAKE THESE CONFIGURABLE IN SETTINGS?)
@@ -28,6 +28,7 @@ class TimelineContainer(FloatLayout):
 
     display_time_start = ObjectProperty(None)
     display_time_end = ObjectProperty(None)
+    timeline_zoom_slider = ObjectProperty(None)
     timeline = ObjectProperty()
 
     label_start = ObjectProperty()
@@ -39,6 +40,9 @@ class TimelineContainer(FloatLayout):
         # Error notification popup variables
         self.error_popup = None
         self.bind(on_size=self.error_popup_reposition, on_pos=self.error_popup_reposition)
+
+        # Slider notification popup variables
+        self.slider_popup = None
 
         # self.bind(display_time_start=self._display_time_update)
         # self.bind(display_time_end=self._display_time_update)
@@ -95,6 +99,21 @@ class TimelineContainer(FloatLayout):
         print(*args)
         if self.error_popup:
             self.error_popup.pos = 400, 200
+
+    def update_slider_notification_popup(self, touch, message):
+        print(touch, message)
+        if not self.slider_popup:
+            self.slider_popup = SliderNotificationPopup(message)
+            self.slider_popup.center_x = touch.x
+            self.slider_popup.y = self.timeline_zoom_slider.height + self.slider_popup.height
+            self.add_widget(self.slider_popup)
+        else:
+            print(self.slider_popup.pos)
+            self.slider_popup.set_message(message)
+            self.slider_popup.center_x = touch.x
+            self.slider_popup.y = self.timeline_zoom_slider.height + self.slider_popup.height
+            # TODO: Fix timeline slider so that it x position is at slider cursor
+            # TODO: Make timeline slider disappear when mouse is released. Animation
 
     def _display_timeline(self, data, tb):
         """ Temporary timeline display method.
@@ -173,7 +192,7 @@ class TimelineContainer(FloatLayout):
         self.add_widget(self.timeline, index=1)
 
 
-class StatsScreen(Screen):  # TODO: Break this out into it's own module eventually.
+class StatsScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 

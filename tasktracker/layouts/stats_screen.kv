@@ -4,6 +4,8 @@
         orientation: "vertical"
         label_start: label_time_start
         label_end: label_time_end
+        timeline_zoom_slider: zoom_slider
+
 
         BoxLayout:
             id: time_controls
@@ -18,6 +20,7 @@
                 time_line_container: timeline_display
 
             TimelineSlider:
+                id: zoom_slider
                 time_line_container: timeline_display
 
             DateTimeLabel:
