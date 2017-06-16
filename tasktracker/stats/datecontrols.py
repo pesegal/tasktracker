@@ -364,12 +364,16 @@ class TimelineSlider(Slider, Themeable):
             self.current_desc, delta_min = self._get_zoom_level_and_title(value)
             zoom_date = timeline.time_1 - timedelta(minutes=delta_min)
             self.moved_flag = True
+            print("AFTERFLAG", self.get_value_pos())
             timeline.index_0 = timeline.index_of(zoom_date)
 
     def on_touch_move(self, touch):
         super().on_touch_move(touch)
         if self.moved_flag:
-            self.time_line_container.update_slider_notification_popup(touch, self.current_desc)
+            print("BEFORE", self.get_value_pos())
+            self.time_line_container.update_slider_notification_popup(self, self.current_desc)
             self.moved_flag = False
+
+            self.get_value_pos()
 
 

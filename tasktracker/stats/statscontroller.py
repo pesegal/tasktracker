@@ -100,18 +100,27 @@ class TimelineContainer(FloatLayout):
         if self.error_popup:
             self.error_popup.pos = 400, 200
 
-    def update_slider_notification_popup(self, touch, message):
-        print(touch, message)
+    def _update_slider_popup_position(self, anim, popup):
+        popup.center_x = self.timeline_zoom_slider.get_value_pos()[0]
+        # TODO: Figure out why timeline slider popup is out of position on initial creation.
+
+    def update_slider_notification_popup(self, slider, message):
         if not self.slider_popup:
             self.slider_popup = SliderNotificationPopup(message)
-            self.slider_popup.center_x = touch.x
-            self.slider_popup.y = self.timeline_zoom_slider.height + self.slider_popup.height
+            slider_original_size = copy(self.slider_popup.size)
+            self.slider_popup.size = (self.slider_popup.width / 1.7, self.slider_popup.height / 2)
+            self.slider_popup.center_x = self.timeline_zoom_slider.get_value_pos()[0]
+            slider_animation = Animation(size=slider_original_size,
+                                         duration=.2, t='out_cubic')
+            self.slider_popup.y = slider.height
             self.add_widget(self.slider_popup)
+            slider_animation.bind(on_complete=self._update_slider_popup_position)
+            slider_animation.start(self.slider_popup)
+
         else:
-            print(self.slider_popup.pos)
             self.slider_popup.set_message(message)
-            self.slider_popup.center_x = touch.x
-            self.slider_popup.y = self.timeline_zoom_slider.height + self.slider_popup.height
+            self.slider_popup.center_x = slider.get_value_pos()[0]
+            self.slider_popup.y = slider.height
             # TODO: Fix timeline slider so that it x position is at slider cursor
             # TODO: Make timeline slider disappear when mouse is released. Animation
 
