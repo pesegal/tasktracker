@@ -11,6 +11,7 @@ from kivy.uix.widget import Widget
 from kivy.properties import ListProperty, StringProperty
 from kivy.core.window import Window
 from kivy.utils import get_color_from_hex
+from kivy.core.audio import SoundLoader
 
 from tasktracker.settings import Borg
 
@@ -24,6 +25,9 @@ LEFT_BEV_CORNERS = _theme_path + '/gfx/all_white3.png'
 SHADOW_TEXTURE = _theme_path + '/gfx/shadow.png'
 BEV_SHADOW_TEXTURE = _theme_path + '/gfx/beveled_shadow.png'
 TRANSPARENT_TEXTURE = _theme_path + '/gfx/transparent.png'
+
+# Notification Sound Paths
+NOTIFICATION_SOUND = SoundLoader.load(_theme_path + '/sounds/notification.wav')
 
 # Config Setup
 

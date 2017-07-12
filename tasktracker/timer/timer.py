@@ -11,7 +11,7 @@ from kivy.uix.togglebutton import ToggleButton, ToggleButtonBehavior
 from kivy.properties import NumericProperty, ObjectProperty, ListProperty, BooleanProperty, StringProperty
 
 from tasktracker.themes import themes
-from tasktracker.themes.themes import Themeable
+from tasktracker.themes.themes import Themeable, NOTIFICATION_SOUND
 from tasktracker.task.task import Task
 from tasktracker.database.db_interface import DB
 from tasktracker.settings import APP_CONTROL
@@ -155,6 +155,7 @@ class TimerScreen(Screen, Themeable):
         # Use this function to trigger notifications and other logic when the
         # count down timer is finished.
         self.timer_reset()
+        NOTIFICATION_SOUND.play()
         print("FINISHED")
 
 
