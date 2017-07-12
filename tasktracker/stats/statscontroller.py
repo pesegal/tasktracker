@@ -1,9 +1,11 @@
 from kivy.uix.screenmanager import Screen
-from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.slider import Slider
 from kivy.properties import ObjectProperty
 from kivy.utils import get_color_from_hex
 from kivy.animation import Animation
+from kivy.clock import Clock
+
 
 
 from copy import copy
@@ -14,14 +16,14 @@ from datetime import datetime, timezone, timedelta
 from tasktracker.task.taskpopups import PROJECT_LIST
 from tasktracker.themes.themes import THEME_CONTROLLER
 from tasktracker.stats.datecontrols import ErrorNotificationPopup, SliderNotificationPopup
-
+from functools import partial
 
 # TODO: DEFAULT COLORS FOR SHORT BREAK, LONG BREAK, & PAUSE (MAKE THESE CONFIGURABLE IN SETTINGS?)
 
 # Todo: write a helper function that takes start and end datetimes and returns the number of months, weeks, days
 
 
-class TimelineContainer(FloatLayout):
+class TimelineContainer(RelativeLayout):
     """ TimelineContainer object contains all functionality related to the display and manipulation
         of the timeline.
     """
@@ -43,6 +45,7 @@ class TimelineContainer(FloatLayout):
 
         # Slider notification popup variables
         self.slider_popup = None
+        self.slider_call_counter = 0
 
         # self.bind(display_time_start=self._display_time_update)
         # self.bind(display_time_end=self._display_time_update)
@@ -102,27 +105,48 @@ class TimelineContainer(FloatLayout):
 
     def _update_slider_popup_position(self, anim, popup):
         popup.center_x = self.timeline_zoom_slider.get_value_pos()[0]
-        # TODO: Figure out why timeline slider popup is out of position on initial creation.
 
     def update_slider_notification_popup(self, slider, message):
         if not self.slider_popup:
             self.slider_popup = SliderNotificationPopup(message)
+
             slider_original_size = copy(self.slider_popup.size)
-            self.slider_popup.size = (self.slider_popup.width / 1.7, self.slider_popup.height / 2)
-            self.slider_popup.center_x = self.timeline_zoom_slider.get_value_pos()[0]
-            slider_animation = Animation(size=slider_original_size,
-                                         duration=.2, t='out_cubic')
+            self.opacity = 0
             self.slider_popup.y = slider.height
             self.add_widget(self.slider_popup)
-            slider_animation.bind(on_complete=self._update_slider_popup_position)
-            slider_animation.start(self.slider_popup)
+            # Schedule the positing on the next frame so that positing will work correctly.
+            Clock.schedule_once(partial(self._popup_init_pos_callback,
+                                        slider.get_value_pos()[0],
+                                        slider.height,
+                                        slider_original_size))
 
         else:
             self.slider_popup.set_message(message)
             self.slider_popup.center_x = slider.get_value_pos()[0]
+            print("uptd", self.to_window(*self.slider_popup.pos))
             self.slider_popup.y = slider.height
             # TODO: Fix timeline slider so that it x position is at slider cursor
             # TODO: Make timeline slider disappear when mouse is released. Animation
+
+    def _popup_init_pos_callback(self, x_pos, y_pos, slider_original_size, *largs):
+        self.slider_popup.center_x = x_pos
+        self.slider_popup.y = y_pos
+        self.slider_popup.size = (self.slider_popup.width, self.slider_popup.height / 2)
+        self.opacity = 1
+        slider_animation = Animation(size=slider_original_size, opacity=1,
+                                     duration=.2, t='out_cubic')
+        slider_animation.start(self.slider_popup)
+
+    def close_slider_notification_popup(self):
+        if self.slider_popup:
+            slider_animation = Animation(size=(self.slider_popup.width, 0), opacity=0,
+                                         duration=.2, t='in_cubic')
+            slider_animation.bind(on_complete=self._close_slider_complete_callback)
+            slider_animation.start(self.slider_popup)
+            self.slider_popup = None
+
+    def _close_slider_complete_callback(self, anim, slider):
+        self.remove_widget(slider)
 
     def _display_timeline(self, data, tb):
         """ Temporary timeline display method.
