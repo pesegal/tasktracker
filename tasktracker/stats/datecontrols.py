@@ -361,16 +361,19 @@ class TimelineSlider(Slider, Themeable):
     def _adjust_slider(self, object, value):
         if self.time_line_container:
             timeline = self.time_line_container.timeline
+            # Update zoom state
+            if value < 19:
+                self.time_line_container.zoom_state = 0
+            elif value >= 19:
+                self.time_line_container.zoom_state = 1
+            # TODO: Figure out if a higher level zoom state is needed? Months?
+
             self.current_desc, delta_min = self._get_zoom_level_and_title(value)
             zoom_date = timeline.time_1 - timedelta(minutes=delta_min)
-            print(self.to_window(*self.time_line_container.size))
-            print("BEFORE", self.get_value_pos())
             self.time_line_container.update_slider_notification_popup(self, self.current_desc)
-            print("AFTERFLAG", self.get_value_pos())
             timeline.index_0 = timeline.index_of(zoom_date)
 
     def on_touch_up(self, touch):
-        print("touch_released")
         self.time_line_container.close_slider_notification_popup()
 
 

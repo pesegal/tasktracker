@@ -1,7 +1,7 @@
 from kivy.uix.screenmanager import Screen
 from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.slider import Slider
-from kivy.properties import ObjectProperty
+from kivy.properties import ObjectProperty, NumericProperty
 from kivy.utils import get_color_from_hex
 from kivy.animation import Animation
 from kivy.clock import Clock
@@ -36,12 +36,16 @@ class TimelineContainer(RelativeLayout):
     label_start = ObjectProperty()
     label_end = ObjectProperty()
 
+    # Timeline Zoom State
+    zoom_state = NumericProperty(0)
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
         # Error notification popup variables
         self.error_popup = None
         self.bind(on_size=self.error_popup_reposition, on_pos=self.error_popup_reposition)
+        self.bind(zoom_state=self._zoom_state_update)
 
         # Slider notification popup variables
         self.slider_popup = None
@@ -58,6 +62,7 @@ class TimelineContainer(RelativeLayout):
         today = datetime.now(tz=timezone.utc)
         t_buffer = timedelta(days=60)
 
+        # TODO: Figure out what would be the best starting period.
         self.display_time_start = datetime(year=today.year, month=today.month, day=today.day,
                                            hour=0, minute=0, tzinfo=timezone.utc)
         self.display_time_end = datetime(year=today.year, month=today.month, day=today.day,
@@ -66,6 +71,10 @@ class TimelineContainer(RelativeLayout):
         DB.load_task_actions(self.display_time_start - t_buffer,
                              self.display_time_end + t_buffer, self._display_timeline)
         print(self.ids)
+
+
+    def _zoom_state_update(self, *args):
+        print("zoom_state updated", args)
 
     def open_dt_selection_menu(self, dt, label):
         self.add_widget(StatsTimeSelectionMenu(dt, label, self.timeline))
@@ -99,7 +108,6 @@ class TimelineContainer(RelativeLayout):
         err_animation.start(self.error_popup)
 
     def error_popup_reposition(self, *args):
-        print(*args)
         if self.error_popup:
             self.error_popup.pos = 400, 200
 
@@ -123,10 +131,7 @@ class TimelineContainer(RelativeLayout):
         else:
             self.slider_popup.set_message(message)
             self.slider_popup.center_x = slider.get_value_pos()[0]
-            print("uptd", self.to_window(*self.slider_popup.pos))
             self.slider_popup.y = slider.height
-            # TODO: Fix timeline slider so that it x position is at slider cursor
-            # TODO: Make timeline slider disappear when mouse is released. Animation
 
     def _popup_init_pos_callback(self, x_pos, y_pos, slider_original_size, *largs):
         self.slider_popup.center_x = x_pos
@@ -228,7 +233,6 @@ class TimelineContainer(RelativeLayout):
 class StatsScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-
 
         # DB.load_task_actions(self.test_time_start, self.test_time_end, self._test_load_projects)
         #
