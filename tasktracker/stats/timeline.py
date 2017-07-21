@@ -196,6 +196,7 @@ class PeriodDisplayTick(TimeTick):
         return None
 
     def on_touch_down(self, touch):
+        print("timeline clicked!!!")
         pass
 
     # TODO: Develop a function that will return the current displayed period on a click.
@@ -221,5 +222,10 @@ class TaskTimeLine(Timeline, Themeable):
         self.container.display_time_start = self.time_0
         self.container.display_time_end = self.time_1
 
+    def on_touch_down(self, touch):
+        print("Timeline Clicked!")
+        # NOTE THIS IS WHERE YOU WOULD CHECK TO SEE WHAT DATE YOU CLICKED ON AND OPEN A POP-UP WINDOW
+        self.ticks = [VisualTimeTick(mode=VisualTimeTick.mode.options[i], valign='line_bottom') for i in
+                           [0, 2, 5, 6, 7, 9, 10]]
 
-    # Todo: Tie scale to a slider.
+        super().on_touch_down(touch)

@@ -72,9 +72,9 @@ class TimelineContainer(RelativeLayout):
                              self.display_time_end + t_buffer, self._display_timeline)
         print(self.ids)
 
-
     def _zoom_state_update(self, *args):
         print("zoom_state updated", args)
+
 
     def open_dt_selection_menu(self, dt, label):
         self.add_widget(StatsTimeSelectionMenu(dt, label, self.timeline))
@@ -214,7 +214,7 @@ class TimelineContainer(RelativeLayout):
             p_color[3] = .7 # Add some transparency to the timeline.
 
             for t_key, t_value in value.items():
-                if t_key == 2:
+                if t_key == 2:  # if type is pomodoro
                     self.time_ticks.append(PeriodDisplayTick(data=t_value, valign='line_top',
                                                              tick_color=p_color))
                 else:
