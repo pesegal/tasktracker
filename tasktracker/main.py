@@ -10,6 +10,8 @@ from kivy.lang import Builder
 from tasktracker.screencontroller import ScreenClickDragWindow
 from kivy.config import Config
 from tasktracker.database.db_interface import DB
+from tasktracker.settings import APP_CONTROL
+from kivy.clock import Clock
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
@@ -18,6 +20,9 @@ layout_path = os.path.join(__location__, 'layouts')
 
 
 def exception_shutdown(exctype, value, tb):
+    # Stop the current timer action
+    APP_CONTROL.timer_screen.timer_reset()
+    # Shut down helper threads.
     DB.thread_shutdown()
     tb.print_tb()
     print(exctype, value, tb)
@@ -31,6 +36,7 @@ class TaskApp(App):
         return ScreenClickDragWindow()
 
     def on_stop(self):
+        APP_CONTROL.timer_screen.timer_reset()
         DB.thread_shutdown()
 
 

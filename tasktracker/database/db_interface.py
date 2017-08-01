@@ -74,6 +74,7 @@ class Database:
             self.action_queue.task_done()
 
         print('Thread Shutting Down', self.db_thread.ident)
+        connection.commit()
         connection.close()
 
     def thread_shutdown(self):

@@ -225,7 +225,7 @@ class TaskTimeLine(Timeline, Themeable):
     def on_touch_down(self, touch):
         print("Timeline Clicked!")
         # NOTE THIS IS WHERE YOU WOULD CHECK TO SEE WHAT DATE YOU CLICKED ON AND OPEN A POP-UP WINDOW
-        self.ticks = [VisualTimeTick(mode=VisualTimeTick.mode.options[i], valign='line_bottom') for i in
-                           [0, 2, 5, 6, 7, 9, 10]]
+        # self.ticks = [VisualTimeTick(mode=VisualTimeTick.mode.options[i], valign='line_bottom') for i in
+        #                    [0, 2, 5, 6, 7, 9, 10]]
 
         super().on_touch_down(touch)
