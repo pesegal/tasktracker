@@ -7,7 +7,7 @@ from tasktracker.task.taskcontainer import TaskScrollContainer
 from tasktracker.mixins import Broadcast
 from tasktracker.database.db_interface import DB
 from tasktracker.task.task import Task
-from tasktracker.settings import APP_CONTROL
+from tasktracker.settings.settingscontroller import APP_CONTROL
 
 
 class TaskListView(FloatLayout, Broadcast):

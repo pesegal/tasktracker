@@ -1,6 +1,6 @@
 from kivy.animation import Animation
 
-from tasktracker.settings import Borg
+from tasktracker.settings.settingscontroller import Borg
 from tasktracker.database.db_interface import DB
 import time
 

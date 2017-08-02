@@ -14,7 +14,7 @@ from tasktracker.themes import themes
 from tasktracker.themes.themes import Themeable, NOTIFICATION_SOUND
 from tasktracker.task.task import Task
 from tasktracker.database.db_interface import DB
-from tasktracker.settings import APP_CONTROL
+from tasktracker.settings.settingscontroller import APP_CONTROL
 
 # TODO: Break these out to the settings module
 

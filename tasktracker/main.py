@@ -10,7 +10,7 @@ from kivy.lang import Builder
 from tasktracker.screencontroller import ScreenClickDragWindow
 from kivy.config import Config
 from tasktracker.database.db_interface import DB
-from tasktracker.settings import APP_CONTROL
+from tasktracker.settings.settingscontroller import APP_CONTROL
 from kivy.clock import Clock
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))

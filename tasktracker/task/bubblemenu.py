@@ -5,7 +5,7 @@ from kivy.properties import ListProperty, StringProperty
 from tasktracker.task.taskpopups import TaskEditScreen
 from tasktracker.themes.themes import Themeable
 from tasktracker.themes import themes
-from tasktracker.settings import APP_CONTROL
+from tasktracker.settings.settingscontroller import APP_CONTROL
 
 
 class TaskQuickMenu(Bubble, Themeable):

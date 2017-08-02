@@ -14,7 +14,7 @@ from tasktracker.mixins import Broadcast
 from tasktracker.task.taskpopups import TaskCreationScreen
 from tasktracker.themes import themes
 from tasktracker.themes.themes import Themeable
-from tasktracker.settings import APP_CONTROL
+from tasktracker.settings.settingscontroller import APP_CONTROL
 
 
 class MenuBar(BoxLayout, Broadcast, Themeable):

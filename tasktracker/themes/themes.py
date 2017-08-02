@@ -13,7 +13,7 @@ from kivy.core.window import Window
 from kivy.utils import get_color_from_hex
 from kivy.core.audio import SoundLoader
 
-from tasktracker.settings import Borg
+from tasktracker.settings.settingscontroller import Borg
 
 _theme_path = os.path.dirname(__file__)
 __theme_config_path__ = _theme_path + '/themes.conf'

@@ -16,7 +16,7 @@ from kivy.uix.togglebutton import ToggleButton
 from kivy.utils import get_color_from_hex, get_hex_from_color
 
 from tasktracker.database.db_interface import DB
-from tasktracker.settings import PROJECT_COLORS, APP_CONTROL
+from tasktracker.settings.settingscontroller import PROJECT_COLORS, APP_CONTROL
 from tasktracker.task.task import Task
 from tasktracker.themes.themes import Themeable
 from tasktracker.themes import themes

@@ -17,7 +17,8 @@ from tasktracker.themes.themes import Themeable
 from tasktracker.task.clickdragcontrol import CLICK_DRAG_CONTROLLER
 from tasktracker.task.bubblemenu import TaskQuickMenu
 from tasktracker.stats.statscontroller import StatsScreen
-from tasktracker.settings import APP_CONTROL
+from tasktracker.settings.settingsscreen import SettingsScreen
+from tasktracker.settings.settingscontroller import APP_CONTROL
 
 
 class ScreenController(ScreenManager, Broadcast, Themeable):
@@ -27,11 +28,13 @@ class ScreenController(ScreenManager, Broadcast, Themeable):
         self.tasks = TaskListScreen(name='tasks')
         self.timer = TimerScreen(name='timer')
         self.stats = StatsScreen(name='stats')
+        self.settings = SettingsScreen(name='settings')
         self.theme_update()
 
         self.add_widget(self.tasks)
         self.add_widget(self.timer)
         self.add_widget(self.stats)
+        self.add_widget(self.settings)
 
         APP_CONTROL.screen_controller = self
 
