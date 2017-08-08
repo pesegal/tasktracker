@@ -1,21 +1,37 @@
 <SettingsScreen>:
     BoxLayout:
-        orientation: 'vertical'
+        orientation: 'horizontal'
 
-        Label:
-            text: 'Theme Selection'
+        BoxLayout:
+            id: setting_labels
+            orientation: 'vertical'
 
-        Label:
-            text: 'Notification Sound Selection'
+            SettingsContainer:
+                SettingsLabel:
+                    text: 'Theme Selection'
 
-        Label:
-            text: 'Notification Sound Volume'
+            SettingsLabel:
+                text: 'Notification Sound Selection'
 
-        Label:
-            text: 'Database Backup Location'
+            SettingsLabel:
+                text: 'Notification Sound Volume'
 
-        Label:
-            text: 'Load / Reset Database'
+            SettingsLabel:
+                text: 'Database Backup Location'
 
-        Label:
-            text: 'Extract Data to flat file (.csv)'
+            SettingsLabel:
+                text: 'Load / Reset Database'
+
+            SettingsLabel:
+                text: 'Extract Data to flat file (.csv)'
+
+
+<SettingsLabel@Label>:
+    text_size: self.size
+    halign: 'right'
+    valign: 'middle'
+    font_size: '18sp'
+
+<SettingsContainer@BoxLayout>:
+    orientation: 'horizontal'
+
