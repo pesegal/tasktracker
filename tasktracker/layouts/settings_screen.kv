@@ -6,32 +6,31 @@
             id: setting_labels
             orientation: 'vertical'
 
-            SettingsContainer:
-                SettingsLabel:
-                    text: 'Theme Selection'
+            ThemeSettingsContainer:
+
 
             SettingsLabel:
-                text: 'Notification Sound Selection'
+                text: 'Notification Sound Selection:'
 
             SettingsLabel:
-                text: 'Notification Sound Volume'
+                text: 'Notification Sound Volume:'
 
             SettingsLabel:
-                text: 'Database Backup Location'
+                text: 'Database Backup Location:'
 
             SettingsLabel:
-                text: 'Load / Reset Database'
+                text: 'Load / Reset Database:'
 
             SettingsLabel:
-                text: 'Extract Data to flat file (.csv)'
+                text: 'Extract Data to flat file (.csv):'
 
 
-<SettingsLabel@Label>:
+<SettingsLabel>:
     text_size: self.size
     halign: 'right'
     valign: 'middle'
     font_size: '18sp'
 
-<SettingsContainer@BoxLayout>:
+<SettingsContainer>:
     orientation: 'horizontal'
 
