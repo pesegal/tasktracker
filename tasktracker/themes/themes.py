@@ -64,26 +64,35 @@ class ThemeController(Borg, Widget):
 
     def __init__(self):
         super().__init__()
+        self.config = ConfigParser()
         self.theme_list = list()
+        self.default_theme = None
         self._load_theme_configuration()
         self.registry = list()
 
-        self.set_theme('Dark Theme')  # Stored Configuration Settings Loaded Here
+        self.set_theme(self.default_theme)  # Stored Configuration Settings Loaded Here
 
     def _load_theme_configuration(self):
-        config = ConfigParser()
-        config.read(__theme_config_path__)
-        themes = config.sections()
+        self.config.read(__theme_config_path__)
+        themes = self.config.sections()
         for theme in themes:
+            if theme == 'default':  # Get the default theme from the configuration file.
+                self.default_theme = self.config['default']['defaulttheme']
+                continue
             value_list = list()
-            for k, v in config[theme].items():
+            for k, v in self.config[theme].items():
                 value_list.append(get_color_from_hex(v))
             self.theme_list.append(Theme(theme, *value_list))
 
     def set_theme(self, theme_name):
-        self.theme_name = theme_name
+        """ Sets the theme by name. If theme name not in valid list of themes defaults to first theme."""
+        if theme_name not in [theme.name for theme in self.theme_list]:
+            self.theme_name = self.theme_list[0].name
+        else:
+            self.theme_name = theme_name
+
         for theme in self.theme_list:
-            if theme.name == theme_name:
+            if theme.name == self.theme_name:
                 self.status = theme.status
                 self.list_bg = theme.listbg
                 self.background = theme.background
@@ -94,6 +103,12 @@ class ThemeController(Borg, Widget):
 
         Window.clearcolor = list(self.background)
         self._broadcast_theme_changes()
+
+    def set_theme_default(self, theme_name):
+        self.config['default']['defaulttheme'] = theme_name
+        with open(__theme_config_path__, 'w') as configfile:  # save the date to the .conf
+            self.config.write(configfile)
+        self.theme_name = theme_name
 
     def register(self, ref):
         self.registry.append(ref)

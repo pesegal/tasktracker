@@ -37,7 +37,10 @@ class ThemeSettingsContainer(SettingsContainer):
         super().__init__(**kwargs)
         self.add_widget(SettingsLabel(text='Theme Selection:'))
         for theme_name in [theme.name for theme in THEME_CONTROLLER.theme_list]:
-            self.add_widget(ThemeSelectionToggleButton(text=theme_name, group='theme_selection'))
+            if theme_name == THEME_CONTROLLER.default_theme:
+                self.add_widget(ThemeSelectionToggleButton(text=theme_name, group='theme_selection', state='down'))
+            else:
+                self.add_widget(ThemeSelectionToggleButton(text=theme_name, group='theme_selection'))
 
 
 class SettingsToggleButton(ToggleButton, Themeable):
@@ -71,6 +74,7 @@ class ThemeSelectionToggleButton(SettingsToggleButton):
 
     def on_press(self):
         THEME_CONTROLLER.set_theme(self.text)
+        THEME_CONTROLLER.set_theme_default(self.text)
 
 
 class SettingsLabel(Label, Themeable):
