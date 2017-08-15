@@ -9,11 +9,16 @@
             ThemeSettingsContainer: # Dynamically populated in settingsscreen.py
 
 
-            SettingsLabel:
-                text: 'Notification Sound Selection:'
+            SettingsContainer:
+                SettingsLabel:
+                    text: 'Notification Sound Selection:'
+                SettingsSoundSelector:
 
-            SettingsLabel:
-                text: 'Notification Sound Volume:'
+            SettingsContainer:
+                SettingsLabel:
+                    text: 'Notification Sound Volume:'
+
+
 
             SettingsLabel:
                 text: 'Database Backup Location:'
@@ -33,4 +38,8 @@
 
 <SettingsContainer>:
     orientation: 'horizontal'
+
+<SettingsSoundSelector>:
+
+<SettingsButton>:
 

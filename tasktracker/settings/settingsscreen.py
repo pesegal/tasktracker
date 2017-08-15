@@ -6,7 +6,9 @@ from kivy.uix.screenmanager import Screen
 
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
+from kivy.uix.spinner import Spinner
 from kivy.uix.togglebutton import ToggleButton, ToggleButtonBehavior
+from kivy.uix.button import Button
 from kivy.properties import StringProperty, ListProperty
 
 
@@ -21,6 +23,28 @@ class SettingsScreen(Screen, Themeable):
 
     def theme_update(self):
         pass
+
+
+class SettingsSoundSelector(Spinner, Themeable):
+    """ Contains all the dropdown functionality to allow users to select a different notification
+    sound. Sound loading and control are contained in global object NOTIFICATION_SOUND in themes.py
+    """
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.sounds = themes.get_notification_sound_paths()
+        self.text = self.sounds[0][0]
+        self.values = [s[0] for s in self.sounds]
+
+        self.bind(text=self.select_new_sound)
+
+    def select_new_sound(self, obj, text):
+        # TODO: Add logic to load and play the new sound!
+        print(text)
+
+    def theme_update(self):
+        pass
+
 
 
 class SettingsContainer(BoxLayout, Themeable):
@@ -41,6 +65,14 @@ class ThemeSettingsContainer(SettingsContainer):
                 self.add_widget(ThemeSelectionToggleButton(text=theme_name, group='theme_selection', state='down'))
             else:
                 self.add_widget(ThemeSelectionToggleButton(text=theme_name, group='theme_selection'))
+
+
+class SettingsButton(Button, Themeable):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    def theme_update(self):
+        pass
 
 
 class SettingsToggleButton(ToggleButton, Themeable):
@@ -90,4 +122,5 @@ class SettingsLabel(Label, Themeable):
         text_c = self.theme.text
         text_c[3] = .8
         self.color = text_c
+
 

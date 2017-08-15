@@ -29,6 +29,17 @@ TRANSPARENT_TEXTURE = _theme_path + '/gfx/transparent.png'
 # Notification Sound Paths
 NOTIFICATION_SOUND = SoundLoader.load(_theme_path + '/sounds/notification.wav')
 
+
+def get_notification_sound_paths():
+    """ Returns all full paths to sound files in the ./themes/sounds
+    to allow for dynamic loading of notification sounds.
+    :return list((filename, full path to file))
+    """
+    sound_path = _theme_path + '/sounds'
+    return [(file, os.path.join(sound_path, file)) for file in os.listdir(sound_path) if
+            os.path.isfile(os.path.join(sound_path, file))]
+
+
 # Config Setup
 
 # Global Color Helpers
