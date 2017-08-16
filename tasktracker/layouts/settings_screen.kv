@@ -5,6 +5,7 @@
         BoxLayout:
             id: setting_labels
             orientation: 'vertical'
+            padding: 1
 
             ThemeSettingsContainer: # Dynamically populated in settingsscreen.py
 
@@ -17,6 +18,7 @@
             SettingsContainer:
                 SettingsLabel:
                     text: 'Notification Sound Volume:'
+                Slider: # TODO Replace this with actual themed slider.
 
 
 
@@ -31,12 +33,16 @@
 
 
 <SettingsLabel>:
+    width: 140
+    padding_x: 4
     text_size: self.size
+    size_hint_x: None
     halign: 'right'
     valign: 'middle'
-    font_size: '18sp'
+    font_size: '16sp'
 
 <SettingsContainer>:
+    padding: 0, 2, 0, 0
     orientation: 'horizontal'
 
 <SettingsSoundSelector>:

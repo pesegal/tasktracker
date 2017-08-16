@@ -26,18 +26,38 @@ SHADOW_TEXTURE = _theme_path + '/gfx/shadow.png'
 BEV_SHADOW_TEXTURE = _theme_path + '/gfx/beveled_shadow.png'
 TRANSPARENT_TEXTURE = _theme_path + '/gfx/transparent.png'
 
+
 # Notification Sound Paths
-NOTIFICATION_SOUND = SoundLoader.load(_theme_path + '/sounds/notification.wav')
-
-
-def get_notification_sound_paths():
-    """ Returns all full paths to sound files in the ./themes/sounds
-    to allow for dynamic loading of notification sounds.
-    :return list((filename, full path to file))
+class SoundController(Borg):
+    """ Sound controller is wrapper singleton that is used to load and play
+    notification sounds.
     """
-    sound_path = _theme_path + '/sounds'
-    return [(file, os.path.join(sound_path, file)) for file in os.listdir(sound_path) if
-            os.path.isfile(os.path.join(sound_path, file))]
+
+    def __init__(self):
+        super().__init__()
+        self._current_sound = None
+        # TODO: load and save default sound from configuration file
+        self.load(_theme_path + '/sounds/notification.wav')
+
+    def load(self, sound_file_path):
+        self._current_sound = SoundLoader.load(sound_file_path)
+
+    def play(self):
+        self._current_sound.play()
+
+    def set_volume(self, volume=1):
+        self._current_sound.volume = volume
+
+    def get_notification_sound_paths(self):
+        """ Returns all full paths to sound files in the ./themes/sounds
+        to allow for dynamic loading of notification sounds.
+        :return list((filename, full path to file))
+        """
+        sound_path = _theme_path + '/sounds'
+        return [(file, os.path.join(sound_path, file)) for file in os.listdir(sound_path) if
+                os.path.isfile(os.path.join(sound_path, file))]
+
+NOTIFICATION_SOUND = SoundController()
 
 
 # Config Setup
