@@ -32,18 +32,18 @@ class SettingsSoundSelector(Spinner, Themeable):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.sounds = NOTIFICATION_SOUND.get_notification_sound_paths()
-        self.text = self.sounds[0][0]
+        self.sounds = NOTIFICATION_SOUND.loaded_sounds
+        self.text = NOTIFICATION_SOUND.start_sound
         self.values = [s[0] for s in self.sounds]
 
         self.bind(text=self.select_new_sound)
 
     def select_new_sound(self, obj, text):
         sound_path_index = list(zip(*self.sounds))[0].index(text)  # gets the index of the full path
-        self._load_new_notification_sound(self.sounds[sound_path_index][1])
+        self._load_new_notification_sound(*self.sounds[sound_path_index])
 
-    def _load_new_notification_sound(self, sound_path, preview=True):
-        NOTIFICATION_SOUND.load(sound_path)
+    def _load_new_notification_sound(self, soundname, sound_path, preview=True):
+        NOTIFICATION_SOUND.load(soundname, sound_path)
         if preview:
             NOTIFICATION_SOUND.play()
 

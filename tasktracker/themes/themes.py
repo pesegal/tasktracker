@@ -16,7 +16,6 @@ from kivy.core.audio import SoundLoader
 from tasktracker.settings.settingscontroller import Borg
 
 _theme_path = os.path.dirname(__file__)
-__theme_config_path__ = _theme_path + '/themes.conf'
 
 # Texture Paths todo: replace with atlas
 NO_BEV_CORNERS = _theme_path + '/gfx/all_white.png'
@@ -27,6 +26,17 @@ BEV_SHADOW_TEXTURE = _theme_path + '/gfx/beveled_shadow.png'
 TRANSPARENT_TEXTURE = _theme_path + '/gfx/transparent.png'
 
 
+# Config Setup
+__theme_config_path__ = _theme_path + '/tasktracker.conf'
+CONFIG_PARSER = ConfigParser()
+CONFIG_PARSER.read(__theme_config_path__)
+
+
+def save_set_configuration():
+    with open(__theme_config_path__, 'w') as configfile:  # save the date to the .conf
+        CONFIG_PARSER.write(configfile)
+
+
 # Notification Sound Paths
 class SoundController(Borg):
     """ Sound controller is wrapper singleton that is used to load and play
@@ -35,12 +45,21 @@ class SoundController(Borg):
 
     def __init__(self):
         super().__init__()
+        self.config = CONFIG_PARSER
         self._current_sound = None
-        # TODO: load and save default sound from configuration file
-        self.load(_theme_path + '/sounds/notification.wav')
+        self.start_sound = None
+        self.sound_path = _theme_path + '/sounds'
+        self.loaded_sounds = self.get_notification_sound_paths()
+        try:
+            self.start_sound = self.config['default']['notifysound']
+            self.load(self.start_sound, _theme_path + '/sounds/' + self.start_sound)
+        except AttributeError:
+            self.start_sound = self.loaded_sounds[0][0]
+            self.load(self.start_sound, self.loaded_sounds[0][1])
 
-    def load(self, sound_file_path):
+    def load(self, soundname, sound_file_path):
         self._current_sound = SoundLoader.load(sound_file_path)
+        self.config['default']['notifysound'] = soundname
 
     def play(self):
         self._current_sound.play()
@@ -53,14 +72,10 @@ class SoundController(Borg):
         to allow for dynamic loading of notification sounds.
         :return list((filename, full path to file))
         """
-        sound_path = _theme_path + '/sounds'
-        return [(file, os.path.join(sound_path, file)) for file in os.listdir(sound_path) if
-                os.path.isfile(os.path.join(sound_path, file))]
+        return [(file, os.path.join(self.sound_path, file)) for file in os.listdir(self.sound_path) if
+                os.path.isfile(os.path.join(self.sound_path, file))]
 
 NOTIFICATION_SOUND = SoundController()
-
-
-# Config Setup
 
 # Global Color Helpers
 TRANSPARENT   = [1, 1, 1, 0]
@@ -95,7 +110,7 @@ class ThemeController(Borg, Widget):
 
     def __init__(self):
         super().__init__()
-        self.config = ConfigParser()
+        self.config = CONFIG_PARSER
         self.theme_list = list()
         self.default_theme = None
         self._load_theme_configuration()
@@ -104,7 +119,6 @@ class ThemeController(Borg, Widget):
         self.set_theme(self.default_theme)  # Stored Configuration Settings Loaded Here
 
     def _load_theme_configuration(self):
-        self.config.read(__theme_config_path__)
         themes = self.config.sections()
         for theme in themes:
             if theme == 'default':  # Get the default theme from the configuration file.
@@ -137,8 +151,6 @@ class ThemeController(Borg, Widget):
 
     def set_theme_default(self, theme_name):
         self.config['default']['defaulttheme'] = theme_name
-        with open(__theme_config_path__, 'w') as configfile:  # save the date to the .conf
-            self.config.write(configfile)
         self.theme_name = theme_name
 
     def register(self, ref):
@@ -159,6 +171,5 @@ class ThemeController(Borg, Widget):
 
         for widget in self.registry:
             widget().theme_update()
-
 
 THEME_CONTROLLER = ThemeController()
