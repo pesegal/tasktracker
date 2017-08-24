@@ -9,7 +9,9 @@ from kivy.uix.label import Label
 from kivy.uix.spinner import Spinner
 from kivy.uix.togglebutton import ToggleButton, ToggleButtonBehavior
 from kivy.uix.button import Button
+from kivy.uix.slider import Slider
 from kivy.properties import StringProperty, ListProperty
+from kivy.clock import Clock
 
 
 class SettingsScreen(Screen, Themeable):
@@ -50,6 +52,26 @@ class SettingsSoundSelector(Spinner, Themeable):
     def theme_update(self):
         pass
 
+
+class SettingsSoundVolumeSlider(Slider, Themeable):
+    """ Sets the volume of the notification sound from 0 to 1.
+    Notification sound information is contained inside the SoundController class.
+    """
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.min = 0
+        self.max = 100
+        self.value = NOTIFICATION_SOUND.volume
+        self.bind(value=self._change_volume)
+
+    def _change_volume(self, obj, vol):
+        print(obj, vol)
+        NOTIFICATION_SOUND.set_volume(vol)
+        NOTIFICATION_SOUND.play()
+        # Clock.schedule_once(NOTIFICATION_SOUND.stop, .05)
+
+    def theme_update(self):
+        pass
 
 
 class SettingsContainer(BoxLayout, Themeable):

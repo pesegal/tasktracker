@@ -48,24 +48,34 @@ class SoundController(Borg):
         self.config = CONFIG_PARSER
         self._current_sound = None
         self.start_sound = None
+        self.volume = None
         self.sound_path = _theme_path + '/sounds'
         self.loaded_sounds = self.get_notification_sound_paths()
         try:
             self.start_sound = self.config['default']['notifysound']
+            self.volume = int(self.config['default']['volume'])
             self.load(self.start_sound, _theme_path + '/sounds/' + self.start_sound)
-        except AttributeError:
+        except KeyError:
             self.start_sound = self.loaded_sounds[0][0]
+            self.volume = 50
             self.load(self.start_sound, self.loaded_sounds[0][1])
+        self.set_volume(self.volume)  # Needed to init the volume amount.
+
 
     def load(self, soundname, sound_file_path):
         self._current_sound = SoundLoader.load(sound_file_path)
         self.config['default']['notifysound'] = soundname
 
-    def play(self):
+    def play(self, *args):
         self._current_sound.play()
 
+    def stop(self, *args):
+        self._current_sound.stop()
+
     def set_volume(self, volume=1):
-        self._current_sound.volume = volume
+        self.volume = volume
+        self.config['default']['volume'] = str(round(volume))
+        self._current_sound.volume = volume / 100  # Sound volume needs to be normalized.
 
     def get_notification_sound_paths(self):
         """ Returns all full paths to sound files in the ./themes/sounds
