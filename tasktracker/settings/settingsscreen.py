@@ -11,6 +11,7 @@ from kivy.uix.togglebutton import ToggleButton, ToggleButtonBehavior
 from kivy.uix.button import Button
 from kivy.uix.slider import Slider
 from kivy.properties import StringProperty, ListProperty
+from kivy.factory import Factory
 from kivy.clock import Clock
 
 
@@ -65,7 +66,6 @@ class SettingsSoundVolumeSlider(Slider, Themeable):
         self.bind(value=self._change_volume)
 
     def _change_volume(self, obj, vol):
-        print(obj, vol)
         NOTIFICATION_SOUND.set_volume(vol)
         NOTIFICATION_SOUND.play()
         # Clock.schedule_once(NOTIFICATION_SOUND.stop, .05)
@@ -92,6 +92,21 @@ class ThemeSettingsContainer(SettingsContainer):
                 self.add_widget(ThemeSelectionToggleButton(text=theme_name, group='theme_selection', state='down'))
             else:
                 self.add_widget(ThemeSelectionToggleButton(text=theme_name, group='theme_selection'))
+
+
+class BackupSettingsContainer(SettingsContainer):
+    """ Contains the controller information relating to the db backup functionality."""
+    selected_path = StringProperty('/')
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.file_chooser = Factory.FileSaveLoadController()
+
+    def _open_selection_backup(self, *args):
+        print("_open_selection_backup", args)
+        self.file_chooser.show_load(callback=self._set_path_and_file)
+
+    def _set_path_and_file(self, path, filename):
+        self.selected_path = path
 
 
 class SettingsButton(Button, Themeable):

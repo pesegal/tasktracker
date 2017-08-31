@@ -13,6 +13,7 @@ from tasktracker.database.db_interface import DB
 from tasktracker.settings.settingscontroller import APP_CONTROL
 from tasktracker.themes import themes
 from kivy.clock import Clock
+import tasktracker.fileloader
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 

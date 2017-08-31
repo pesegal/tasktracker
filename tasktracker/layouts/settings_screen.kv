@@ -9,7 +9,6 @@
 
             ThemeSettingsContainer: # Dynamically populated in settingsscreen.py
 
-
             SettingsContainer:
                 SettingsLabel:
                     text: 'Notification Sound Selection:'
@@ -20,8 +19,24 @@
                     text: 'Notification Sound Volume:'
                 SettingsSoundVolumeSlider:
 
-            SettingsLabel:
-                text: 'Database Backup Location:'
+            BackupSettingsContainer:
+                id: database_backup_controller
+                SettingsLabel:
+                    text: 'Database Backup Location:'
+                BoxLayout:
+                    orientation: "vertical"
+                    Label:
+                        text: "Current Backup Location"
+                    Label:
+                        id: current_backup_path
+                        text: database_backup_controller.selected_path
+
+
+                SettingsButton:
+                    text: 'Backup'
+                    size_hint_x: None
+                    width: 140
+                    on_press: database_backup_controller._open_selection_backup()
 
             SettingsLabel:
                 text: 'Load / Reset Database:'
