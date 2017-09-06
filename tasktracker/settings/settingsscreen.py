@@ -14,6 +14,8 @@ from kivy.properties import StringProperty, ListProperty
 from kivy.factory import Factory
 from kivy.clock import Clock
 
+import os
+
 
 class SettingsScreen(Screen, Themeable):
     """ Settings screen object contains all of the control logic relating to the settings screen
@@ -97,13 +99,17 @@ class ThemeSettingsContainer(SettingsContainer):
 class BackupSettingsContainer(SettingsContainer):
     """ Contains the controller information relating to the db backup functionality."""
     selected_path = StringProperty('/')
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.file_chooser = Factory.FileSaveLoadController()
 
+        # TODO: Load last backup directory from config
+        self.selected_path = os.path.expanduser('~')
+
     def _open_selection_backup(self, *args):
         print("_open_selection_backup", args)
-        self.file_chooser.show_load(callback=self._set_path_and_file)
+        self.file_chooser.show_save(callback=self._set_path_and_file, start_path=self.selected_path)
 
     def _set_path_and_file(self, path, filename):
         self.selected_path = path

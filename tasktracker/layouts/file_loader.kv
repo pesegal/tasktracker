@@ -5,6 +5,8 @@
         orientation: "vertical"
         FileChooserListView:
             id: filechooser
+            on_path: root.set_popup_title(self.path)
+
 
         BoxLayout:
             size_hint_y: None
@@ -24,9 +26,12 @@
         size: root.size
         pos: root.pos
         orientation: "vertical"
+
         FileChooserListView:
             id: filechooser
+            path: root.start_path
             on_selection: text_input.text = self.selection and self.selection[0] or ''
+            on_path: root.set_popup_title(self.path)
 
         TextInput:
             id: text_input
@@ -43,4 +48,4 @@
 
             Button:
                 text: "Save"
-                on_release: root.save(filechooser.path, text_input.text)
+                on_release: root.save(filechooser.path, text_input.text, root.callback)
