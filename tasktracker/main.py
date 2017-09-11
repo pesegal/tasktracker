@@ -22,6 +22,7 @@ layout_path = os.path.join(__location__, 'layouts')
 
 
 def exception_shutdown(exctype, value, tb):
+    """Actions to take if the App encounters a runtime error."""
     # Stop the current timer action
     APP_CONTROL.timer_screen.timer_reset()
     # Shut down helper threads.
@@ -38,6 +39,7 @@ class TaskApp(App):
         return ScreenClickDragWindow()
 
     def on_stop(self):
+        """Actions to take before the program closes."""
         themes.save_set_configuration()  # This saves config settings to tasktracker.conf
         APP_CONTROL.timer_screen.timer_reset()
         DB.thread_shutdown()

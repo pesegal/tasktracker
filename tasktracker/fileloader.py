@@ -1,10 +1,10 @@
-from kivy.app import App
 from kivy.uix.floatlayout import FloatLayout
 from kivy.factory import Factory
 from kivy.properties import ObjectProperty, StringProperty
 from kivy.uix.popup import Popup
 from kivy.uix.filechooser import FileChooserListView
 
+from tasktracker.themes.themes import CONFIG_PARSER
 import os
 
 
@@ -14,8 +14,6 @@ class LoadDialog(FloatLayout):
     set_popup_title = ObjectProperty(None)
     callback = ObjectProperty(None)
     start_path = StringProperty(None)
-
-
 
 
 class SaveDialog(FloatLayout):
@@ -39,23 +37,23 @@ class FileSaveLoadController(FloatLayout):
     def set_popup_title(self, path):
         self._popup.title = self.popup_title + ': ' + path
 
-    def show_load(self, popup_title="Load File", start_path='/', callback=None):
+    def show_load(self, popup_title="Load File: ", start_path='/', callback=None):
         self.popup_title = popup_title
         content = LoadDialog(load=self.load, callback=callback, cancel=self.dismiss_popup,
                              start_path=start_path,
                              set_popup_title=self.set_popup_title)
 
-        self._popup = Popup(title=popup_title, content=content,
+        self._popup = Popup(title=popup_title + start_path, content=content,
                             size_hint=(0.9, 0.9))
         self._popup.open()
 
-    def show_save(self, popup_title="Save File", start_path='/', callback=None):
+    def show_save(self, popup_title="Save File: ", start_path='/', callback=None):
         self.popup_title = popup_title
         content = SaveDialog(save=self.save, callback=callback, cancel=self.dismiss_popup,
                              start_path=start_path,
                              set_popup_title=self.set_popup_title)
 
-        self._popup = Popup(title=popup_title, content=content,
+        self._popup = Popup(title=popup_title + start_path, content=content,
                             size_hint=(0.9, 0.9))
         self._popup.open()
 
@@ -77,8 +75,8 @@ class FileSaveLoadController(FloatLayout):
 
         if callback:
             callback(path, filename)
-
         self.dismiss_popup()
+
 
 
 Factory.register('FileSaveLoadController', cls=FileSaveLoadController)

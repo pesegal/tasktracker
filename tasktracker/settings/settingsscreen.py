@@ -1,6 +1,6 @@
 
 from tasktracker.themes import themes
-from tasktracker.themes.themes import Themeable, THEME_CONTROLLER, NOTIFICATION_SOUND
+from tasktracker.themes.themes import Themeable, THEME_CONTROLLER, NOTIFICATION_SOUND, CONFIG_PARSER
 
 from kivy.uix.screenmanager import Screen
 
@@ -103,8 +103,6 @@ class BackupSettingsContainer(SettingsContainer):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.file_chooser = Factory.FileSaveLoadController()
-
-        # TODO: Load last backup directory from config
         self.selected_path = os.path.expanduser('~')
 
     def _open_selection_backup(self, *args):
@@ -113,6 +111,7 @@ class BackupSettingsContainer(SettingsContainer):
 
     def _set_path_and_file(self, path, filename):
         self.selected_path = path
+        # TODO: Write the function to save a copy of the database.
 
 
 class SettingsButton(Button, Themeable):

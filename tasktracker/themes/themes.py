@@ -61,7 +61,6 @@ class SoundController(Borg):
             self.load(self.start_sound, self.loaded_sounds[0][1])
         self.set_volume(self.volume)  # Needed to init the volume amount.
 
-
     def load(self, soundname, sound_file_path):
         self._current_sound = SoundLoader.load(sound_file_path)
         self.config['default']['notifysound'] = soundname
