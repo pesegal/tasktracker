@@ -77,6 +77,10 @@ class Database:
         connection.commit()
         connection.close()
 
+    def thread_startup(self):
+        if not self.db_thread.is_alive():
+            self.db_thread.start()
+
     def thread_shutdown(self):
         self.action_queue.put(SqlTask('shutdown'))
 
