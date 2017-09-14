@@ -68,7 +68,7 @@ class FileSaveLoadController(FloatLayout):
 
         self.dismiss_popup()
 
-    def save(self, path, filename, callback):
+    def save(self, path, filename, callback=None):
         print(path, filename)
         # with open(os.path.join(path, filename), 'w') as stream:
         #     stream.write(self.text_input.text)
@@ -76,8 +76,6 @@ class FileSaveLoadController(FloatLayout):
         if callback:
             callback(path, filename)
         self.dismiss_popup()
-
-
 
 Factory.register('FileSaveLoadController', cls=FileSaveLoadController)
 Factory.register('LoadDialog', cls=LoadDialog)

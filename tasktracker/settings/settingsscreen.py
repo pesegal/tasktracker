@@ -1,6 +1,7 @@
 
 from tasktracker.themes import themes
 from tasktracker.themes.themes import Themeable, THEME_CONTROLLER, NOTIFICATION_SOUND, CONFIG_PARSER
+from tasktracker.database.db_interface import DB
 
 from kivy.uix.screenmanager import Screen
 
@@ -111,6 +112,10 @@ class BackupSettingsContainer(SettingsContainer):
 
     def _set_path_and_file(self, path, filename):
         self.selected_path = path
+        full_file_path = os.path.join(path, filename)
+        if
+        DATABASE
+
         # TODO: Write the function to save a copy of the database.
 
 

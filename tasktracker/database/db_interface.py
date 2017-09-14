@@ -4,6 +4,7 @@
 
 import os
 import os.path
+import shutil
 import sqlite3
 from datetime import datetime, timezone
 from threading import Thread
@@ -76,6 +77,44 @@ class Database:
         print('Thread Shutting Down', self.db_thread.ident)
         connection.commit()
         connection.close()
+        if item.callback and item.statement == 'shutdown':  # If shutdown callback passed.
+            Clock.schedule_once(partial(item.callback, item.args))
+
+    def backup_database(self, dst_path):
+        """ This function creates a backup of the sqlite database by copying the
+            dbfile. This shuts down the db thread and restarts the db thread after copying
+            to avoid file corruption
+            :param dst_path - full path and filename for the db backup.
+            :return true if the
+
+        """
+        if self.db_thread.is_alive():
+            self.action_queue.put(
+                SqlTask(statement='shutdown',
+                        callback=self._database_backup,
+                        args=dst_path)
+            )
+
+    def _database_backup(self, *args):
+        """ Callback to do the database copy once the thread has shutdown """
+
+        # TODO FINISH THIS!
+        try:
+            pass
+
+        except OSError as os_err:
+            # Write permissions don't exist.
+            pass
+
+        except shutil.SameFileError as sf_err:
+            # When self.path = dst_path
+            pass
+
+        finally:
+            self.thread_startup()
+
+    def thread_status(self):
+        print("Thread is alive: ", self.db_thread.is_alive())
 
     def thread_startup(self):
         if not self.db_thread.is_alive():
