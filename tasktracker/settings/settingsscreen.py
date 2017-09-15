@@ -113,8 +113,15 @@ class BackupSettingsContainer(SettingsContainer):
     def _set_path_and_file(self, path, filename):
         self.selected_path = path
         full_file_path = os.path.join(path, filename)
-        if
-        DATABASE
+
+        # TODO: Do Duplicate filename check and open up conformation window!
+
+        DB.backup_database(self, full_file_path)
+        DB.thread_status()
+
+    def error_popup(self, error):
+        """ Called to open a popup upon error on database file backup."""
+        pass
 
         # TODO: Write the function to save a copy of the database.
 

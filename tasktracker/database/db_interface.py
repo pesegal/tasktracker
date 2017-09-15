@@ -80,7 +80,7 @@ class Database:
         if item.callback and item.statement == 'shutdown':  # If shutdown callback passed.
             Clock.schedule_once(partial(item.callback, item.args))
 
-    def backup_database(self, dst_path):
+    def backup_database(self, controller, dst_path):
         """ This function creates a backup of the sqlite database by copying the
             dbfile. This shuts down the db thread and restarts the db thread after copying
             to avoid file corruption
@@ -92,33 +92,41 @@ class Database:
             self.action_queue.put(
                 SqlTask(statement='shutdown',
                         callback=self._database_backup,
-                        args=dst_path)
+                        args=(controller, dst_path)
+                        )
             )
 
-    def _database_backup(self, *args):
+    def _database_backup(self, arguments, dt):
         """ Callback to do the database copy once the thread has shutdown """
 
-        # TODO FINISH THIS!
+        # TODO handle errors
+
+        print("database._database_backup", arguments)
+        obj = arguments[0]
+        path = arguments[1]
         try:
-            pass
+            shutil.copyfile(self.path, path)
 
         except OSError as os_err:
             # Write permissions don't exist.
-            pass
+            print('OS ERROR')
 
         except shutil.SameFileError as sf_err:
             # When self.path = dst_path
-            pass
+            print(SameFile_error)
 
         finally:
             self.thread_startup()
 
     def thread_status(self):
-        print("Thread is alive: ", self.db_thread.is_alive())
+        print("Thread is alive: ", self.db_thread.is_alive(), self.db_thread.ident)
 
     def thread_startup(self):
+        """ if the thread is dead """
         if not self.db_thread.is_alive():
+            self.db_thread = Thread(target=self._database_loop, args=(self.path,))
             self.db_thread.start()
+            print("New thread created ", self.db_thread.ident)
 
     def thread_shutdown(self):
         self.action_queue.put(SqlTask('shutdown'))
