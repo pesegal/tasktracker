@@ -98,10 +98,6 @@ class Database:
 
     def _database_backup(self, arguments, dt):
         """ Callback to do the database copy once the thread has shutdown """
-
-        # TODO handle errors
-
-        print("database._database_backup", arguments)
         obj = arguments[0]
         path = arguments[1]
         try:
@@ -109,11 +105,11 @@ class Database:
 
         except OSError as os_err:
             # Write permissions don't exist.
-            print('OS ERROR')
+            obj.error_popup(str(os_err))
 
         except shutil.SameFileError as sf_err:
             # When self.path = dst_path
-            print(SameFile_error)
+            obj.error_popup(str(sf_err))
 
         finally:
             self.thread_startup()

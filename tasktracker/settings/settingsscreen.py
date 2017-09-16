@@ -11,8 +11,9 @@ from kivy.uix.spinner import Spinner
 from kivy.uix.togglebutton import ToggleButton, ToggleButtonBehavior
 from kivy.uix.button import Button
 from kivy.uix.slider import Slider
-from kivy.properties import StringProperty, ListProperty
+from kivy.properties import StringProperty, ListProperty, ObjectProperty
 from kivy.factory import Factory
+from kivy.uix.popup import Popup
 from kivy.clock import Clock
 
 import os
@@ -77,12 +78,31 @@ class SettingsSoundVolumeSlider(Slider, Themeable):
         pass
 
 
+class SettingsPopup(Popup, Themeable):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.size_hint = (.5, .3)
+
+    def theme_update(self):
+        pass
+
+
 class SettingsContainer(BoxLayout, Themeable):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
     def theme_update(self):
         pass
+
+
+class ErrorNotification(SettingsContainer):
+    popup = ObjectProperty(None)
+    error_message = StringProperty("ERROR")
+
+    def __init__(self, popup, message, **kwargs):
+        super().__init__(**kwargs)
+        self.popup = popup
+        self.error_message = message
 
 
 class ThemeSettingsContainer(SettingsContainer):
@@ -106,7 +126,7 @@ class BackupSettingsContainer(SettingsContainer):
         self.file_chooser = Factory.FileSaveLoadController()
         self.selected_path = os.path.expanduser('~')
 
-    def _open_selection_backup(self, *args):
+    def open_selection_backup(self, *args):
         print("_open_selection_backup", args)
         self.file_chooser.show_save(callback=self._set_path_and_file, start_path=self.selected_path)
 
@@ -121,7 +141,15 @@ class BackupSettingsContainer(SettingsContainer):
 
     def error_popup(self, error):
         """ Called to open a popup upon error on database file backup."""
-        pass
+        self.open_selection_backup()
+        popup = SettingsPopup(title='File Backup Error')
+        content = ErrorNotification(
+            popup=popup,
+            message=error
+        )
+        popup.content = content
+        popup.open()
+
 
         # TODO: Write the function to save a copy of the database.
 

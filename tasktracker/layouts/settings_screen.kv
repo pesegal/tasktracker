@@ -35,13 +35,30 @@
                     text: 'Backup'
                     size_hint_x: None
                     width: 140
-                    on_press: database_backup_controller._open_selection_backup()
+                    on_press: database_backup_controller.open_selection_backup()
 
             SettingsLabel:
                 text: 'Load / Reset Database:'
 
             SettingsLabel:
                 text: 'Extract Data to flat file (.csv):'
+
+
+<ErrorNotification>:
+    size_hint: 1, 1
+    BoxLayout:
+        orientation: 'vertical'
+        SettingsLabel:
+            id: message
+            size_hint_x: 1
+            halign: 'center'
+            text: root.error_message
+        BoxLayout:
+            orientation: 'horizontal'
+            SettingsButton:
+                id: error_ok_button
+                text: 'Ok'
+                on_touch_down: root.popup.dismiss()
 
 
 <SettingsLabel>:
