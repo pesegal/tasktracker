@@ -44,6 +44,29 @@
                 text: 'Extract Data to flat file (.csv):'
 
 
+<ConfirmationNotification>:
+    size_hint: 1, 1
+    BoxLayout:
+        orientation: 'vertical'
+        SettingsLabel:
+            id: message
+            size_hint_x: 1
+            halign: 'center'
+            text: root.notification_message
+        BoxLayout:
+            orientation: 'horizontal'
+            SettingsButton:
+                id: confirmation_ok
+                text: 'Ok'
+                on_touch_down: root.controller._backup_database(root.file_path)
+            SettingsButton:
+                id: confirmation_cancel
+                text: 'Cancel'
+                on_touch_down:
+                    root.popup.dismiss()
+
+
+
 <ErrorNotification>:
     size_hint: 1, 1
     BoxLayout:

@@ -13,7 +13,7 @@
             height: 30
             Button:
                 text: "Cancel"
-                on_release: root.cancel()
+                on_release: root.cancel.dismiss_popup()
 
             Button:
                 text: "Load"
@@ -44,7 +44,9 @@
             height: 30
             Button:
                 text: "Cancel"
-                on_release: root.cancel()
+                on_release:
+                    # TODO: fix bug with cancel screen.
+                    root.cancel.dismiss_popup()
 
             Button:
                 text: "Save"

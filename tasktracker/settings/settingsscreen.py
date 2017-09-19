@@ -95,6 +95,20 @@ class SettingsContainer(BoxLayout, Themeable):
         pass
 
 
+class ConfirmationNotification(SettingsContainer):
+    popup = ObjectProperty(None)
+    controller = ObjectProperty(None)
+    notification_message = StringProperty("Notification")
+    file_path = StringProperty('/')
+
+    def __init__(self, popup, message, controller=None, file_path='', **kwargs):
+        super().__init__(**kwargs)
+        self.popup = popup
+        self.notification_message = message
+        self.file_path = file_path
+        self.controller = controller
+
+
 class ErrorNotification(SettingsContainer):
     popup = ObjectProperty(None)
     error_message = StringProperty("ERROR")
@@ -133,9 +147,24 @@ class BackupSettingsContainer(SettingsContainer):
     def _set_path_and_file(self, path, filename):
         self.selected_path = path
         full_file_path = os.path.join(path, filename)
+        print(filename)
 
-        # TODO: Do Duplicate filename check and open up conformation window!
+        # Do Duplicate filename check and open up confirmation window.
+        if os.path.isfile(full_file_path):
+            popup = SettingsPopup(title='File Exists')
+            content = ConfirmationNotification(
+                popup=popup,
+                message="Filename %s exists. Overwrite?" % os.path.basename(filename),
+                file_path=full_file_path,
+                controller=self
+            )
+            popup.content = content
+            self.open_selection_backup()
+            popup.open()
+        else:
+            self._backup_database(full_file_path)
 
+    def _backup_database(self, full_file_path):
         DB.backup_database(self, full_file_path)
         DB.thread_status()
 
@@ -149,9 +178,6 @@ class BackupSettingsContainer(SettingsContainer):
         )
         popup.content = content
         popup.open()
-
-
-        # TODO: Write the function to save a copy of the database.
 
 
 class SettingsButton(Button, Themeable):
