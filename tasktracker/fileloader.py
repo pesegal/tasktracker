@@ -49,7 +49,7 @@ class FileSaveLoadController(FloatLayout):
 
     def show_save(self, popup_title="Save File: ", start_path='/', callback=None):
         self.popup_title = popup_title
-        content = SaveDialog(save=self.save, callback=callback, cancel=self,
+        content = SaveDialog(save=self.save, callback=callback, cancel=self.dismiss_popup,
                              start_path=start_path,
                              set_popup_title=self.set_popup_title)
 
@@ -63,19 +63,11 @@ class FileSaveLoadController(FloatLayout):
         if callback:
             callback(path, filename)
 
-        # with open(os.path.join(path, filename[0])) as stream:
-        #     self.text_input.text = stream.read()
-
-        self.dismiss_popup()
-
     def save(self, path, filename, callback=None):
         print(path, filename)
-        # with open(os.path.join(path, filename), 'w') as stream:
-        #     stream.write(self.text_input.text)
 
         if callback:
             callback(path, filename)
-        self.dismiss_popup()
 
 
 Factory.register('FileSaveLoadController', cls=FileSaveLoadController)

@@ -159,7 +159,6 @@ class BackupSettingsContainer(SettingsContainer):
                 controller=self
             )
             popup.content = content
-            self.open_selection_backup()
             popup.open()
         else:
             self._backup_database(full_file_path)
@@ -167,6 +166,7 @@ class BackupSettingsContainer(SettingsContainer):
     def _backup_database(self, full_file_path):
         DB.backup_database(self, full_file_path)
         DB.thread_status()
+        self.file_chooser.dismiss_popup()
 
     def error_popup(self, error):
         """ Called to open a popup upon error on database file backup."""
