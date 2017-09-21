@@ -37,8 +37,16 @@
                     width: 140
                     on_press: database_backup_controller.open_selection_backup()
 
-            SettingsLabel:
-                text: 'Load / Reset Database:'
+            LoadResetDatabaseContainer:
+                SettingsLabel:
+                    text: 'Load / Reset Database:'
+
+                SettingsButton:
+                    text: 'Load Database File':
+                    on_release: pass
+                SettingsButton:
+                    text: 'Reset Database File':
+                    on_release: pass
 
             SettingsLabel:
                 text: 'Extract Data to flat file (.csv):'
