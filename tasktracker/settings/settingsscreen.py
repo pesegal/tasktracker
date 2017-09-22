@@ -191,11 +191,9 @@ class LoadResetDatabaseContainer(SettingsContainer):
     def open_load_window(self):
         pass
 
-
     def _check_selected_db_file(self, path):
-
         os.path.isfile(path)
-
+        self
         with open(path, 'r', encoding="ISO-889-1") as f:
             header = f.read(100)
             if header.startswith('SQLite format 3'):
@@ -204,12 +202,12 @@ class LoadResetDatabaseContainer(SettingsContainer):
         # TODO: Check that the SQLite datafile is a valid tasktracker file. Create a database table
         # TODO: do a temp check for existance of version table and version number?
 
-
     def _trigger_program_mem_clear(self):
         pass
 
     def _trigger_program_data_reload(self):
         pass
+
 
 class SettingsButton(Button, Themeable):
     def __init__(self, **kwargs):

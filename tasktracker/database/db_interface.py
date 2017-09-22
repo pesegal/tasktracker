@@ -14,6 +14,28 @@ from functools import partial
 
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+# Note this number should be updated everytime the tasktracker db schema is changed
+# it is used on database file load to make sure that the file is correctly formatted.
+__database_version_number__ = '00001'
+
+
+def load_file_check_version(loaded_file_path):
+    """ Takes the path of loaded db file and checks the tasktracker table
+        to make sure that it is of the correct version and format.
+        :return True if file valid else False
+    """
+    version_number = 0
+    try:
+        con = sqlite3.connect(loaded_file_path)
+        cur = con.cursor()
+        cur.execute("select version_number from tasktracker;")
+        version_number = cur.fetchone()
+        con.close()
+    except sqlite3.DatabaseError:
+        return False
+
+    return version_number == __database_version_number__
+
 
 
 class SqlTask:
@@ -84,8 +106,8 @@ class Database:
         """ This function creates a backup of the sqlite database by copying the
             dbfile. This shuts down the db thread and restarts the db thread after copying
             to avoid file corruption
+            :param controller - reference to the object calling db_backup. For error notifications.
             :param dst_path - full path and filename for the db backup.
-            :return true if the
 
         """
         if self.db_thread.is_alive():

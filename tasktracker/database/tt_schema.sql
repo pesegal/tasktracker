@@ -1,6 +1,12 @@
 -- Task tracker database
 -- SQlite3
 
+
+-- This tables purpose is to hold the version number to check to makesure loaded files are correct.
+CREATE TABLE tasktracker (
+    version_number VARCHAR(10)
+);
+
 CREATE TABLE tasks (
     id INTEGER PRIMARY KEY,
     creation_date DATETIME,

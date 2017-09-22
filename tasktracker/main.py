@@ -20,7 +20,6 @@ __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file
 # Load in the .kv files
 layout_path = os.path.join(__location__, 'layouts')
 
-
 def exception_shutdown(exctype, value, tb):
     """Actions to take if the App encounters a runtime error."""
     # Stop the current timer action
