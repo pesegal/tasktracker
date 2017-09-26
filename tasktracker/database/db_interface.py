@@ -24,7 +24,7 @@ def load_file_check_version(loaded_file_path):
         to make sure that it is of the correct version and format.
         :return True if file valid else False
     """
-    version_number = 0
+    version_number = ''
     try:
         con = sqlite3.connect(loaded_file_path)
         cur = con.cursor()
@@ -34,6 +34,8 @@ def load_file_check_version(loaded_file_path):
     except sqlite3.DatabaseError:
         return False
 
+    if con:
+        con.close()
     return version_number == __database_version_number__
 
 
@@ -142,6 +144,7 @@ class Database:
     def thread_startup(self):
         """ if the thread is dead """
         if not self.db_thread.is_alive():
+            # You cannot restart a stopped thread due to os limitations. Creating new thread instead.
             self.db_thread = Thread(target=self._database_loop, args=(self.path,))
             self.db_thread.start()
             print("New thread created ", self.db_thread.ident)
