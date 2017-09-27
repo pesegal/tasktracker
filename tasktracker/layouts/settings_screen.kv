@@ -25,11 +25,16 @@
                     text: 'Database Backup Location:'
                 BoxLayout:
                     orientation: "vertical"
-                    Label:
+                    SettingsLabel:
                         text: "Current Backup Location"
-                    Label:
+                        halign: 'center'
+                        size_hint_x: 1
+
+                    SettingsLabel:
                         id: current_backup_path
                         text: database_backup_controller.selected_path
+                        size_hint_x: 1
+                        halign: 'center'
 
                 SettingsButton:
                     text: 'Backup'
@@ -38,12 +43,14 @@
                     on_press: database_backup_controller.open_selection_backup()
 
             LoadResetDatabaseContainer:
+                id: database_load_reset_controller
                 SettingsLabel:
                     text: 'Load / Reset Database:'
 
                 SettingsButton:
                     text: 'Load Database File'
-                    on_release: pass
+                    on_release: database_load_reset_controller.open_load_window()
+
                 SettingsButton:
                     text: 'Reset Database File'
                     on_release: pass

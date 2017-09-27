@@ -141,7 +141,6 @@ class BackupSettingsContainer(SettingsContainer):
         self.selected_path = os.path.expanduser('~')
 
     def open_selection_backup(self, *args):
-        print("_open_selection_backup", args)
         self.file_chooser.show_save(callback=self._set_path_and_file, start_path=self.selected_path)
 
     def _set_path_and_file(self, path, filename):
@@ -187,9 +186,13 @@ class LoadResetDatabaseContainer(SettingsContainer):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.selected_path = os.path.expanduser('~')
+        self.file_chooser = Factory.FileSaveLoadController()
 
     def open_load_window(self):
-        pass
+       self.file_chooser.show_load(start_path=self.selected_path, callback=self._load_database_backup)
+
+    def _load_database_backup(self, path, filename):
+        print("_load_database_backup", path, filename)
 
     def _check_selected_db_file(self, path):
         os.path.isfile(path)
