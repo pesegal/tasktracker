@@ -29,13 +29,14 @@ def load_file_check_version(loaded_file_path):
         con = sqlite3.connect(loaded_file_path)
         cur = con.cursor()
         cur.execute("select version_number from tasktracker;")
-        version_number = cur.fetchone()
+        version_number = cur.fetchone()[0]
         con.close()
     except sqlite3.DatabaseError:
         return False
 
     if con:
         con.close()
+
     return version_number == __database_version_number__
 
 

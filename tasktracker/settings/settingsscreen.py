@@ -2,6 +2,7 @@
 from tasktracker.themes import themes
 from tasktracker.themes.themes import Themeable, THEME_CONTROLLER, NOTIFICATION_SOUND, CONFIG_PARSER
 from tasktracker.database.db_interface import DB
+from tasktracker.database import db_interface
 
 from kivy.uix.screenmanager import Screen
 
@@ -191,25 +192,44 @@ class LoadResetDatabaseContainer(SettingsContainer):
     def open_load_window(self):
        self.file_chooser.show_load(start_path=self.selected_path, callback=self._load_database_backup)
 
-    def _load_database_backup(self, path, filename):
-        print("_load_database_backup", path, filename)
+    def _load_database_backup(self, path, full_path):
+        print("_load_database_backup", path, full_path)
+        # Pass either the selected directory or the full path of the file.
+        selected_file = full_path[0] if full_path else path
+
+        self._check_selected_db_file(selected_file)
 
     def _check_selected_db_file(self, path):
-        os.path.isfile(path)
-        self
-        with open(path, 'r', encoding="ISO-889-1") as f:
-            header = f.read(100)
-            if header.startswith('SQLite format 3'):
-                pass
+        if os.path.isfile(path):
+            # TODO: Raise Error that selected was a directory.
+            with open(path, 'rb') as f:
+                header = f.read(100)
 
-        # TODO: Check that the SQLite datafile is a valid tasktracker file. Create a database table
-        # TODO: do a temp check for existance of version table and version number?
+                if header.startswith(b'SQLite format 3'):
+                    print(db_interface.load_file_check_version(path))
+                    # When load_file_check_version returns true. Clear the program memory and then reload database.
+                else:
+                    self.error_popup(path + "\nInvalid backup file.")
+                    # TODO: Raise error that the file selected wasn't the correct datatype.
+
+        else:
+            self.error_popup(path + "\nDirectory not a file.")
 
     def _trigger_program_mem_clear(self):
         pass
 
     def _trigger_program_data_reload(self):
         pass
+
+    def error_popup(self, error):
+        """ Called to open a popup upon error on database file backup."""
+        popup = SettingsPopup(title='File Load Error')
+        content = ErrorNotification(
+            popup=popup,
+            message=error
+        )
+        popup.content = content
+        popup.open()
 
 
 class SettingsButton(Button, Themeable):

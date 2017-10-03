@@ -56,13 +56,15 @@ class ScreenMenuAndDisplay(BoxLayout, Broadcast):
         self.menu_bar = MenuBar()
 
         # TODO: REMOVE THIS WHEN DONE DEVELOPING WITH THE STATS SCREEN
-        self.screen_controller.current = 'stats'
-
+        self.screen_controller.current = 'tasks'
         # This is where you transmit
         self.bind(screen_size=self.broadcast_window_resize)
 
         self.add_widget(self.menu_bar)
         self.add_widget(self.screen_controller)
+
+        # Manually trigger so that the task screen displays correctly in the beginning.
+        self.broadcast_window_resize()
 
     def screen_width_state(self, *args):
         if self.size[0] < 360:  # Small width screens where text needs to be icons
