@@ -5,6 +5,7 @@
 import os
 import pytz
 import tzlocal
+import weakref
 
 from configparser import ConfigParser
 from kivy.utils import get_color_from_hex
@@ -65,6 +66,9 @@ class Colors(Borg):
 
 
 class AppController(Borg):
+    """ Contains references to important controller objects.
+        Also contains the registry for object saving and loading.
+    """
     def __init__(self):
         super().__init__()
         self.click_drag_screen = None
@@ -74,6 +78,55 @@ class AppController(Borg):
         self.timer_screen = None
         self.timer_task_manager = None
         self.menu_bar = None
+
+        self.data_container_registry = list()
+
+    def register(self, ref):
+        self.data_container_registry.append(ref)
+
+    def _flush(self):
+        to_remove = list()
+
+        for ref in self.data_container_registry:
+            if ref() is None:
+                to_remove.append(ref)
+
+        for item in to_remove:
+            self.data_container_registry.remove(item)
+
+    def clear_app_data(self):
+        """ Calls clear_data function on all objects that are registered
+        with the data_container registry.
+        """
+        self._flush()
+
+        for widget in self.data_container_registry:
+            widget().clear_data()
+
+    def load_app_data(self):
+        """ Calls the load_data function on all object that are registered
+        with the data_container registry.
+        """
+        self._flush()
+
+        for widget in self.data_container_registry:
+            widget().load_data()
+
+
+class DataContainer:
+    """ Mixin class that registers the child classes with the AppController
+        and defines the interface for clearing loaded data and reloading data from the database.
+    """
+    def __init__(self):
+        self._appctl = APP_CONTROL
+        self._appctl.register(weakref.ref(self))
+
+    def clear_data(self):
+        raise NotImplementedError("clear_data method need to be implemented to clear object memory.")
+
+    def load_data(self):
+        raise NotImplementedError("load_data method needs to be implemented to load data from db")
+
 
 # Global Instance Init
 APP_CONTROL = AppController()

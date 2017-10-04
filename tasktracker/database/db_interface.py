@@ -40,7 +40,6 @@ def load_file_check_version(loaded_file_path):
     return version_number == __database_version_number__
 
 
-
 class SqlTask:
     def __init__(self, statement, args=None, function=None, callback=None):
         self.function = function  # The function to call when returning sql data. E.G. 'fetchone()
