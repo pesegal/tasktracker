@@ -3,9 +3,10 @@ from tasktracker.themes import themes
 from tasktracker.themes.themes import Themeable, THEME_CONTROLLER, NOTIFICATION_SOUND, CONFIG_PARSER
 from tasktracker.database.db_interface import DB
 from tasktracker.database import db_interface
+from tasktracker.settings.settingscontroller import APP_CONTROL
+
 
 from kivy.uix.screenmanager import Screen
-
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
 from kivy.uix.spinner import Spinner
@@ -183,6 +184,7 @@ class BackupSettingsContainer(SettingsContainer):
 class LoadResetDatabaseContainer(SettingsContainer):
     """ Controller for all of the load and reset functionality."""
     selected_path = StringProperty('/')
+    app_control = ObjectProperty(APP_CONTROL)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

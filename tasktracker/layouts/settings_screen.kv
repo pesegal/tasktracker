@@ -52,8 +52,12 @@
                     on_release: database_load_reset_controller.open_load_window()
 
                 SettingsButton:
-                    text: 'Reset Database File'
-                    on_release: pass
+                    text: 'Clear Data Test'
+                    on_release: database_load_reset_controller.app_control.clear_app_data()
+
+                SettingsButton:
+                    text: 'Load Data Test'
+                    on_release: database_load_reset_controller.app_control.load_app_data()
 
             SettingsLabel:
                 text: 'Extract Data to flat file (.csv):'

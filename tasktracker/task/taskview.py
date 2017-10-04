@@ -8,6 +8,7 @@ from tasktracker.mixins import Broadcast
 from tasktracker.database.db_interface import DB
 from tasktracker.task.task import Task
 from tasktracker.settings.settingscontroller import APP_CONTROL
+from tasktracker.settings.settingscontroller import DataContainer
 
 
 class TaskListView(FloatLayout, Broadcast):
@@ -84,11 +85,12 @@ class TaskListView(FloatLayout, Broadcast):
             i += 1
 
 
-class TaskListScreen(Screen, Broadcast):
+class TaskListScreen(Screen, Broadcast, DataContainer):
     """
         This is the task screen that contains references to all the list objects. And contains the logic for
         changing the task list view.
     """
+
     def __init__(self, **kwargs):
         super(TaskListScreen, self).__init__(**kwargs)
         self.today_list = TaskScrollContainer(list_id=0, name='today')
@@ -116,6 +118,13 @@ class TaskListScreen(Screen, Broadcast):
 
         # Init loading tasks from database
         DB.load_all_tasks(self._tasks_loaded)
+
+    def load_data(self):
+        DB.load_all_tasks(self._tasks_loaded)
+
+    def clear_data(self):
+        for scroll_list in self.lists:
+            scroll_list.task_list.clear_widgets()
 
     def _tasks_loaded(self, loaded_tasks, dt):
         for record in loaded_tasks:
