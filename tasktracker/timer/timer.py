@@ -14,7 +14,7 @@ from tasktracker.themes import themes
 from tasktracker.themes.themes import Themeable, NOTIFICATION_SOUND
 from tasktracker.task.task import Task
 from tasktracker.database.db_interface import DB
-from tasktracker.settings.settingscontroller import APP_CONTROL
+from tasktracker.settings.settingscontroller import APP_CONTROL, DataContainer
 
 # TODO: Break these out to the settings module
 
@@ -159,11 +159,12 @@ class TimerScreen(Screen, Themeable):
         print("FINISHED")
 
 
-class TimerTaskDisplayManager(BoxLayout):
+class TimerTaskDisplayManager(BoxLayout, DataContainer):
     """ This object acts as an interface for the selected task widget display on the timer screen.
     when no project is selected this widget will show the default view of a button that allows
     the user to select a project to work on.
     """
+
     def __init__(self, **kwargs):
         super(TimerTaskDisplayManager, self).__init__(**kwargs)
         self.default = NoProjectSelectedButton()
@@ -171,10 +172,17 @@ class TimerTaskDisplayManager(BoxLayout):
         self.add_widget(self.selected)
         APP_CONTROL.timer_task_manager = self
 
+    def clear_data(self):
+        self._reset_default_task()
+
+    def load_data(self):
+        pass  # App clear/load cycle doesn't have a database save state
+
     def load_task(self, task):
         self.clear_widgets()
         # TODO: Add in parts to write to the database when a task is switched in mid session.
         # TODO: What is the behavior when switching out a task mid timer session?
+        # TODO: Implement functionality to select a task when no task is currently selected.
         project_id = task.project
         if not task.project:
             project_id = 0

@@ -16,7 +16,7 @@ from kivy.uix.togglebutton import ToggleButton
 from kivy.utils import get_color_from_hex, get_hex_from_color
 
 from tasktracker.database.db_interface import DB
-from tasktracker.settings.settingscontroller import PROJECT_COLORS, APP_CONTROL
+from tasktracker.settings.settingscontroller import PROJECT_COLORS, APP_CONTROL, DataContainer
 from tasktracker.task.task import Task
 from tasktracker.themes.themes import Themeable
 from tasktracker.themes import themes
@@ -60,10 +60,11 @@ class Project:
             self._observers.remove(item)
 
 
-class ProjectList:
+class ProjectList(DataContainer):
     """ProjectList Class is a global container that is used to load and track
     modification to project objects.
     """
+
     def __init__(self):
         super(ProjectList, self).__init__()
         self.project_list = list()
@@ -71,6 +72,12 @@ class ProjectList:
 
     def __call__(self):
         return self.project_list
+
+    def clear_data(self):
+        self.project_list = list()
+
+    def load_data(self):
+        self.load_all_projects()
 
     def load_all_projects(self):
         DB.load_all_projects(self._loaded_all_projects)
