@@ -1,33 +1,34 @@
 <StatsScreen>:
-    TimelineContainer:
-        id: timeline_display
-        orientation: "vertical"
-        label_start: label_time_start
-        label_end: label_time_end
-        timeline_zoom_slider: zoom_slider
+
+<TimelineContainer>:
+    id: timeline_display
+    orientation: "vertical"
+    label_start: label_time_start
+    label_end: label_time_end
+    timeline_zoom_slider: zoom_slider
 
 
-        BoxLayout:
-            id: time_controls
-            orientation: 'horizontal'
-            size_hint_y: None
-            height: 50
+    BoxLayout:
+        id: time_controls
+        orientation: 'horizontal'
+        size_hint_y: None
+        height: 50
 
-            DateTimeLabel:
-                id: label_time_start
-                name: "label_time_start"
-                display_time: timeline_display.display_time_start
-                time_line_container: timeline_display
+        DateTimeLabel:
+            id: label_time_start
+            name: "label_time_start"
+            display_time: timeline_display.display_time_start
+            time_line_container: timeline_display
 
-            TimelineSlider:
-                id: zoom_slider
-                time_line_container: timeline_display
+        TimelineSlider:
+            id: zoom_slider
+            time_line_container: timeline_display
 
-            DateTimeLabel:
-                id: label_time_end
-                name: "label_time_end"
-                display_time: timeline_display.display_time_end
-                time_line_container: timeline_display
+        DateTimeLabel:
+            id: label_time_end
+            name: "label_time_end"
+            display_time: timeline_display.display_time_end
+            time_line_container: timeline_display
 
 <DateTimeLabel>:
     size_hint: None, 1

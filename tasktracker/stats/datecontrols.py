@@ -69,7 +69,6 @@ class VTimeInput(ValidatedTextInput):
     def update_time(self, dt):
         self.text = dt.strftime('%I:%M')
         self.current_time = dt.timetz()
-        # TODO: Switch between AM/PM selections
 
     def insert_text(self, substring, from_undo=False):
         if self.cursor[0] == 1 and len(self.text) <= self.cursor[0]:

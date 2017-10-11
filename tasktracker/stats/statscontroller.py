@@ -1,4 +1,4 @@
-from kivy.uix.screenmanager import Screen
+from kivy.uix.screenmanager import Screen, ScreenManager
 from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.slider import Slider
 from kivy.properties import ObjectProperty, NumericProperty
@@ -6,12 +6,11 @@ from kivy.utils import get_color_from_hex
 from kivy.animation import Animation
 from kivy.clock import Clock
 
-
-
 from copy import copy
 from tasktracker.database.db_interface import DB
 from tasktracker.stats.timeline import TaskTimeLine, VisualTimeTick, PeriodDisplayTick, RecordPeriod
 from tasktracker.stats.datecontrols import StatsTimeSelectionMenu
+from tasktracker.settings.settingscontroller import DataContainer
 from datetime import datetime, timezone, timedelta
 from tasktracker.task.taskpopups import PROJECT_LIST
 from tasktracker.themes.themes import THEME_CONTROLLER
@@ -23,7 +22,7 @@ from functools import partial
 # Todo: write a helper function that takes start and end datetimes and returns the number of months, weeks, days
 
 
-class TimelineContainer(RelativeLayout):
+class TimelineContainer(Screen):
     """ TimelineContainer object contains all functionality related to the display and manipulation
         of the timeline.
     """
@@ -74,7 +73,6 @@ class TimelineContainer(RelativeLayout):
 
     def _zoom_state_update(self, *args):
         print("zoom_state updated", args)
-
 
     def open_dt_selection_menu(self, dt, label):
         self.add_widget(StatsTimeSelectionMenu(dt, label, self.timeline))
@@ -230,9 +228,47 @@ class TimelineContainer(RelativeLayout):
         self.add_widget(self.timeline, index=1)
 
 
+class StatsDataController(DataContainer):
+   """ StatsDataController handles all of the in memory store of statistical information, loading and clearing
+   of this statistical information from the database. It also contains the logic that slices and sums this
+   data for the different statistical views.
+   """
+    def __init__(self, **kwargs):
+        super(StatsDataController, self).__init__(**kwargs)
+
+    def clear_data(self):
+        pass
+
+    def load_data(self):
+        pass
+
+    def return_projects_summary_stats(self, time_period):
+        pass
+
+    def return_tasks_summary_stats(self, time_period):
+        pass
+
+    def single_project_stats(self):
+        pass
+
+    def single_task_stats(self):
+        pass
+
+
+
 class StatsScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.sm = ScreenManager()
+        self.add_widget(self.sm)
+
+        self.view_timeline = TimelineContainer(name='TimelineView')
+
+        self.add_widget(self.view_timeline)
+        print(self.sm.screens)
+
+
+
 
         # DB.load_task_actions(self.test_time_start, self.test_time_end, self._test_load_projects)
         #
