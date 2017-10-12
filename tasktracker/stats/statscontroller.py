@@ -229,10 +229,12 @@ class TimelineContainer(Screen):
 
 
 class StatsDataController(DataContainer):
-   """ StatsDataController handles all of the in memory store of statistical information, loading and clearing
-   of this statistical information from the database. It also contains the logic that slices and sums this
-   data for the different statistical views.
-   """
+    """
+    StatsDataController handles all of the in memory store of statistical information, loading and clearing
+    of this statistical information from the database. It also contains the logic that slices and sums this
+    data for the different statistical views.
+    """
+
     def __init__(self, **kwargs):
         super(StatsDataController, self).__init__(**kwargs)
 
@@ -248,12 +250,11 @@ class StatsDataController(DataContainer):
     def return_tasks_summary_stats(self, time_period):
         pass
 
-    def single_project_stats(self):
+    def single_project_stats(self, time_period):
         pass
 
-    def single_task_stats(self):
+    def single_task_stats(self, time_period):
         pass
-
 
 
 class StatsScreen(Screen):
