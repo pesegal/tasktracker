@@ -1,6 +1,6 @@
 from kivy.uix.screenmanager import Screen, ScreenManager
 from kivy.uix.relativelayout import RelativeLayout
-from kivy.uix.slider import Slider
+from kivy.uix.boxlayout import BoxLayout
 from kivy.properties import ObjectProperty, NumericProperty
 from kivy.utils import get_color_from_hex
 from kivy.animation import Animation
@@ -13,16 +13,40 @@ from tasktracker.stats.datecontrols import StatsTimeSelectionMenu
 from tasktracker.settings.settingscontroller import DataContainer
 from datetime import datetime, timezone, timedelta
 from tasktracker.task.taskpopups import PROJECT_LIST
-from tasktracker.themes.themes import THEME_CONTROLLER
+from tasktracker.themes.themes import THEME_CONTROLLER, Themeable
 from tasktracker.stats.datecontrols import ErrorNotificationPopup, SliderNotificationPopup
 from functools import partial
+
 
 # TODO: DEFAULT COLORS FOR SHORT BREAK, LONG BREAK, & PAUSE (MAKE THESE CONFIGURABLE IN SETTINGS?)
 
 # Todo: write a helper function that takes start and end datetimes and returns the number of months, weeks, days
 
 
-class TimelineContainer(Screen):
+class StandardStatsScreen(Screen):
+    """ The standard stats screen view contains the project / task summary screen and the timeline
+    view.
+    """
+
+    def __init__(self, **kwargs):
+        super(StandardStatsScreen, self).__init__(**kwargs)
+
+
+class TaskProjectStatsSummaryView(BoxLayout, Themeable):
+    """ Contains all the updating logic for the task/project summary view. This statical view lists
+    all of the tasks or projects withing the specified time frame that can be sorted by taskname,
+    work time, or break time. It also calculates totals (worktime, breaktime)
+     for all tasks or projects in selected time period.
+    """
+
+    def __init__(self, **kwargs):
+        super(TaskProjectStatsSummaryView, self).__init__(**kwargs)
+
+    def theme_update(self):
+        pass
+
+
+class TimelineContainer(RelativeLayout):
     """ TimelineContainer object contains all functionality related to the display and manipulation
         of the timeline.
     """
@@ -56,7 +80,7 @@ class TimelineContainer(Screen):
         self.time_ticks = [VisualTimeTick(mode=VisualTimeTick.mode.options[i], valign='line_bottom') for i in
                            [0, 2, 5, 6, 7, 9, 10]]
         self.time_ticks.extend([VisualTimeTick(mode=VisualTimeTick.mode.options[i], valign='line_top',
-                                               tick_color=[1,1,1,1]) for i in [0, 2, 5, 6, 7, 9, 10]])
+                                               tick_color=[1, 1, 1, 1]) for i in [0, 2, 5, 6, 7, 9, 10]])
 
         today = datetime.now(tz=timezone.utc)
         t_buffer = timedelta(days=60)
@@ -209,7 +233,7 @@ class TimelineContainer(Screen):
             else:
                 p_color = get_color_from_hex(project.color)
 
-            p_color[3] = .7 # Add some transparency to the timeline.
+            p_color[3] = .7  # Add some transparency to the timeline.
 
             for t_key, t_value in value.items():
                 if t_key == 2:  # if type is pomodoro
@@ -263,7 +287,7 @@ class StatsScreen(Screen):
         self.sm = ScreenManager()
         self.add_widget(self.sm)
 
-        self.view_timeline = TimelineContainer(name='TimelineView')
+        self.view_timeline = StandardStatsScreen(name='TimelineView')
 
         self.add_widget(self.view_timeline)
         print(self.sm.screens)
@@ -281,6 +305,3 @@ class StatsScreen(Screen):
         #                                        tick_color=[1,1,1,1]) for i in [0, 2, 5, 6, 7, 9, 10]])
         #
         # print(self.time_ticks)
-
-
-

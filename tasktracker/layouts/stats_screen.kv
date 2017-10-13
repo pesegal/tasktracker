@@ -1,12 +1,53 @@
 <StatsScreen>:
 
+<StandardStatsScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        TaskProjectStatsSummaryView:
+            size_hint_y: .5
+        TimelineContainer:
+            size_hint_y: .5
+
+
+<TaskProjectStatsSummaryView>:
+    orientation: 'vertical'
+
+    BoxLayout:
+        id: summary_labels
+        orientation: "horizontal"
+        size_hint_y: .8
+        Button:
+            text: "Task/Project"
+            size_hint_x: .2
+
+        Button:
+            text: "Details"
+            size_hint_x: .8
+
+
+    BoxLayout:
+        id: total_line
+        orientation: "horizontal"
+        size_hint_y: .2
+        Button:
+            text: "Total"
+            size_hint_x: .2
+
+        Button:
+            text: "Totals Placeholder"
+            size_hint_x: .8
+
+
+
+
+
+
 <TimelineContainer>:
     id: timeline_display
     orientation: "vertical"
     label_start: label_time_start
     label_end: label_time_end
     timeline_zoom_slider: zoom_slider
-
 
     BoxLayout:
         id: time_controls
