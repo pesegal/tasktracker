@@ -4,41 +4,72 @@
     BoxLayout:
         orientation: 'vertical'
         TaskProjectStatsSummaryView:
-            size_hint_y: .5
+            size_hint_y: .45
         TimelineContainer:
-            size_hint_y: .5
+            size_hint_y: .55
 
 
 <TaskProjectStatsSummaryView>:
     orientation: 'vertical'
 
+    # TODO: Replace scaffold with themed widgets.
+
     BoxLayout:
         id: summary_labels
         orientation: "horizontal"
-        size_hint_y: .8
-        Button:
-            text: "Task/Project"
+        size_hint_y: .85
+        BoxLayout:
+            id: task_project_switcher
             size_hint_x: .2
+            orientation: "vertical"
+            Label:
+                id: view_label
+                text: "Summary"
+                size_hint_y: .2
+            Button:
+                text: "Time by Project"
+                size_hint_y: .2
+            Button:
+                text: "Time by Task"
+                size_hint_y: .2
+            Button:
+                text: "% By Project"
+                size_hint_y: .2
+            Button:
+                text:  "% By Task"
+                size_hint_y: .2
 
-        Button:
-            text: "Details"
+        BoxLayout:
+            id: detail_container
+            orientation: 'vertical'
             size_hint_x: .8
+            BoxLayout:
+                id: detail_header
+                orientation: "horizontal"
+                size_hint_y: .2
+                Button:
+                    text: "Task/Project"
+                Button:
+                    text: "Working Time"
+                Button:
+                    text: "Break Time"
+
+            Button:
+                text: "Details"
+                size_hint_y: .8
 
 
     BoxLayout:
         id: total_line
         orientation: "horizontal"
-        size_hint_y: .2
-        Button:
+        size_hint_y: .15
+        Label:
             text: "Total"
             size_hint_x: .2
 
         Button:
             text: "Totals Placeholder"
             size_hint_x: .8
-
-
-
 
 
 
