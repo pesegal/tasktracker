@@ -5,6 +5,7 @@ from kivy.properties import ObjectProperty, NumericProperty
 from kivy.utils import get_color_from_hex
 from kivy.animation import Animation
 from kivy.clock import Clock
+from kivy.uix.gridlayout import GridLayout
 
 from copy import copy
 from tasktracker.database.db_interface import DB
@@ -41,6 +42,28 @@ class TaskProjectStatsSummaryView(BoxLayout, Themeable):
 
     def __init__(self, **kwargs):
         super(TaskProjectStatsSummaryView, self).__init__(**kwargs)
+
+    def theme_update(self):
+        pass
+
+
+class RecordDetailGridView(GridLayout):
+    def __init__(self, **kwargs):
+        super(RecordDetailGridView, self).__init__(**kwargs)
+        self.bind(minimum_height=self.setter('height'))
+
+
+class StatsRecordLine(BoxLayout, Themeable):
+    """ This object holds the display of the total worked and break time by task or project.
+    These are generated and added to the RecordDetailGridView based on the returned records from
+    the database. This is a themeable object.
+    """
+
+    # TODO: Should you be able to click the project/task name and open up the detailed stats?
+
+    def __init__(self, **kwargs):
+        super(StatsRecordLine, self).__init__(**kwargs)
+        # TODO: figure out how each record line will be created.
 
     def theme_update(self):
         pass

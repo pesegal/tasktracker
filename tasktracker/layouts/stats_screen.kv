@@ -11,6 +11,7 @@
 
 <TaskProjectStatsSummaryView>:
     orientation: 'vertical'
+    record_detail_grid_view: detail_grid_view
 
     # TODO: Replace scaffold with themed widgets.
 
@@ -54,11 +55,29 @@
                 Button:
                     text: "Break Time"
 
-            Button:
-                text: "Details"
+            ScrollView:
+                id: detail_scroll_view
                 size_hint_y: .8
-
-
+                RecordDetailGridView:
+                    id: detail_grid_view
+                    cols: 1
+                    spacing: 2
+                    size_hint_y: None
+                    Button:
+                        text: "Placeholder1"
+                        size_hint_x:1
+                        size_hint_y: None
+                        height:80
+                    Button:
+                        text: "Placeholder1"
+                        size_hint_x:1
+                        size_hint_y: None
+                        height:80
+                    Button:
+                        text: "Placeholder1"
+                        size_hint_x:1
+                        size_hint_y: None
+                        height:80
     BoxLayout:
         id: total_line
         orientation: "horizontal"
@@ -70,6 +89,13 @@
         Button:
             text: "Totals Placeholder"
             size_hint_x: .8
+
+
+<StatsRecordLine>:
+    size_hint_x: 1
+    size_hint_y: None
+    height: 40
+    orientation: "horizontal"
 
 
 
@@ -106,7 +132,6 @@
     size_hint: None, 1
     height: 50
     markup: True
-
 
 
 

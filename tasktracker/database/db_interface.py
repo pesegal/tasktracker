@@ -273,13 +273,13 @@ class Database:
                         aty.action_description,
                         t.id as task_id,
                         t.name as task_name,
-                        p.id as project_id
+                        p.id as project_id,
                         p.name as project_name
 
                     FROM task_actions AS ta
-                    JOIN tasks AS t ON ta.task_id = tasks.id
-                    JOIN action_type AS aty ON task_actions.action_id = action_type.id
-                    JOIN projects AS p ON tasks.project_id = projects.id
+                    JOIN tasks AS t ON ta.task_id = t.id
+                    JOIN action_type AS aty ON ta.action_id = aty.id
+                    JOIN projects AS p ON t.project_id = p.id
                     WHERE ta.creation_date >= ? AND finish_date <= ?;
                 """,
                 args=(start_time, end_time),
