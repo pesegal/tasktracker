@@ -80,7 +80,6 @@ class Database:
 
         while True:
             item = self.action_queue.get()
-            print(item)
             if item.statement == 'shutdown':
                 break
 

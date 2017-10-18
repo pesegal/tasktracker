@@ -236,7 +236,6 @@ class TimelineContainer(RelativeLayout):
 
         for item in data:
             record = RecordPeriod(*item)
-            print(record)
 
             if record.project_id in project_dict.keys():
                 if record.action_type in project_dict[record.project_id].keys():
@@ -247,7 +246,6 @@ class TimelineContainer(RelativeLayout):
                 project_dict[record.project_id] = {record.action_type: [record]}
 
         for key, value in project_dict.items():
-            print(key, value)
 
             # Get Project Color Else Default
             project = PROJECT_LIST.return_project_by_id(key)
@@ -284,12 +282,21 @@ class StatsDataController(DataContainer):
 
     def __init__(self, **kwargs):
         super(StatsDataController, self).__init__(**kwargs)
+        self.load_data()
 
     def clear_data(self):
         pass
 
-    def load_data(self):
-        pass
+    def load_data(self, min_time=datetime.min, max_time=datetime.max):
+        print(self.__class__.__name__, min_time, max_time)
+        DB.get_task_actions_stats(min_time, max_time, self._stats_data_loaded)
+
+    def _stats_data_loaded(self, data, *args):
+        print("Dataloaded", type(data), *args)
+        for record in data:
+            print(record)
+
+
 
     def return_projects_summary_stats(self, time_period):
         pass
@@ -308,6 +315,7 @@ class StatsScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.sm = ScreenManager()
+        self.data_container = StatsDataController()
         self.add_widget(self.sm)
 
         self.view_timeline = StandardStatsScreen(name='TimelineView')
