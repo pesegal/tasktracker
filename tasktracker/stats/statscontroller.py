@@ -17,7 +17,7 @@ from tasktracker.task.taskpopups import PROJECT_LIST
 from tasktracker.themes.themes import THEME_CONTROLLER, Themeable
 from tasktracker.stats.datecontrols import ErrorNotificationPopup, SliderNotificationPopup
 from functools import partial
-
+from collections import namedtuple
 
 # TODO: DEFAULT COLORS FOR SHORT BREAK, LONG BREAK, & PAUSE (MAKE THESE CONFIGURABLE IN SETTINGS?)
 
@@ -283,6 +283,10 @@ class StatsDataController(DataContainer):
     def __init__(self, **kwargs):
         super(StatsDataController, self).__init__(**kwargs)
         self.load_data()
+        self.StatRecord = namedtuple('StatRecord',
+                                     ['action_id', 'creation_date', 'finish_date', 'duration',
+                                      'type', 'task_id', 'task_name', 'project_id', 'project_name'])
+        self.stats_data = list()
 
     def clear_data(self):
         pass
@@ -292,14 +296,23 @@ class StatsDataController(DataContainer):
         DB.get_task_actions_stats(min_time, max_time, self._stats_data_loaded)
 
     def _stats_data_loaded(self, data, *args):
-        print("Dataloaded", type(data), *args)
-        for record in data:
-            print(record)
+        self.stats_data = [self.StatRecord(*rcd) for rcd in data]
+
+    def _in_dt_range(self, dt_min, dt_max, start_time, end_time):
+        return start_time <= dt_max or end_time >= dt_min
+
+    def return_projects_summary_stats(self, time_period=None):
+        if time_period:
+            min_dt = time_period[0]
+            max_dt = time_period[1]
+        else:
+            min_dt = datetime.min
+            max_dt = datetime.max
+
+        records_in_range = []
 
 
 
-    def return_projects_summary_stats(self, time_period):
-        pass
 
     def return_tasks_summary_stats(self, time_period):
         pass
