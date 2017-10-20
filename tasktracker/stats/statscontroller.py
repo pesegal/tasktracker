@@ -11,7 +11,7 @@ from copy import copy
 from tasktracker.database.db_interface import DB
 from tasktracker.stats.timeline import TaskTimeLine, VisualTimeTick, PeriodDisplayTick, RecordPeriod
 from tasktracker.stats.datecontrols import StatsTimeSelectionMenu
-from tasktracker.settings.settingscontroller import DataContainer
+from tasktracker.settings.settingscontroller import DataContainer, to_datetime, to_local_time
 from datetime import datetime, timezone, timedelta
 from tasktracker.task.taskpopups import PROJECT_LIST
 from tasktracker.themes.themes import THEME_CONTROLLER, Themeable
@@ -288,6 +288,13 @@ class StatsDataController(DataContainer):
                                       'type', 'task_id', 'task_name', 'project_id', 'project_name'])
         self.stats_data = list()
 
+        # Testing Code
+        self.test_time_period = (to_local_time(datetime.now(timezone.utc)) - timedelta(days=3),
+                                 to_local_time(datetime.now(timezone.utc)))
+
+
+
+
     def clear_data(self):
         pass
 
@@ -296,20 +303,37 @@ class StatsDataController(DataContainer):
         DB.get_task_actions_stats(min_time, max_time, self._stats_data_loaded)
 
     def _stats_data_loaded(self, data, *args):
-        self.stats_data = [self.StatRecord(*rcd) for rcd in data]
+        self.stats_data = [stat._replace(
+            creation_date=to_local_time(to_datetime(stat.creation_date)),
+            finish_date=to_local_time(to_datetime(stat.finish_date))
+        ) for stat in [self.StatRecord(*rcd) for rcd in data]]
 
-    def _in_dt_range(self, dt_min, dt_max, start_time, end_time):
-        return start_time <= dt_max or end_time >= dt_min
+        print(self.test_time_period)
+        self.return_projects_summary_stats(self.test_time_period)
+
+    @staticmethod
+    def _in_dt_range(dt_min, dt_max, start_time, end_time):
+        return ((dt_max >= start_time >= dt_min) or
+                (dt_max >= end_time >= dt_min))
 
     def return_projects_summary_stats(self, time_period=None):
         if time_period:
             min_dt = time_period[0]
             max_dt = time_period[1]
         else:
-            min_dt = datetime.min
-            max_dt = datetime.max
+            min_dt = to_local_time(datetime.min)
+            max_dt = to_local_time(datetime.max)
 
-        records_in_range = []
+        records_in_range = [rec for rec in self.stats_data if self._in_dt_range(min_dt, max_dt,
+                                                                                rec.creation_date,
+                                                                                rec.finish_date)]
+
+        print(len(self.stats_data))
+        print(len(records_in_range))
+        for r in records_in_range:
+            print(r)
+        # TODO: continue here
+
 
 
 
@@ -332,6 +356,7 @@ class StatsScreen(Screen):
         self.add_widget(self.sm)
 
         self.view_timeline = StandardStatsScreen(name='TimelineView')
+
 
         self.add_widget(self.view_timeline)
         print(self.sm.screens)
