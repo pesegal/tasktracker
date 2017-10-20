@@ -17,7 +17,7 @@ from tasktracker.task.taskpopups import PROJECT_LIST
 from tasktracker.themes.themes import THEME_CONTROLLER, Themeable
 from tasktracker.stats.datecontrols import ErrorNotificationPopup, SliderNotificationPopup
 from functools import partial
-from collections import namedtuple
+from collections import namedtuple, Counter
 
 # TODO: DEFAULT COLORS FOR SHORT BREAK, LONG BREAK, & PAUSE (MAKE THESE CONFIGURABLE IN SETTINGS?)
 
@@ -289,7 +289,7 @@ class StatsDataController(DataContainer):
         self.stats_data = list()
 
         # Testing Code
-        self.test_time_period = (to_local_time(datetime.now(timezone.utc)) - timedelta(days=3),
+        self.test_time_period = (to_local_time(datetime.now(timezone.utc)) - timedelta(days=20),
                                  to_local_time(datetime.now(timezone.utc)))
 
 
@@ -317,6 +317,12 @@ class StatsDataController(DataContainer):
                 (dt_max >= end_time >= dt_min))
 
     def return_projects_summary_stats(self, time_period=None):
+        """ Send a start and end time list or tuple. Returns a dict of summed durations in seconds
+        keyed by project id.
+
+        :param time_period: [lower bound datetime, upper bound datetime]
+        :return: dict{ project_id: { "WorkTime", "PauseTime", "BreakTime" }}
+        """
         if time_period:
             min_dt = time_period[0]
             max_dt = time_period[1]
@@ -324,18 +330,30 @@ class StatsDataController(DataContainer):
             min_dt = to_local_time(datetime.min)
             max_dt = to_local_time(datetime.max)
 
+        # Filter out only the records in the effective range.
         records_in_range = [rec for rec in self.stats_data if self._in_dt_range(min_dt, max_dt,
                                                                                 rec.creation_date,
                                                                                 rec.finish_date)]
+        # Group by project id and sum duration by type.
+        project_stats = dict()
+        for record in records_in_range:
+            if record.project_id not in project_stats.keys():
+                project_stats[record.project_id] = dict()
+                project_stats[record.project_id]['WorkTime'] = 0
+                project_stats[record.project_id]['PauseTime'] = 0
+                project_stats[record.project_id]['BreakTime'] = 0
 
-        print(len(self.stats_data))
-        print(len(records_in_range))
-        for r in records_in_range:
-            print(r)
-        # TODO: continue here
+            if record.type == 'Pomodoro' or record.type == 'Stopwatch':
+                project_stats[record.project_id]['WorkTime'] += record.duration
+            elif record.type == 'Pause':
+                project_stats[record.project_id]['PauseTime'] += record.duration
+            else:
+                project_stats[record.project_id]['BreakTime'] += record.duration
 
+        for key, value in project_stats.items():
+            print(key, value)
 
-
+        return project_stats
 
 
     def return_tasks_summary_stats(self, time_period):
