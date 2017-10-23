@@ -1,7 +1,7 @@
 from kivy.uix.screenmanager import Screen, ScreenManager
 from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.boxlayout import BoxLayout
-from kivy.properties import ObjectProperty, NumericProperty
+from kivy.properties import ObjectProperty, NumericProperty, ListProperty
 from kivy.utils import get_color_from_hex
 from kivy.animation import Animation
 from kivy.clock import Clock
@@ -279,7 +279,6 @@ class StatsDataController(DataContainer):
     of this statistical information from the database. It also contains the logic that slices and sums this
     data for the different statistical views.
     """
-
     def __init__(self, **kwargs):
         super(StatsDataController, self).__init__(**kwargs)
         self.load_data()
@@ -289,17 +288,13 @@ class StatsDataController(DataContainer):
         self.stats_data = list()
 
         # Testing Code
-        self.test_time_period = (to_local_time(datetime.now(timezone.utc)) - timedelta(days=20),
-                                 to_local_time(datetime.now(timezone.utc)))
-
-
-
+        self.test_time_period = [to_local_time(datetime.now(timezone.utc)) - timedelta(days=20),
+                                 to_local_time(datetime.now(timezone.utc))]
 
     def clear_data(self):
-        pass
+        self.stats_data = list()
 
     def load_data(self, min_time=datetime.min, max_time=datetime.max):
-        print(self.__class__.__name__, min_time, max_time)
         DB.get_task_actions_stats(min_time, max_time, self._stats_data_loaded)
 
     def _stats_data_loaded(self, data, *args):
@@ -308,13 +303,23 @@ class StatsDataController(DataContainer):
             finish_date=to_local_time(to_datetime(stat.finish_date))
         ) for stat in [self.StatRecord(*rcd) for rcd in data]]
 
-        print(self.test_time_period)
-        self.return_projects_summary_stats(self.test_time_period)
-
     @staticmethod
     def _in_dt_range(dt_min, dt_max, start_time, end_time):
         return ((dt_max >= start_time >= dt_min) or
                 (dt_max >= end_time >= dt_min))
+
+    def _return_records_in_daterange(self, time_period):
+        if time_period:
+            # TODO: local datetime conversion here?
+            min_dt = time_period[0]
+            max_dt = time_period[1]
+        else:
+            min_dt = to_local_time(datetime.min)
+            max_dt = to_local_time(datetime.max)
+        # Filter out only the records in the effective range.
+        return [rec for rec in self.stats_data if self._in_dt_range(min_dt, max_dt,
+                                                                    rec.creation_date,
+                                                                    rec.finish_date)]
 
     def return_projects_summary_stats(self, time_period=None):
         """ Send a start and end time list or tuple. Returns a dict of summed durations in seconds
@@ -323,17 +328,8 @@ class StatsDataController(DataContainer):
         :param time_period: [lower bound datetime, upper bound datetime]
         :return: dict{ project_id: { "WorkTime", "PauseTime", "BreakTime" }}
         """
-        if time_period:
-            min_dt = time_period[0]
-            max_dt = time_period[1]
-        else:
-            min_dt = to_local_time(datetime.min)
-            max_dt = to_local_time(datetime.max)
+        records_in_range = self._return_records_in_daterange(time_period)
 
-        # Filter out only the records in the effective range.
-        records_in_range = [rec for rec in self.stats_data if self._in_dt_range(min_dt, max_dt,
-                                                                                rec.creation_date,
-                                                                                rec.finish_date)]
         # Group by project id and sum duration by type.
         project_stats = dict()
         for record in records_in_range:
@@ -355,9 +351,34 @@ class StatsDataController(DataContainer):
 
         return project_stats
 
+    def return_tasks_summary_stats(self, time_period=None):
+        """ Send a start and end time list or tuple. Returns a dict of summed durations in seconds
+        keyed by task_id.
 
-    def return_tasks_summary_stats(self, time_period):
-        pass
+        :param time_period: [lower bound datetime, upper bound datetime]
+        :return: dict{ task_id: { "WorkTime", "PauseTime", "BreakTime" }}
+        """
+        records_in_range = self._return_records_in_daterange(time_period)
+
+        task_stats = dict()
+        for record in records_in_range:
+            if record.task_id not in task_stats.keys():
+                task_stats[record.task_id] = dict()
+                task_stats[record.task_id]['WorkTime'] = 0
+                task_stats[record.task_id]['PauseTime'] = 0
+                task_stats[record.task_id]['BreakTime'] = 0
+
+            if record.type == 'Pomodoro' or record.type == 'Stopwatch':
+                task_stats[record.task_id]['WorkTime'] += record.duration
+            elif record.type == 'Pause':
+                task_stats[record.task_id]['PauseTime'] += record.duration
+            else:
+                task_stats[record.task_id]['BreakTime'] += record.duration
+
+        for key, value in task_stats.items():
+            print(key, value)
+
+        return task_stats
 
     def single_project_stats(self, time_period):
         pass
