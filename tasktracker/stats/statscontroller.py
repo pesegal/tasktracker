@@ -1,5 +1,7 @@
 from kivy.uix.screenmanager import Screen, ScreenManager
 from kivy.uix.relativelayout import RelativeLayout
+from kivy.uix.label import Label
+from kivy.uix.button import Button
 from kivy.uix.boxlayout import BoxLayout
 from kivy.properties import ObjectProperty, NumericProperty, ListProperty
 from kivy.utils import get_color_from_hex
@@ -51,22 +53,6 @@ class RecordDetailGridView(GridLayout):
     def __init__(self, **kwargs):
         super(RecordDetailGridView, self).__init__(**kwargs)
         self.bind(minimum_height=self.setter('height'))
-
-
-class StatsRecordLine(BoxLayout, Themeable):
-    """ This object holds the display of the total worked and break time by task or project.
-    These are generated and added to the RecordDetailGridView based on the returned records from
-    the database. This is a themeable object.
-    """
-
-    # TODO: Should you be able to click the project/task name and open up the detailed stats?
-
-    def __init__(self, **kwargs):
-        super(StatsRecordLine, self).__init__(**kwargs)
-        # TODO: figure out how each record line will be created.
-
-    def theme_update(self):
-        pass
 
 
 class TimelineContainer(RelativeLayout):
@@ -321,71 +307,85 @@ class StatsDataController(DataContainer):
                                                                     rec.creation_date,
                                                                     rec.finish_date)]
 
-    def return_projects_summary_stats(self, time_period=None):
+    def return_summary_stats(self, group_by='project_id', time_period=None):
         """ Send a start and end time list or tuple. Returns a dict of summed durations in seconds
         keyed by project id.
 
+        :param group_by: element to group by (ex. 'project_id', 'task_id')
         :param time_period: [lower bound datetime, upper bound datetime]
         :return: dict{ project_id: { "WorkTime", "PauseTime", "BreakTime" }}
         """
         records_in_range = self._return_records_in_daterange(time_period)
 
-        # Group by project id and sum duration by type.
-        project_stats = dict()
+        stats_dict = dict()
         for record in records_in_range:
-            if record.project_id not in project_stats.keys():
-                project_stats[record.project_id] = dict()
-                project_stats[record.project_id]['WorkTime'] = 0
-                project_stats[record.project_id]['PauseTime'] = 0
-                project_stats[record.project_id]['BreakTime'] = 0
+
+            item_id = getattr(record, group_by)
+
+            if item_id not in stats_dict.keys():
+                stats_dict[item_id] = dict()
+                stats_dict[item_id]['WorkTime'] = 0
+                stats_dict[item_id]['PauseTime'] = 0
+                stats_dict[item_id]['BreakTime'] = 0
 
             if record.type == 'Pomodoro' or record.type == 'Stopwatch':
-                project_stats[record.project_id]['WorkTime'] += record.duration
+                stats_dict[item_id]['WorkTime'] += record.duration
             elif record.type == 'Pause':
-                project_stats[record.project_id]['PauseTime'] += record.duration
+                stats_dict[item_id]['PauseTime'] += record.duration
             else:
-                project_stats[record.project_id]['BreakTime'] += record.duration
+                stats_dict[item_id]['BreakTime'] += record.duration
 
-        for key, value in project_stats.items():
-            print(key, value)
+        return stats_dict
 
-        return project_stats
-
-    def return_tasks_summary_stats(self, time_period=None):
-        """ Send a start and end time list or tuple. Returns a dict of summed durations in seconds
-        keyed by task_id.
-
-        :param time_period: [lower bound datetime, upper bound datetime]
-        :return: dict{ task_id: { "WorkTime", "PauseTime", "BreakTime" }}
-        """
-        records_in_range = self._return_records_in_daterange(time_period)
-
-        task_stats = dict()
-        for record in records_in_range:
-            if record.task_id not in task_stats.keys():
-                task_stats[record.task_id] = dict()
-                task_stats[record.task_id]['WorkTime'] = 0
-                task_stats[record.task_id]['PauseTime'] = 0
-                task_stats[record.task_id]['BreakTime'] = 0
-
-            if record.type == 'Pomodoro' or record.type == 'Stopwatch':
-                task_stats[record.task_id]['WorkTime'] += record.duration
-            elif record.type == 'Pause':
-                task_stats[record.task_id]['PauseTime'] += record.duration
-            else:
-                task_stats[record.task_id]['BreakTime'] += record.duration
-
-        for key, value in task_stats.items():
-            print(key, value)
-
-        return task_stats
-
-    def single_project_stats(self, time_period):
+    def single_record_stats(self, item_id, item_type='project', time_period=None):
         pass
 
-    def single_task_stats(self, time_period):
+# Stats View Widgets
+
+
+class StatsLabel(Label, Themeable):
+    def __init__(self, **kwargs):
+        super(StatsLabel, self).__init__(**kwargs)
+
+    def theme_update(self):
         pass
 
+
+class StatsButton(Button, Themeable):
+    def __init__(self, **kwargs):
+        super(StatsButton, self).__init__(**kwargs)
+
+    def theme_update(self):
+        pass
+
+
+class ProjectTaskDisplay(StatsButton):
+    def __init__(self, **kwargs):
+        super(ProjectTaskDisplay, self).__init__(**kwargs)
+
+    def theme_update(self):
+        super(ProjectTaskDisplay, self).theme_update()
+
+
+class StatsRecordLine(BoxLayout, Themeable, DataContainer):
+    """ Each represents a single row in the RecordDetailGridView
+        contains all the methods for displaying holding and displaying data returned from
+        the StatsDataController
+    """
+    def __init__(self, **kwargs):
+        super(RecordRowDisplay, self).__init__(**kwargs)
+
+    def clear_data(self):
+        pass
+
+    def load_data(self):
+        pass
+
+    def theme_update(self):
+        pass
+
+
+###
 
 class StatsScreen(Screen):
     def __init__(self, **kwargs):
