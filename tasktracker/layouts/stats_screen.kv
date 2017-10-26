@@ -50,12 +50,16 @@
                 size_hint_y: .2
                 Button:
                     text: "Task/Project"
+                    size_hint_x: .34
                 Button:
                     text: "Working Time"
+                    size_hint_x: .22
                 Button:
                     text: "Break Time"
+                    size_hint_x: .22
                 Button:
                     text: "Paused Time"
+                    size_hint_x: .22
 
             ScrollView:
                 id: detail_scroll_view
@@ -65,11 +69,8 @@
                     cols: 1
                     spacing: 2
                     size_hint_y: None
-                    Button:
-                        text: "Placeholder1"
-                        size_hint_x:1
-                        size_hint_y: None
-                        height:80
+                    StatsRecordLine:
+
                     Button:
                         text: "Placeholder1"
                         size_hint_x:1
@@ -93,6 +94,10 @@
             size_hint_x: .8
 
 
+<ProjectTaskDisplay>:
+
+
+
 <StatsRecordLine>:
     size_hint_x: 1
     size_hint_y: None
@@ -100,16 +105,25 @@
     orientation: "horizontal"
     ProjectTaskDisplay:
         id: project_task_display
+        text: "Project Display"
+        size_hint_x: .34
 
     StatsButton:
         id: work_time
+        text: "Work Time"
+        size_hint_x: .22
 
     StatsButton:
         id: break_time
+        text: "Break Time"
+        size_hint_x: .22
 
     StatsButton:
         id: pause_time
-    # TODO: Add size layouts.
+        text: "Pause Time"
+        size_hint_x: .22
+
+# TODO: Add size layouts.
 
 <TimelineContainer>:
     id: timeline_display

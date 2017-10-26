@@ -3,7 +3,7 @@ from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivy.uix.boxlayout import BoxLayout
-from kivy.properties import ObjectProperty, NumericProperty, ListProperty
+from kivy.properties import ObjectProperty, NumericProperty, ListProperty, StringProperty
 from kivy.utils import get_color_from_hex
 from kivy.animation import Animation
 from kivy.clock import Clock
@@ -17,6 +17,7 @@ from tasktracker.settings.settingscontroller import DataContainer, to_datetime, 
 from datetime import datetime, timezone, timedelta
 from tasktracker.task.taskpopups import PROJECT_LIST
 from tasktracker.themes.themes import THEME_CONTROLLER, Themeable
+from tasktracker.themes import themes
 from tasktracker.stats.datecontrols import ErrorNotificationPopup, SliderNotificationPopup
 from functools import partial
 from collections import namedtuple, Counter
@@ -360,6 +361,19 @@ class StatsButton(Button, Themeable):
 
 
 class ProjectTaskDisplay(StatsButton):
+    # Themeable Properties
+    pt_display_color = ListProperty()
+    project_color = ListProperty()
+    # Shadow Texture Colors
+    shadow_color = ListProperty(themes.SHADOW_COLOR)
+    project_shadow_color = ListProperty()
+    # Textures
+    pt_display_texture = StringProperty(themes.LEFT_BEV_CORNERS)
+    pt_display_shadow_texture = StringProperty(themes.SHADOW_TEXTURE)
+    project_indicator = StringProperty(themes.LEFT_BEV_CORNERS)
+
+    project = ObjectProperty(None)
+
     def __init__(self, **kwargs):
         super(ProjectTaskDisplay, self).__init__(**kwargs)
 
@@ -367,19 +381,13 @@ class ProjectTaskDisplay(StatsButton):
         super(ProjectTaskDisplay, self).theme_update()
 
 
-class StatsRecordLine(BoxLayout, Themeable, DataContainer):
+class StatsRecordLine(BoxLayout, Themeable):
     """ Each represents a single row in the RecordDetailGridView
         contains all the methods for displaying holding and displaying data returned from
         the StatsDataController
     """
     def __init__(self, **kwargs):
-        super(RecordRowDisplay, self).__init__(**kwargs)
-
-    def clear_data(self):
-        pass
-
-    def load_data(self):
-        pass
+        super().__init__(**kwargs)
 
     def theme_update(self):
         pass
