@@ -374,11 +374,43 @@ class ProjectTaskDisplay(StatsButton):
 
     project = ObjectProperty(None)
 
-    def __init__(self, **kwargs):
+    def __init__(self, name, project_id=0, **kwargs):
+        """
+
+        :param name: The name of the task or project.
+        :param project_id:
+        :param kwargs:
+        """
         super(ProjectTaskDisplay, self).__init__(**kwargs)
+
+        if project_id != 0:
+            self.project = PROJECT_LIST.return_project_by_id(project_id)
+        self._update_project_display(self, self.project)
+        self.bind(project=self._update_project_display)
+
+        # TODO: Finish building loading of names
+
 
     def theme_update(self):
         super(ProjectTaskDisplay, self).theme_update()
+
+    def update_project_color(self, color):
+        # This function is called by the registered project observer pattern to broadcast all color changes
+        self.project_color = color
+
+    def _update_project_display(self, disp, project):
+        if project is None:
+            self.project_color = themes.TRANSPARENT
+            self.project_shadow_color = themes.TRANSPARENT
+        elif project.name == 'No Project':
+            self.project_color = themes.TRANSPARENT
+            self.project_shadow_color = themes.TRANSPARENT
+        else:
+            self.project = project
+            self.project.register(self)
+            self.project_color = get_color_from_hex(project.color)
+            self.project_shadow_color = themes.SHADOW_COLOR
+        self.canvas.ask_update()
 
 
 class StatsRecordLine(BoxLayout, Themeable):

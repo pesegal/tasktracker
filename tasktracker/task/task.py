@@ -107,7 +107,7 @@ class Task(Button, TapAndHold, Themeable):
         self.tasktext.height = self.height
         self.tasktext.text_size = (self.width - start - 40, None)
         # Commented out the section that will turn on self.tasktext shortening.
-        # Figure out if the is useful. And how to turn it on and off with fixed height.
+        # Figure out if this is useful. And how to turn it on and off with fixed height.
 
         # if not self.tasktext.shorten:
         #     self.multi_line_height = self.tasktext.texture_size[1] + short_padding
