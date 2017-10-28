@@ -36,15 +36,26 @@ class StandardStatsScreen(Screen):
         super(StandardStatsScreen, self).__init__(**kwargs)
 
 
-class TaskProjectStatsSummaryView(BoxLayout, Themeable):
+class TaskProjectStatsSummaryView(BoxLayout, DataContainer, Themeable):
     """ Contains all the updating logic for the task/project summary view. This statical view lists
     all of the tasks or projects withing the specified time frame that can be sorted by taskname,
     work time, or break time. It also calculates totals (worktime, breaktime)
      for all tasks or projects in selected time period.
     """
 
+    def load_data(self):
+        pass
+
+    def clear_data(self):
+        pass
+
     def __init__(self, **kwargs):
         super(TaskProjectStatsSummaryView, self).__init__(**kwargs)
+        self.stats_container = StatsDataController()
+
+
+    def update_timerange(self, start_datetime, end_datetime):
+        pass
 
     def theme_update(self):
         pass
@@ -431,7 +442,6 @@ class StatsScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.sm = ScreenManager()
-        self.data_container = StatsDataController()
         self.add_widget(self.sm)
 
         self.view_timeline = StandardStatsScreen(name='TimelineView')
