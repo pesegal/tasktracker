@@ -31,7 +31,6 @@ class StandardStatsScreen(Screen):
     """ The standard stats screen view contains the project / task summary screen and the timeline
     view.
     """
-
     def __init__(self, **kwargs):
         super(StandardStatsScreen, self).__init__(**kwargs)
 
@@ -43,6 +42,9 @@ class TaskProjectStatsSummaryView(BoxLayout, DataContainer, Themeable):
      for all tasks or projects in selected time period.
     """
 
+    display_time_start = ObjectProperty(None)
+    display_time_end = ObjectProperty(None)
+
     def load_data(self):
         pass
 
@@ -52,6 +54,11 @@ class TaskProjectStatsSummaryView(BoxLayout, DataContainer, Themeable):
     def __init__(self, **kwargs):
         super(TaskProjectStatsSummaryView, self).__init__(**kwargs)
         self.stats_container = StatsDataController()
+        self.bind(display_time_start=self._timeline_time_changed)
+
+
+    def _timeline_time_changed(self, *args):
+        print("Task Project Stats Summary View time changed", args)
 
 
     def update_timerange(self, start_datetime, end_datetime):

@@ -4,8 +4,12 @@
     BoxLayout:
         orientation: 'vertical'
         TaskProjectStatsSummaryView:
+            id: stats_summary_view
+            display_time_start: time_container.display_time_start
+            display_time_end: time_container.display_time_end
             size_hint_y: .45
         TimelineContainer:
+            id: time_container
             size_hint_y: .55
 
 
