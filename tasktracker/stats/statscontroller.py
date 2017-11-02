@@ -44,27 +44,36 @@ class TaskProjectStatsSummaryView(BoxLayout, DataContainer, Themeable):
 
     display_time_start = ObjectProperty(None)
     display_time_end = ObjectProperty(None)
+    record_detail_grid_view = ObjectProperty(None)
+    filter_selection = StringProperty('project_id')
+    sort_selection = NumericProperty(0)
 
-    def load_data(self):
-        pass
-
-    def clear_data(self):
-        pass
 
     def __init__(self, **kwargs):
         super(TaskProjectStatsSummaryView, self).__init__(**kwargs)
         self.stats_container = StatsDataController()
         self.bind(display_time_start=self._timeline_time_changed)
 
-
     def _timeline_time_changed(self, *args):
-        print("Task Project Stats Summary View time changed", args)
-
+        # GET data list from StatsDataContoller
+        # for each record populate the
+        summary_data = self.stats_container.return_summary_stats(group_by=self.filter_selection,
+                                                                 time_period=(
+                                                                      self.display_time_start,
+                                                                      self.display_time_end
+                                                                 ))
+        self.record_detail_grid_view.populate_records(summary_data, self.filter_selection)
 
     def update_timerange(self, start_datetime, end_datetime):
         pass
 
     def theme_update(self):
+        pass
+
+    def load_data(self):
+        pass
+
+    def clear_data(self):
         pass
 
 
@@ -73,10 +82,17 @@ class RecordDetailGridView(GridLayout):
         super(RecordDetailGridView, self).__init__(**kwargs)
         self.bind(minimum_height=self.setter('height'))
 
+    def populate_records(self, record_data, summary_type):
+        for record in record_data.items():
+            print(record)
+
+    def sort_records(self, sort_param):
+        pass
+
 
 class TimelineContainer(RelativeLayout):
     """ TimelineContainer object contains all functionality related to the display and manipulation
-        of the timeline.
+        of the timeline.7y
     """
 
     display_time_start = ObjectProperty(None)
@@ -436,8 +452,20 @@ class StatsRecordLine(BoxLayout, Themeable):
         contains all the methods for displaying holding and displaying data returned from
         the StatsDataController
     """
-    def __init__(self, **kwargs):
+    task_object = ObjectProperty(None)
+    project_object = ObjectProperty(None)
+    work_time = NumericProperty(0)
+    break_time = NumericProperty(0)
+    pause_time = NumericProperty(0)
+
+    def __init__(self, record, record_type, **kwargs):
         super().__init__(**kwargs)
+
+        # Todo: Figure out how to pull a task reference based on task_id
+
+        self.work_time = record[1]['WorkTime']
+        self.break_time = record[1]['BreakTime']
+        self.pause_time = record[1]['PauseTime']
 
     def theme_update(self):
         pass
