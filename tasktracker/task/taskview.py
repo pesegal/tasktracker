@@ -128,7 +128,7 @@ class TaskListScreen(Screen, Broadcast, DataContainer):
 
     def _tasks_loaded(self, loaded_tasks, dt):
         for record in loaded_tasks:
-            self.add_task_to_list(Task(record[0], record[6], record[7], record[3]), record[4] - 1)
+            self.add_task_to_list(Task(record[0], record[6], record[7], record[4] - 1, record[3]), record[4] - 1)
 
     def add_task_to_list(self, task, list_id):
         list_index = self.get_list_length(list_id)  # Adds to the top instead of the bottom.

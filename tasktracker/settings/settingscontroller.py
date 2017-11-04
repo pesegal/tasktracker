@@ -128,10 +128,44 @@ class DataContainer:
         raise NotImplementedError("load_data method needs to be implemented to load data from db")
 
 
+class TaskListRegistry:
+    """ This object allows program wide objects to look op references to all loaded objects
+    in the program.
+    """
+    def __init__(self):
+        self._tasks = list()
+
+    def register(self, item):
+        self._tasks.append(weakref.ref(item))
+
+    def _flush(self):
+        to_remove = list()
+
+        for ref in self._tasks:
+            if ref() is None:
+                to_remove.append(ref)
+
+        for item in to_remove:
+            self._tasks.remove(item)
+
+    def task_id_lookup(self, task_id):
+        """ Returns a weak ref to the task object if task_id == UUID of the task.
+
+        :param task_id: the UUID of the task.
+        :return: weakref(Task()) else None if not found
+        """
+        self._flush()
+
+        for task in self._tasks:
+            if task.uuid == task_id:
+                return task
+
+        return None
+
 # Global Instance Init
 APP_CONTROL = AppController()
 PROJECT_COLORS = Colors('colors.conf')
-
+ALL_TASKS = TaskListRegistry()
 
 
 """ FUTURE SETTINGS MENU FEATURES

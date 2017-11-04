@@ -23,6 +23,7 @@ from tasktracker.themes import themes
 from tasktracker.themes.themes import Themeable
 from tasktracker.mixins import TapAndHold
 from tasktracker.task.clickdragcontrol import CLICK_DRAG_CONTROLLER
+from tasktracker.settings.settingscontroller import ALL_TASKS
 import tasktracker.task.taskpopups
 
 
@@ -44,8 +45,9 @@ class Task(Button, TapAndHold, Themeable):
 
     project = ObjectProperty(None)
 
-    def __init__(self, id, name, notes, project_id=0, **kwargs):
+    def __init__(self, id, name, notes, list_id, project_id=0, **kwargs):
         super(Task, self).__init__(**kwargs)
+        ALL_TASKS.register(self)  # Register self will the global task registry.
         self.drop_type = 'task'
         self.uuid = id
 
@@ -64,6 +66,9 @@ class Task(Button, TapAndHold, Themeable):
         self.tasktext.shorten_from = 'right'
         self.bind(size=self._label_position_update)
         self.bind(pos=self._label_position_update)
+
+        # Current List
+        self.list_id = list_id
 
         if project_id != 0:
             self.project = tasktracker.task.taskpopups.PROJECT_LIST.return_project_by_id(project_id)

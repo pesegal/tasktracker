@@ -13,7 +13,7 @@ from copy import copy
 from tasktracker.database.db_interface import DB
 from tasktracker.stats.timeline import TaskTimeLine, VisualTimeTick, PeriodDisplayTick, RecordPeriod
 from tasktracker.stats.datecontrols import StatsTimeSelectionMenu
-from tasktracker.settings.settingscontroller import DataContainer, to_datetime, to_local_time
+from tasktracker.settings.settingscontroller import DataContainer, to_datetime, to_local_time, ALL_TASKS
 from datetime import datetime, timezone, timedelta
 from tasktracker.task.taskpopups import PROJECT_LIST
 from tasktracker.themes.themes import THEME_CONTROLLER, Themeable
@@ -459,9 +459,17 @@ class StatsRecordLine(BoxLayout, Themeable):
     pause_time = NumericProperty(0)
 
     def __init__(self, record, record_type, **kwargs):
+        """ Object that contains all the visual display logic of a record for statistics.
+
+        :param record: tuple(task/project_id, {WorkTime, BreakTime, PauseTime})
+        :param record_type: task_id or project_id
+        :param kwargs: BoxLayout arguments.
+        """
         super().__init__(**kwargs)
 
         # Todo: Figure out how to pull a task reference based on task_id
+        if record_type == 'task_id':
+            task = ALL_TASKS.task_id_lookup(record[0])
 
         self.work_time = record[1]['WorkTime']
         self.break_time = record[1]['BreakTime']
