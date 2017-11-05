@@ -81,10 +81,18 @@ class RecordDetailGridView(GridLayout):
     def __init__(self, **kwargs):
         super(RecordDetailGridView, self).__init__(**kwargs)
         self.bind(minimum_height=self.setter('height'))
+        self._records = list()
+        self.add_widget(StatsRecordLine((3,{'WorkTime': 300, 'PauseTime': 400, 'BreakTime':500}), ))
 
     def populate_records(self, record_data, summary_type):
+
+        self._records = list()
         for record in record_data.items():
-            print(record)
+            self._records.append(StatsRecordLine(record,
+                                                 summary_type))
+
+        # TODO Figure out why this succeeds constructing and fails displaying
+           # self.add_widget(StatsRecordLine(record, summary_type))
 
     def sort_records(self, sort_param):
         pass
@@ -408,14 +416,15 @@ class ProjectTaskDisplay(StatsButton):
 
     project = ObjectProperty(None)
 
-    def __init__(self, name, project_id=0, **kwargs):
+    def __init__(self, project_id, task, **kwargs):
         """
-
         :param name: The name of the task or project.
         :param project_id:
         :param kwargs:
         """
         super(ProjectTaskDisplay, self).__init__(**kwargs)
+
+        self.task = task
 
         if project_id != 0:
             self.project = PROJECT_LIST.return_project_by_id(project_id)
@@ -423,7 +432,6 @@ class ProjectTaskDisplay(StatsButton):
         self.bind(project=self._update_project_display)
 
         # TODO: Finish building loading of names
-
 
     def theme_update(self):
         super(ProjectTaskDisplay, self).theme_update()
@@ -465,15 +473,23 @@ class StatsRecordLine(BoxLayout, Themeable):
         :param record_type: task_id or project_id
         :param kwargs: BoxLayout arguments.
         """
-        super().__init__(**kwargs)
+        super(BoxLayout).__init__(**kwargs)
 
-        # Todo: Figure out how to pull a task reference based on task_id
         if record_type == 'task_id':
             task = ALL_TASKS.task_id_lookup(record[0])
+            project_id = task.project_id
+        else:
+            task = None
+            project_id = record[0]
 
         self.work_time = record[1]['WorkTime']
         self.break_time = record[1]['BreakTime']
         self.pause_time = record[1]['PauseTime']
+
+        # TODO Create the add of the TaskProjectLabel
+
+        self.task_project_display = ProjectTaskDisplay(project_id, task)
+
 
     def theme_update(self):
         pass

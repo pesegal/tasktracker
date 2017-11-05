@@ -70,6 +70,7 @@ class Task(Button, TapAndHold, Themeable):
         # Current List
         self.list_id = list_id
 
+        self.project_id = project_id
         if project_id != 0:
             self.project = tasktracker.task.taskpopups.PROJECT_LIST.return_project_by_id(project_id)
         self._update_project_display(self, self.project)
