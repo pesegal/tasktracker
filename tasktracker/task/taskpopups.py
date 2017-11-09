@@ -85,7 +85,9 @@ class ProjectList(DataContainer):
     def _loaded_all_projects(self, projects, dt):
         self.project_list = list()
         for project in projects:
+            print(project)
             self.project_list.append(Project(*project))
+
 
             # TODO: DO THESE TWO LINES CAUSE AN ISSUE?
         self.default = self.project_list[0]

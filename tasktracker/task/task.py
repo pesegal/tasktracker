@@ -43,7 +43,7 @@ class Task(Button, TapAndHold, Themeable):
     shadow_texture = StringProperty(themes.SHADOW_TEXTURE)
     project_indicator = StringProperty(themes.LEFT_BEV_CORNERS)
 
-    project = ObjectProperty(None)
+    project = ObjectProperty()
 
     def __init__(self, id, name, notes, list_id, project_id=0, **kwargs):
         super(Task, self).__init__(**kwargs)

@@ -74,6 +74,26 @@
                     cols: 1
                     spacing: 2
                     size_hint_y: None
+                    Button:
+                        text: "test"
+                        size_hint_y: None
+                        height: 60
+                    BoxLayout:
+                        size_hint_y: None
+                        height: 60
+                        orientation: "horizontal"
+                        Button:
+                            text: "test1"
+                        Button:
+                            text: "test2"
+                    BoxLayout:
+                        size_hint_y: None
+                        height: 60
+                        orientation: "horizontal"
+                        Button:
+                            text: "test1"
+                        Button:
+                            text: "test2"
 
     BoxLayout:
         id: total_line
@@ -92,36 +112,36 @@
     size_hint_y: None
     height: 60
 
-    background_color: self.pt_display_color
-    background_normal: self.pt_display_texture
-    background_down: self.pt_display_texture
-    border: [2, 2, 2, 2]
+#    background_color: self.pt_display_color
+#    background_normal: self.pt_display_texture
+#    background_down: self.pt_display_texture
+#    border: [2, 2, 2, 2]
 
-    canvas.before:
-        Color:
-            rgba: root.shadow_color
-        BorderImage:
-            source: root.pt_display_shadow_texture
-            border: [1, 1, 1, 1]
-            pos: self.x - 3, self.y - 3
-            size: self.width + 3, self.height + 3
-
-    canvas:
-        Color:
-            rgba: root.project_shadow_color
-        BorderImage:
-            source: root.pt_display_shadow_texture
-            border: [3, 3, 3, 3]
-            pos: self.x + 1, self.y - 1
-            size: self.width*.07 - 4, self.height + 2
-
-        Color:
-            rgba: root.project_color
-        BorderImage:
-            source: root.project_indicator
-            border: [2, 2, 2, 2]
-            pos: self.x - 1, self.y
-            size: self.width*.07 - 4, self.height
+#    canvas.before:
+#        Color:
+#            rgba: root.shadow_color
+#        BorderImage:
+#            source: root.pt_display_shadow_texture
+#            border: [1, 1, 1, 1]
+#            pos: self.x - 3, self.y - 3
+#            size: self.width + 3, self.height + 3
+#
+#    canvas:
+#        Color:
+#            rgba: root.project_shadow_color
+#        BorderImage:
+#            source: root.pt_display_shadow_texture
+#            border: [3, 3, 3, 3]
+#            pos: self.x + 1, self.y - 1
+#            size: self.width*.07 - 4, self.height + 2
+#
+#        Color:
+#            rgba: root.project_color
+#        BorderImage:
+#            source: root.project_indicator
+#            border: [2, 2, 2, 2]
+#            pos: self.x - 1, self.y
+#            size: self.width*.07 - 4, self.height
 
 
 

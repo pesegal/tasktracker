@@ -82,7 +82,7 @@ class RecordDetailGridView(GridLayout):
         super(RecordDetailGridView, self).__init__(**kwargs)
         self.bind(minimum_height=self.setter('height'))
         self._records = list()
-        self.add_widget(StatsRecordLine((3,{'WorkTime': 300, 'PauseTime': 400, 'BreakTime':500}), ))
+        # self.add_widget(StatsRecordLine((3, {'WorkTime': 300, 'PauseTime': 400, 'BreakTime': 500}), record_type="project_id"))
 
     def populate_records(self, record_data, summary_type):
 
@@ -404,15 +404,15 @@ class StatsButton(Button, Themeable):
 
 class ProjectTaskDisplay(StatsButton):
     # Themeable Properties
-    pt_display_color = ListProperty()
-    project_color = ListProperty()
-    # Shadow Texture Colors
-    shadow_color = ListProperty(themes.SHADOW_COLOR)
-    project_shadow_color = ListProperty()
-    # Textures
-    pt_display_texture = StringProperty(themes.LEFT_BEV_CORNERS)
-    pt_display_shadow_texture = StringProperty(themes.SHADOW_TEXTURE)
-    project_indicator = StringProperty(themes.LEFT_BEV_CORNERS)
+    # pt_display_color = ListProperty()
+    # project_color = ListProperty()
+    # # Shadow Texture Colors
+    # shadow_color = ListProperty(themes.SHADOW_COLOR)
+    # project_shadow_color = ListProperty()
+    # # Textures
+    # pt_display_texture = StringProperty(themes.LEFT_BEV_CORNERS)
+    # pt_display_shadow_texture = StringProperty(themes.SHADOW_TEXTURE)
+    # project_indicator = StringProperty(themes.LEFT_BEV_CORNERS)
 
     project = ObjectProperty(None)
 
@@ -422,37 +422,45 @@ class ProjectTaskDisplay(StatsButton):
         :param project_id:
         :param kwargs:
         """
-        super(ProjectTaskDisplay, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
-        self.task = task
+        #self.task = task
 
-        if project_id != 0:
-            self.project = PROJECT_LIST.return_project_by_id(project_id)
-        self._update_project_display(self, self.project)
-        self.bind(project=self._update_project_display)
+        # self.bind(project=self._update_project_display)
+
+
+        #self.project = PROJECT_LIST.return_project_by_id(project_id)
+        # self._update_project_display(self, self.project)
+
+        #print(project_id, self.project)
+
+
 
         # TODO: Finish building loading of names
 
     def theme_update(self):
-        super(ProjectTaskDisplay, self).theme_update()
+        pass
+        # super(ProjectTaskDisplay, self).theme_update()
 
-    def update_project_color(self, color):
-        # This function is called by the registered project observer pattern to broadcast all color changes
-        self.project_color = color
+    # def update_project_color(self, color):
+    #     # This function is called by the registered project observer pattern to broadcast all color changes
+    #     self.project_color = color
 
-    def _update_project_display(self, disp, project):
-        if project is None:
-            self.project_color = themes.TRANSPARENT
-            self.project_shadow_color = themes.TRANSPARENT
-        elif project.name == 'No Project':
-            self.project_color = themes.TRANSPARENT
-            self.project_shadow_color = themes.TRANSPARENT
-        else:
-            self.project = project
-            self.project.register(self)
-            self.project_color = get_color_from_hex(project.color)
-            self.project_shadow_color = themes.SHADOW_COLOR
-        self.canvas.ask_update()
+    # def _update_project_display(self, disp, project):
+    #     print(disp, project)
+
+    #     if project is None:
+    #         self.project_color = themes.TRANSPARENT
+    #         self.project_shadow_color = themes.TRANSPARENT
+    #     elif project.name == 'No Project':
+    #         self.project_color = themes.TRANSPARENT
+    #         self.project_shadow_color = themes.TRANSPARENT
+    #     else:
+    #         self.project = project
+    #         self.project.register(self)
+    #         self.project_color = get_color_from_hex(project.color)
+    #         self.project_shadow_color = themes.SHADOW_COLOR
+    #     self.canvas.ask_update()
 
 
 class StatsRecordLine(BoxLayout, Themeable):
