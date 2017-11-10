@@ -48,7 +48,6 @@ class TaskProjectStatsSummaryView(BoxLayout, DataContainer, Themeable):
     filter_selection = StringProperty('project_id')
     sort_selection = NumericProperty(0)
 
-
     def __init__(self, **kwargs):
         super(TaskProjectStatsSummaryView, self).__init__(**kwargs)
         self.stats_container = StatsDataController()
@@ -82,7 +81,12 @@ class RecordDetailGridView(GridLayout):
         super(RecordDetailGridView, self).__init__(**kwargs)
         self.bind(minimum_height=self.setter('height'))
         self._records = list()
-        # self.add_widget(StatsRecordLine((3, {'WorkTime': 300, 'PauseTime': 400, 'BreakTime': 500}), record_type="project_id"))
+
+    def _add_record(self):
+        self.add_widget(StatsRecordLine((5, {'WorkTime': 300,
+                                         'BreakTime': 500,
+                                         'PauseTime': 10}),
+                                    'project_id'))
 
     def populate_records(self, record_data, summary_type):
 
@@ -90,9 +94,9 @@ class RecordDetailGridView(GridLayout):
         for record in record_data.items():
             self._records.append(StatsRecordLine(record,
                                                  summary_type))
-
-        # TODO Figure out why this succeeds constructing and fails displaying
-           # self.add_widget(StatsRecordLine(record, summary_type))
+        print(self._records)
+        #  TODO Figure out why this succeeds constructing and fails displaying
+        # self.add_widget(StatsRecordLine(record, summary_type))
 
     def sort_records(self, sort_param):
         pass
@@ -404,15 +408,15 @@ class StatsButton(Button, Themeable):
 
 class ProjectTaskDisplay(StatsButton):
     # Themeable Properties
-    # pt_display_color = ListProperty()
-    # project_color = ListProperty()
-    # # Shadow Texture Colors
-    # shadow_color = ListProperty(themes.SHADOW_COLOR)
-    # project_shadow_color = ListProperty()
-    # # Textures
-    # pt_display_texture = StringProperty(themes.LEFT_BEV_CORNERS)
-    # pt_display_shadow_texture = StringProperty(themes.SHADOW_TEXTURE)
-    # project_indicator = StringProperty(themes.LEFT_BEV_CORNERS)
+    pt_display_color = ListProperty()
+    project_color = ListProperty()
+    # Shadow Texture Colors
+    shadow_color = ListProperty(themes.SHADOW_COLOR)
+    project_shadow_color = ListProperty()
+    # Textures
+    pt_display_texture = StringProperty(themes.LEFT_BEV_CORNERS)
+    pt_display_shadow_texture = StringProperty(themes.SHADOW_TEXTURE)
+    project_indicator = StringProperty(themes.LEFT_BEV_CORNERS)
 
     project = ObjectProperty(None)
 
@@ -424,15 +428,16 @@ class ProjectTaskDisplay(StatsButton):
         """
         super().__init__(**kwargs)
 
-        #self.task = task
 
-        # self.bind(project=self._update_project_display)
+        self.task = task
+
+        self.bind(project=self._update_project_display)
 
 
-        #self.project = PROJECT_LIST.return_project_by_id(project_id)
-        # self._update_project_display(self, self.project)
+        self.project = PROJECT_LIST.return_project_by_id(project_id)
+        self._update_project_display(self, self.project)
 
-        #print(project_id, self.project)
+        print(project_id, self.project)
 
 
 
@@ -442,25 +447,25 @@ class ProjectTaskDisplay(StatsButton):
         pass
         # super(ProjectTaskDisplay, self).theme_update()
 
-    # def update_project_color(self, color):
-    #     # This function is called by the registered project observer pattern to broadcast all color changes
-    #     self.project_color = color
+    def update_project_color(self, color):
+        # This function is called by the registered project observer pattern to broadcast all color changes
+        self.project_color = color
 
-    # def _update_project_display(self, disp, project):
-    #     print(disp, project)
+    def _update_project_display(self, disp, project):
+        print(disp, project)
 
-    #     if project is None:
-    #         self.project_color = themes.TRANSPARENT
-    #         self.project_shadow_color = themes.TRANSPARENT
-    #     elif project.name == 'No Project':
-    #         self.project_color = themes.TRANSPARENT
-    #         self.project_shadow_color = themes.TRANSPARENT
-    #     else:
-    #         self.project = project
-    #         self.project.register(self)
-    #         self.project_color = get_color_from_hex(project.color)
-    #         self.project_shadow_color = themes.SHADOW_COLOR
-    #     self.canvas.ask_update()
+        if project is None:
+            self.project_color = themes.TRANSPARENT
+            self.project_shadow_color = themes.TRANSPARENT
+        elif project.name == 'No Project':
+            self.project_color = themes.TRANSPARENT
+            self.project_shadow_color = themes.TRANSPARENT
+        else:
+            self.project = project
+            self.project.register(self)
+            self.project_color = get_color_from_hex(project.color)
+            self.project_shadow_color = themes.SHADOW_COLOR
+        self.canvas.ask_update()
 
 
 class StatsRecordLine(BoxLayout, Themeable):
@@ -481,7 +486,7 @@ class StatsRecordLine(BoxLayout, Themeable):
         :param record_type: task_id or project_id
         :param kwargs: BoxLayout arguments.
         """
-        super(BoxLayout).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         if record_type == 'task_id':
             task = ALL_TASKS.task_id_lookup(record[0])
@@ -497,6 +502,7 @@ class StatsRecordLine(BoxLayout, Themeable):
         # TODO Create the add of the TaskProjectLabel
 
         self.task_project_display = ProjectTaskDisplay(project_id, task)
+        self.add_widget(self.task_project_display)
 
 
     def theme_update(self):
