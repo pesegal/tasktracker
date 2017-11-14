@@ -399,25 +399,31 @@ class StatsLabel(Label, Themeable):
 
 
 class StatsButton(Button, Themeable):
+    button_texture = StringProperty(themes.LEFT_BEV_CORNERS)
+    shadow_texture = StringProperty(themes.SHADOW_TEXTURE)
+    shadow_color = ListProperty(themes.SHADOW_COLOR)
+    text_color = ListProperty([0, 0, 0, 0])
+    button_color = ListProperty([0, 0, 0, 0])
+
     def __init__(self, **kwargs):
         super(StatsButton, self).__init__(**kwargs)
 
     def theme_update(self):
-        pass
+        self.button_color = self.theme.tasks
+        self.text_color =self.theme.text
+        self.text_color[3] = .8
 
 
 class ProjectTaskDisplay(StatsButton):
     # Themeable Properties
-    pt_display_color = ListProperty()
-    project_color = ListProperty()
+    pt_display_color = ListProperty([0, 0, 0, 0])
+    project_color = ListProperty([0, 0, 0, 0])
     # Shadow Texture Colors
     shadow_color = ListProperty(themes.SHADOW_COLOR)
-    project_shadow_color = ListProperty()
-    # Textures
-    pt_display_texture = StringProperty(themes.LEFT_BEV_CORNERS)
-    pt_display_shadow_texture = StringProperty(themes.SHADOW_TEXTURE)
-    project_indicator = StringProperty(themes.LEFT_BEV_CORNERS)
+    project_shadow_color = ListProperty(themes.SHADOW_COLOR)
 
+    # Textures
+    project_indicator = StringProperty(themes.LEFT_BEV_CORNERS)
     project = ObjectProperty(None)
 
     def __init__(self, project_id, task, **kwargs):
@@ -428,18 +434,13 @@ class ProjectTaskDisplay(StatsButton):
         """
         super().__init__(**kwargs)
 
-
         self.task = task
-
         self.bind(project=self._update_project_display)
-
 
         self.project = PROJECT_LIST.return_project_by_id(project_id)
         self._update_project_display(self, self.project)
 
         print(project_id, self.project)
-
-
 
         # TODO: Finish building loading of names
 
@@ -503,7 +504,6 @@ class StatsRecordLine(BoxLayout, Themeable):
 
         self.task_project_display = ProjectTaskDisplay(project_id, task)
         self.add_widget(self.task_project_display)
-
 
     def theme_update(self):
         pass

@@ -90,28 +90,33 @@
             size_hint_x: .8
 
 
-<ProjectTaskDisplay>:
-    size_hint_x: .34
-
-    background_color: self.pt_display_color
-    background_normal: self.pt_display_texture
-    background_down: self.pt_display_texture
+<StatsButton>:
     border: [2, 2, 2, 2]
-
+    color: self.text_color
+    background_color: self.button_color
+    background_normal: self.button_texture
+    background_down: self.button_texture
     canvas.before:
         Color:
             rgba: root.shadow_color
         BorderImage:
-            source: root.pt_display_shadow_texture
+            source: root.shadow_texture
             border: [1, 1, 1, 1]
             pos: self.x - 3, self.y - 3
-            size: self.width + 3, self.height + 3
+            size: self.width + 3 , self.height + 3
 
+
+<ProjectTaskDisplay>:
+    size_hint_x: .34
+    border: [2, 2, 2, 2]
+    background_color: self.button_color
+    background_normal: self.button_texture
+    background_down: self.button_texture
     canvas:
         Color:
             rgba: root.project_shadow_color
         BorderImage:
-            source: root.pt_display_shadow_texture
+            source: root.project_indicator
             border: [3, 3, 3, 3]
             pos: self.x + 1, self.y - 1
             size: self.width*.07 - 4, self.height + 2
