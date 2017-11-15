@@ -23,24 +23,26 @@
         id: summary_labels
         orientation: "horizontal"
         size_hint_y: .85
+        spacing: 3
         BoxLayout:
             id: task_project_switcher
             size_hint_x: .2
             orientation: "vertical"
+            spacing: 2
             Label:
                 id: view_label
                 text: "Summary"
                 size_hint_y: .2
-            Button:
+            StatsButton:
                 text: "Time by Project"
                 size_hint_y: .2
-            Button:
+            StatsButton:
                 text: "Time by Task"
                 size_hint_y: .2
-            Button:
+            StatsButton:
                 text: "% By Project"
                 size_hint_y: .2
-            Button:
+            StatsButton:
                 text:  "% By Task"
                 size_hint_y: .2
 
@@ -49,20 +51,21 @@
             orientation: 'vertical'
             size_hint_x: .8
             BoxLayout:
+                spacing: 3
                 id: detail_header
                 orientation: "horizontal"
                 size_hint_y: .2
-                Button:
+                StatsButton:
                     text: "Task/Project"
                     size_hint_x: .34
                     on_release: detail_grid_view._add_record()
-                Button:
+                StatsButton:
                     text: "Working Time"
                     size_hint_x: .22
-                Button:
+                StatsButton:
                     text: "Break Time"
                     size_hint_x: .22
-                Button:
+                StatsButton:
                     text: "Paused Time"
                     size_hint_x: .22
 
@@ -85,7 +88,7 @@
             text: "Total"
             size_hint_x: .2
 
-        Button:
+        StatsButton:
             text: "Totals Placeholder"
             size_hint_x: .8
 

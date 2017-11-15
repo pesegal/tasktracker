@@ -90,6 +90,9 @@ class Task(Button, TapAndHold, Themeable):
     def set_text(self, text):
         self.tasktext.text = text
 
+    def get_text(self):
+        return self.tasktext.text
+
     def update_project_color(self, value):
         self.current_project_color = value
 

@@ -83,7 +83,7 @@ class RecordDetailGridView(GridLayout):
         self._records = list()
 
     def _add_record(self):
-        self.add_widget(StatsRecordLine((5, {'WorkTime': 300,
+        self.add_widget(StatsRecordLine((2, {'WorkTime': 300,
                                          'BreakTime': 500,
                                          'PauseTime': 10}),
                                     'project_id'))
@@ -399,7 +399,7 @@ class StatsLabel(Label, Themeable):
 
 
 class StatsButton(Button, Themeable):
-    button_texture = StringProperty(themes.LEFT_BEV_CORNERS)
+    button_texture = StringProperty(themes.ALL_BEV_CORNERS)
     shadow_texture = StringProperty(themes.SHADOW_TEXTURE)
     shadow_color = ListProperty(themes.SHADOW_COLOR)
     text_color = ListProperty([0, 0, 0, 0])
@@ -407,11 +407,22 @@ class StatsButton(Button, Themeable):
 
     def __init__(self, **kwargs):
         super(StatsButton, self).__init__(**kwargs)
+        self.button_color = self.theme.tasks
+        self.text_color = self.theme.text
+        self.text_color[3] == .8
+        self.shadow_color = themes.SHADOW_COLOR
 
     def theme_update(self):
         self.button_color = self.theme.tasks
         self.text_color =self.theme.text
         self.text_color[3] = .8
+        self.on_state(self, 0)
+
+    def on_state(self, widget, value):
+        if self.state == 'down':
+            self.button_color = self.theme.selected
+        else:
+            self.button_color = self.theme.tasks
 
 
 class ProjectTaskDisplay(StatsButton):
@@ -421,6 +432,9 @@ class ProjectTaskDisplay(StatsButton):
     # Shadow Texture Colors
     shadow_color = ListProperty(themes.SHADOW_COLOR)
     project_shadow_color = ListProperty(themes.SHADOW_COLOR)
+
+    #Overwrite Texture so that it fits
+    button_texture = StringProperty(themes.LEFT_BEV_CORNERS)
 
     # Textures
     project_indicator = StringProperty(themes.LEFT_BEV_CORNERS)
@@ -435,18 +449,31 @@ class ProjectTaskDisplay(StatsButton):
         super().__init__(**kwargs)
 
         self.task = task
+        self.label = Label(text="HELLOW")
         self.bind(project=self._update_project_display)
 
         self.project = PROJECT_LIST.return_project_by_id(project_id)
         self._update_project_display(self, self.project)
 
-        print(project_id, self.project)
+        self.add_widget(self.label)
+        self.label.halign = 'left'
+        self.label.valign = 'middle'
+        self.label.shorten_from = 'right'
+        self.bind(size=self._label_position_update)
+        self.bind(pos=self._label_position_update)
 
-        # TODO: Finish building loading of names
+        # Set Task/Project Name
+        if self.task:
+            self.set_text(self.task.get_text())
+        else:
+            self.set_text(self.project.name)
 
     def theme_update(self):
-        pass
+        self.label.color = self.themes.text
         # super(ProjectTaskDisplay, self).theme_update()
+
+    def set_text(self, text):
+        self.label.text = text
 
     def update_project_color(self, color):
         # This function is called by the registered project observer pattern to broadcast all color changes
@@ -467,6 +494,25 @@ class ProjectTaskDisplay(StatsButton):
             self.project_color = get_color_from_hex(project.color)
             self.project_shadow_color = themes.SHADOW_COLOR
         self.canvas.ask_update()
+
+    def _label_position_update(self, _object, size, short_padding=5):
+        start = self.width * .07 + 5
+        self.label.width = self.width - start - 20
+        self.label.height = self.height
+        self.label.text_size = (self.width - start - 40, None)
+        # Commented out the section that will turn on self.label shortening.
+        # Figure out if this is useful. And how to turn it on and off with fixed height.
+
+        # if not self.label.shorten:
+        #     self.multi_line_height = self.label.texture_size[1] + short_padding
+        # if (self.label.texture_size[1] + short_padding >= self.height
+        #         and not self.label.shorten):
+        #     print('TASKS TRUEs')
+        #     self.label.shorten = True
+        # elif self.multi_line_height < self.height:
+        #     self.label.shorten = False
+        self.label.x = self.x + start + 5
+        self.label.y = self.y
 
 
 class StatsRecordLine(BoxLayout, Themeable):
