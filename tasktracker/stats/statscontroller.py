@@ -440,16 +440,18 @@ class ProjectTaskDisplay(StatsButton):
     project_indicator = StringProperty(themes.LEFT_BEV_CORNERS)
     project = ObjectProperty(None)
 
-    def __init__(self, project_id, task, **kwargs):
+    def __init__(self, **kwargs):
         """
         :param name: The name of the task or project.
         :param project_id:
         :param kwargs:
         """
         super().__init__(**kwargs)
+        self.task = None
+        self.label = Label()
 
+    def set_display(self, project_id, task):
         self.task = task
-        self.label = Label(text="HELLOW")
         self.bind(project=self._update_project_display)
 
         self.project = PROJECT_LIST.return_project_by_id(project_id)
@@ -515,16 +517,39 @@ class ProjectTaskDisplay(StatsButton):
         self.label.y = self.y
 
 
+class NoBevStatsButton(StatsButton):
+    button_texture = StringProperty(themes.NO_BEV_CORNERS)
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+
+class LeftBevStatsButton(StatsButton):
+    button_texture = StringProperty(themes.LEFT_BEV_CORNERS)
+
+    def __init__(self, **kwargs):
+        super(LeftBevStatsButton, self).__init__(**kwargs)
+
+
+class RightBevStatsButton(StatsButton):
+    button_texture = StringProperty(themes.RIGHT_BEV_CORNERS)
+
+    def __init__(self, **kwargs):
+        super(RightBevStatsButton, self).__init__(**kwargs)
+
+
 class StatsRecordLine(BoxLayout, Themeable):
     """ Each represents a single row in the RecordDetailGridView
         contains all the methods for displaying holding and displaying data returned from
         the StatsDataController
     """
-    task_object = ObjectProperty(None)
-    project_object = ObjectProperty(None)
-    work_time = NumericProperty(0)
-    break_time = NumericProperty(0)
-    pause_time = NumericProperty(0)
+    display_object = ObjectProperty(None)
+    work_time_data = NumericProperty(0)
+    break_time_data = NumericProperty(0)
+    pause_time_data = NumericProperty(0)
+    work_time_display = StringProperty()
+    break_time_display = StringProperty()
+    pause_time_display = StringProperty()
 
     def __init__(self, record, record_type, **kwargs):
         """ Object that contains all the visual display logic of a record for statistics.
@@ -542,14 +567,15 @@ class StatsRecordLine(BoxLayout, Themeable):
             task = None
             project_id = record[0]
 
-        self.work_time = record[1]['WorkTime']
-        self.break_time = record[1]['BreakTime']
-        self.pause_time = record[1]['PauseTime']
+        self.work_time_data = record[1]['WorkTime']
+        self.break_time_data = record[1]['BreakTime']
+        self.pause_time_data = record[1]['PauseTime']
 
-        # TODO Create the add of the TaskProjectLabel
+        self.display_object.set_display(project_id, task)
+        self.work_time_display = str(self.work_time_data)
+        self.break_time_display = str(self.break_time_data)
+        self.pause_time_display = str(self.pause_time_data)
 
-        self.task_project_display = ProjectTaskDisplay(project_id, task)
-        self.add_widget(self.task_project_display)
 
     def theme_update(self):
         pass

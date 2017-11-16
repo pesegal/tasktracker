@@ -21,6 +21,7 @@ _theme_path = os.path.dirname(__file__)
 NO_BEV_CORNERS = _theme_path + '/gfx/all_white.png'
 ALL_BEV_CORNERS = _theme_path + '/gfx/all_white2.png'
 LEFT_BEV_CORNERS = _theme_path + '/gfx/all_white3.png'
+RIGHT_BEV_CORNERS = _theme_path + '/gfx/all_white4.png'
 SHADOW_TEXTURE = _theme_path + '/gfx/shadow.png'
 BEV_SHADOW_TEXTURE = _theme_path + '/gfx/beveled_shadow.png'
 TRANSPARENT_TEXTURE = _theme_path + '/gfx/transparent.png'

@@ -52,24 +52,26 @@
             size_hint_x: .8
             BoxLayout:
                 spacing: 3
+                padding: 2
                 id: detail_header
                 orientation: "horizontal"
                 size_hint_y: .2
-                StatsButton:
+                LeftBevStatsButton:
                     text: "Task/Project"
                     size_hint_x: .34
                     on_release: detail_grid_view._add_record()
-                StatsButton:
+                NoBevStatsButton:
                     text: "Working Time"
                     size_hint_x: .22
-                StatsButton:
+                NoBevStatsButton:
                     text: "Break Time"
                     size_hint_x: .22
-                StatsButton:
+                RightBevStatsButton:
                     text: "Paused Time"
                     size_hint_x: .22
 
             ScrollView:
+
                 id: detail_scroll_view
                 size_hint_y: .8
 
@@ -77,6 +79,7 @@
                     id: detail_grid_view
                     cols: 1
                     spacing: 2
+                    padding: 2
                     size_hint_y: None
 
 
@@ -133,33 +136,33 @@
             size: self.width*.07 - 4, self.height
 
 
-
 <StatsRecordLine>:
     size_hint_x: 1
     size_hint_y: None
     height: 40
     orientation: "horizontal"
-#    ProjectTaskDisplay:
-#        id: project_task_display
-#        text: "Project Display"
-#        size_hint_x: .34
+    spacing: 3
+    display_object: project_task_display
 
-#    StatsButton:
-#        id: work_time
-#        text: "Work Time"
-#        size_hint_x: .22
-#
-#    StatsButton:
-#        id: break_time
-#        text: "Break Time"
-#        size_hint_x: .22
-#
-#    StatsButton:
-#        id: pause_time
-#        text: "Pause Time"
-#        size_hint_x: .22
+    ProjectTaskDisplay:
+        id: project_task_display
+        size_hint_x: .34
 
-# TODO: Add size layouts.
+    NoBevStatsButton:
+        id: work_time
+        text: root.work_time_display
+        size_hint_x: .22
+
+    NoBevStatsButton:
+        id: break_time
+        text: root.break_time_display
+        size_hint_x: .22
+
+    RightBevStatsButton:
+        id: pause_time
+        text: root.pause_time_display
+        size_hint_x: .22
+
 
 <TimelineContainer>:
     id: timeline_display
