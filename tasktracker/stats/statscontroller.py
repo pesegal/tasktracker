@@ -89,12 +89,9 @@ class RecordDetailGridView(GridLayout):
                                     'project_id'))
 
     def populate_records(self, record_data, summary_type):
-
-        self._records = list()
+        self.clear_widgets()
         for record in record_data.items():
-            self._records.append(StatsRecordLine(record,
-                                                 summary_type))
-        print(self._records)
+            self.add_widget(StatsRecordLine(record, summary_type))
         #  TODO Figure out why this succeeds constructing and fails displaying
         # self.add_widget(StatsRecordLine(record, summary_type))
 
