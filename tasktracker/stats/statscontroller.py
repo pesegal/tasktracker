@@ -22,6 +22,7 @@ from tasktracker.stats.datecontrols import ErrorNotificationPopup, SliderNotific
 from functools import partial
 from collections import namedtuple, Counter
 
+
 # TODO: DEFAULT COLORS FOR SHORT BREAK, LONG BREAK, & PAUSE (MAKE THESE CONFIGURABLE IN SETTINGS?)
 
 # Todo: write a helper function that takes start and end datetimes and returns the number of months, weeks, days
@@ -31,6 +32,7 @@ class StandardStatsScreen(Screen):
     """ The standard stats screen view contains the project / task summary screen and the timeline
     view.
     """
+
     def __init__(self, **kwargs):
         super(StandardStatsScreen, self).__init__(**kwargs)
 
@@ -58,8 +60,8 @@ class TaskProjectStatsSummaryView(BoxLayout, DataContainer, Themeable):
         # for each record populate the
         summary_data = self.stats_container.return_summary_stats(group_by=self.filter_selection,
                                                                  time_period=(
-                                                                      self.display_time_start,
-                                                                      self.display_time_end
+                                                                     self.display_time_start,
+                                                                     self.display_time_end
                                                                  ))
         self.record_detail_grid_view.populate_records(summary_data, self.filter_selection)
 
@@ -84,16 +86,16 @@ class RecordDetailGridView(GridLayout):
 
     def _add_record(self):
         self.add_widget(StatsRecordLine((2, {'WorkTime': 300,
-                                         'BreakTime': 500,
-                                         'PauseTime': 10}),
-                                    'project_id'))
+                                             'BreakTime': 500,
+                                             'PauseTime': 10}),
+                                        'project_id'))
 
     def populate_records(self, record_data, summary_type):
         self.clear_widgets()
         for record in record_data.items():
             self.add_widget(StatsRecordLine(record, summary_type))
-        #  TODO Figure out why this succeeds constructing and fails displaying
-        # self.add_widget(StatsRecordLine(record, summary_type))
+            #  TODO Figure out why this succeeds constructing and fails displaying
+            # self.add_widget(StatsRecordLine(record, summary_type))
 
     def sort_records(self, sort_param):
         pass
@@ -146,7 +148,6 @@ class TimelineContainer(RelativeLayout):
 
         DB.load_task_actions(self.display_time_start - t_buffer,
                              self.display_time_end + t_buffer, self._display_timeline)
-        print(self.ids)
 
     def _zoom_state_update(self, *args):
         print("zoom_state updated", args)
@@ -176,7 +177,6 @@ class TimelineContainer(RelativeLayout):
         self.error_popup = ErrorNotificationPopup(message)
         err_original_size = copy(self.error_popup.size)
         self.error_popup.size = (self.error_popup.width / 1.7, self.error_popup.height / 2)
-        print(err_original_size, self.error_popup.size)
         err_animation = Animation(size=err_original_size,
                                   duration=.2, t='out_cubic')
         self.add_widget(self.error_popup)
@@ -309,6 +309,7 @@ class StatsDataController(DataContainer):
     of this statistical information from the database. It also contains the logic that slices and sums this
     data for the different statistical views.
     """
+
     def __init__(self, **kwargs):
         super(StatsDataController, self).__init__(**kwargs)
         self.load_data()
@@ -384,6 +385,7 @@ class StatsDataController(DataContainer):
     def single_record_stats(self, item_id, item_type='project', time_period=None):
         pass
 
+
 # Stats View Widgets
 
 
@@ -411,7 +413,7 @@ class StatsButton(Button, Themeable):
 
     def theme_update(self):
         self.button_color = self.theme.tasks
-        self.text_color =self.theme.text
+        self.text_color = self.theme.text
         self.text_color[3] = .8
         self.on_state(self, 0)
 
@@ -430,7 +432,7 @@ class ProjectTaskDisplay(StatsButton):
     shadow_color = ListProperty(themes.SHADOW_COLOR)
     project_shadow_color = ListProperty(themes.SHADOW_COLOR)
 
-    #Overwrite Texture so that it fits
+    # Overwrite Texture so that it fits
     button_texture = StringProperty(themes.LEFT_BEV_CORNERS)
 
     # Textures
@@ -460,6 +462,7 @@ class ProjectTaskDisplay(StatsButton):
         self.label.shorten_from = 'right'
         self.bind(size=self._label_position_update)
         self.bind(pos=self._label_position_update)
+        self.label.color = self.theme.text
 
         # Set Task/Project Name
         if self.task:
@@ -468,8 +471,8 @@ class ProjectTaskDisplay(StatsButton):
             self.set_text(self.project.name)
 
     def theme_update(self):
-        self.label.color = self.themes.text
-        # super(ProjectTaskDisplay, self).theme_update()
+        self.label.color = self.theme.text
+        super(ProjectTaskDisplay, self).theme_update()
 
     def set_text(self, text):
         self.label.text = text
@@ -479,7 +482,6 @@ class ProjectTaskDisplay(StatsButton):
         self.project_color = color
 
     def _update_project_display(self, disp, project):
-        print(disp, project)
 
         if project is None:
             self.project_color = themes.TRANSPARENT
@@ -547,6 +549,7 @@ class StatsRecordLine(BoxLayout, Themeable):
     work_time_display = StringProperty()
     break_time_display = StringProperty()
     pause_time_display = StringProperty()
+    filter_type = StringProperty('dhm')
 
     def __init__(self, record, record_type, **kwargs):
         """ Object that contains all the visual display logic of a record for statistics.
@@ -569,11 +572,42 @@ class StatsRecordLine(BoxLayout, Themeable):
         self.pause_time_data = record[1]['PauseTime']
 
         self.display_object.set_display(project_id, task)
-        self.work_time_display = str(self.work_time_data)
-        self.break_time_display = str(self.break_time_data)
-        self.pause_time_display = str(self.pause_time_data)
+        self.bind(filter_type=self.set_time_displays)
+        self.set_time_displays()
 
+    def set_time_displays(self, *args):
+        if self.filter_type == 'dhm':
+            work = self._convert_seconds_to_dhm(self.work_time_data)
+            brk = self._convert_seconds_to_dhm(self.break_time_data)
+            pause = self._convert_seconds_to_dhm(self.pause_time_data)
 
+        self.work_time_display = work
+        self.break_time_display = brk
+        self.pause_time_display = pause
+
+    @staticmethod
+    def _convert_seconds_to_dhm(secs):
+        days, time = divmod(secs, 24 * 3600)
+        date_formated = ''
+        if days >= 1:
+            hours, time = divmod(time, 3600)
+            date_formated += '{} days'.format(days)
+        else:
+            hours, time = divmod(secs, 3600)
+        if hours >= 1 or days >= 1:
+            mins, time = divmod(time, 60)
+            date_formated += ' {} hours'.format(hours)
+        else:
+            mins, time = divmod(secs, 60)
+        if mins >= 1 or hours >= 1 or days >= 1:
+            date_formated = ' {} min'.format(mins)
+        else:
+            date_formated = '{} seconds'.format(secs)
+
+            print(days, hours, mins, secs)
+        return date_formated
+
+        # TODO: Figure out whats going on here!
     def theme_update(self):
         pass
 
@@ -587,7 +621,6 @@ class StatsScreen(Screen):
         self.add_widget(self.sm)
 
         self.view_timeline = StandardStatsScreen(name='TimelineView')
-
 
         self.add_widget(self.view_timeline)
         print(self.sm.screens)
