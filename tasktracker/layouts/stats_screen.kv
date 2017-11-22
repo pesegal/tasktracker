@@ -165,6 +165,27 @@
         size_hint_x: .22
 
 
+<StatsSummaryLine>:
+    orientation: "horizontal"
+    spacing: 3
+
+    LeftBevStatsButton:
+        id: task_project_counter
+        size_hint_x: .34
+
+    NoBevStatsButton:
+        id: work_time_total
+        size_hint_x: .22
+
+    NoBevStatsButton:
+        id: break_time_total
+        size_hint_x: .22
+
+    RightBevStatsButton:
+        id: pause_time_total
+        size_hint_x: .22
+
+
 <TimelineContainer>:
     id: timeline_display
     orientation: "vertical"
@@ -193,6 +214,7 @@
             name: "label_time_end"
             display_time: timeline_display.display_time_end
             time_line_container: timeline_display
+
 
 <DateTimeLabel>:
     size_hint: None, 1

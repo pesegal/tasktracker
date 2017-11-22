@@ -596,18 +596,35 @@ class StatsRecordLine(BoxLayout, Themeable):
             hours, time = divmod(secs, 3600)
         if hours >= 1 or days >= 1:
             mins, time = divmod(time, 60)
-            date_formated += ' {} hours'.format(hours)
+            date_formated += ' {} hrs'.format(hours)
         else:
             mins, time = divmod(secs, 60)
         if mins >= 1 or hours >= 1 or days >= 1:
-            date_formated = ' {} min'.format(mins)
+            date_formated += ' {} min'.format(mins)
         else:
-            date_formated = '{} seconds'.format(secs)
+            date_formated += '{} sec'.format(secs)
 
-            print(days, hours, mins, secs)
         return date_formated
 
-        # TODO: Figure out whats going on here!
+    def theme_update(self):
+        pass
+
+
+class StatsSummaryLine(BoxLayout, Themeable):
+    task_project_data = NumericProperty(0)
+    work_time_data = NumericProperty(0)
+    break_time_data = NumericProperty(0)
+    pause_time_data = NumericProperty(0)
+
+    work_time_display = StringProperty()
+    break_time_display = StringProperty()
+    pause_time_display = StringProperty()
+
+    def __init__(self, **kwargs):
+        super(StatsSummaryLine, self).__init__(**kwargs)
+
+    # todo: continue developing stats line.
+
     def theme_update(self):
         pass
 
