@@ -27,6 +27,34 @@ from collections import namedtuple, Counter
 
 # Todo: write a helper function that takes start and end datetimes and returns the number of months, weeks, days
 
+def convert_seconds_to_dhm(secs):
+    """ This function takes duration in seconds and returns nice formatted
+        days, hours, minutes, seconds
+
+    :param secs: Duration in seconds
+    :return: pretty formatted string (1 days, 15 hrs, 5 min)
+    """
+    days, time = divmod(secs, 24 * 3600)
+    date_formated = ''
+    if days >= 1:
+        hours, time = divmod(time, 3600)
+        date_formated += '{} day'.format(days)
+        date_formated += 's' if days > 1 else ''
+    else:
+        hours, time = divmod(secs, 3600)
+    if hours >= 1 or days >= 1:
+        mins, time = divmod(time, 60)
+        date_formated += ' {} hr'.format(hours)
+        date_formated += 's' if hours > 1 else ''
+    else:
+        mins, time = divmod(secs, 60)
+    if mins >= 1 or hours >= 1 or days >= 1:
+        date_formated += ' {} min'.format(mins)
+    else:
+        date_formated += '{} sec'.format(secs)
+
+    return date_formated
+
 
 class StandardStatsScreen(Screen):
     """ The standard stats screen view contains the project / task summary screen and the timeline
@@ -47,6 +75,7 @@ class TaskProjectStatsSummaryView(BoxLayout, DataContainer, Themeable):
     display_time_start = ObjectProperty(None)
     display_time_end = ObjectProperty(None)
     record_detail_grid_view = ObjectProperty(None)
+    record_summary_line = ObjectProperty(None)
     filter_selection = StringProperty('project_id')
     sort_selection = NumericProperty(0)
 
@@ -64,6 +93,8 @@ class TaskProjectStatsSummaryView(BoxLayout, DataContainer, Themeable):
                                                                      self.display_time_end
                                                                  ))
         self.record_detail_grid_view.populate_records(summary_data, self.filter_selection)
+        self.record_summary_line.calc_totals(summary_data, self.filter_selection)
+
 
     def update_timerange(self, start_datetime, end_datetime):
         pass
@@ -85,6 +116,7 @@ class RecordDetailGridView(GridLayout):
         self._records = list()
 
     def _add_record(self):
+        # TODO: Remove this testing function and the button on_press that links to it
         self.add_widget(StatsRecordLine((2, {'WorkTime': 300,
                                              'BreakTime': 500,
                                              'PauseTime': 10}),
@@ -94,8 +126,7 @@ class RecordDetailGridView(GridLayout):
         self.clear_widgets()
         for record in record_data.items():
             self.add_widget(StatsRecordLine(record, summary_type))
-            #  TODO Figure out why this succeeds constructing and fails displaying
-            # self.add_widget(StatsRecordLine(record, summary_type))
+
 
     def sort_records(self, sort_param):
         pass
@@ -577,34 +608,14 @@ class StatsRecordLine(BoxLayout, Themeable):
 
     def set_time_displays(self, *args):
         if self.filter_type == 'dhm':
-            work = self._convert_seconds_to_dhm(self.work_time_data)
-            brk = self._convert_seconds_to_dhm(self.break_time_data)
-            pause = self._convert_seconds_to_dhm(self.pause_time_data)
+            work = convert_seconds_to_dhm(self.work_time_data)
+            brk = convert_seconds_to_dhm(self.break_time_data)
+            pause = convert_seconds_to_dhm(self.pause_time_data)
 
         self.work_time_display = work
         self.break_time_display = brk
         self.pause_time_display = pause
 
-    @staticmethod
-    def _convert_seconds_to_dhm(secs):
-        days, time = divmod(secs, 24 * 3600)
-        date_formated = ''
-        if days >= 1:
-            hours, time = divmod(time, 3600)
-            date_formated += '{} days'.format(days)
-        else:
-            hours, time = divmod(secs, 3600)
-        if hours >= 1 or days >= 1:
-            mins, time = divmod(time, 60)
-            date_formated += ' {} hrs'.format(hours)
-        else:
-            mins, time = divmod(secs, 60)
-        if mins >= 1 or hours >= 1 or days >= 1:
-            date_formated += ' {} min'.format(mins)
-        else:
-            date_formated += '{} sec'.format(secs)
-
-        return date_formated
 
     def theme_update(self):
         pass
@@ -616,6 +627,7 @@ class StatsSummaryLine(BoxLayout, Themeable):
     break_time_data = NumericProperty(0)
     pause_time_data = NumericProperty(0)
 
+    task_project_display = StringProperty()
     work_time_display = StringProperty()
     break_time_display = StringProperty()
     pause_time_display = StringProperty()
@@ -623,7 +635,26 @@ class StatsSummaryLine(BoxLayout, Themeable):
     def __init__(self, **kwargs):
         super(StatsSummaryLine, self).__init__(**kwargs)
 
-    # todo: continue developing stats line.
+    def calc_totals(self, records, record_type):
+
+        self.task_project_data = len(records)
+        unit = ' task' if record_type == 'task_id' else ' project'
+        unit += 's' if self.task_project_data != 1 else ''
+
+        # Reset Data
+        self.work_time_data = 0
+        self.pause_time_data = 0
+        self.break_time_data = 0
+
+        for record in records.values():
+            self.work_time_data += record['WorkTime']
+            self.break_time_data += record['BreakTime']
+            self.pause_time_data += record['PauseTime']
+
+        self.task_project_display = str(self.task_project_data) + unit
+        self.work_time_display = convert_seconds_to_dhm(self.work_time_data)
+        self.break_time_display = convert_seconds_to_dhm(self.break_time_data)
+        self.pause_time_display = convert_seconds_to_dhm(self.pause_time_data)
 
     def theme_update(self):
         pass

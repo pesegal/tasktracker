@@ -466,7 +466,7 @@ class TaskCreationScreen(TaskScreen):
             self.dismiss()
 
     def _task_creation_finalization(self, task_id):
-        task = Task(task_id, self.task_name.text, self.notes.text)
+        task = Task(task_id, self.task_name.text, self.notes.text, self.list_selection)
         APP_CONTROL.task_list_screen.add_task_to_list(task, self.list_selection)
         task.project = PROJECT_LIST.selected_project
 
