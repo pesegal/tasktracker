@@ -79,10 +79,18 @@ class TaskProjectStatsSummaryView(BoxLayout, DataContainer, Themeable):
     filter_selection = StringProperty('project_id')
     sort_selection = NumericProperty(0)
 
+    # Links to buttons
+    task_project_toggle_button = ObjectProperty(None)
+    working_time_sort_button = ObjectProperty(None)
+    break_time_sort_button = ObjectProperty(None)
+    paused_time_sort_button = ObjectProperty(None)
+
+
     def __init__(self, **kwargs):
         super(TaskProjectStatsSummaryView, self).__init__(**kwargs)
         self.stats_container = StatsDataController()
         self.bind(display_time_start=self._timeline_time_changed)
+        self.bind(filter_selection=self._timeline_time_changed)
 
     def _timeline_time_changed(self, *args):
         # GET data list from StatsDataContoller
@@ -94,6 +102,10 @@ class TaskProjectStatsSummaryView(BoxLayout, DataContainer, Themeable):
                                                                  ))
         self.record_detail_grid_view.populate_records(summary_data, self.filter_selection)
         self.record_summary_line.calc_totals(summary_data, self.filter_selection)
+
+    def toggle_filter_selection(self, *args):
+        print(args)
+        self.filter_selection = 'project_id' if self.filter_selection == 'task_id' else 'task_id'
 
 
     def update_timerange(self, start_datetime, end_datetime):

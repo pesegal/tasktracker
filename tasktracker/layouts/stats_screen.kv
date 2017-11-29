@@ -59,16 +59,20 @@
                 orientation: "horizontal"
                 size_hint_y: .2
                 LeftBevStatsButton:
+                    id: task_project_toggle_button
                     text: "Task/Project"
                     size_hint_x: .34
-                    on_release: detail_grid_view._add_record()
+                    on_release: root.toggle_filter_selection(self)
                 NoBevStatsButton:
+                    id: working_time_sort_button
                     text: "Working Time"
                     size_hint_x: .22
                 NoBevStatsButton:
+                    id: break_time_sort_button
                     text: "Break Time"
                     size_hint_x: .22
                 RightBevStatsButton:
+                    id: paused_time_sort_button
                     text: "Paused Time"
                     size_hint_x: .22
 

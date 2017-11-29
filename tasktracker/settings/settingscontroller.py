@@ -157,8 +157,8 @@ class TaskListRegistry:
         self._flush()
 
         for task in self._tasks:
-            if task.uuid == task_id:
-                return task
+            if task().uuid == task_id:
+                return task()
 
         return None
 
