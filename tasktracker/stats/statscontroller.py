@@ -107,6 +107,9 @@ class TaskProjectStatsSummaryView(BoxLayout, DataContainer, Themeable):
         print(args)
         self.filter_selection = 'project_id' if self.filter_selection == 'task_id' else 'task_id'
 
+    def set_filter_selection(self, selection):
+        self.filter_selection = selection
+
 
     def update_timerange(self, start_datetime, end_datetime):
         pass
@@ -139,9 +142,12 @@ class RecordDetailGridView(GridLayout):
         for record in record_data.items():
             self.add_widget(StatsRecordLine(record, summary_type))
 
-
     def sort_records(self, sort_param):
         pass
+
+    def change_filter_type(self, type, total_work, total_break, total_pause):
+        for record in self.children:
+            record.change_filter_type(type, total_work, total_break, total_pause)
 
 
 class TimelineContainer(RelativeLayout):
@@ -589,6 +595,9 @@ class StatsRecordLine(BoxLayout, Themeable):
     work_time_data = NumericProperty(0)
     break_time_data = NumericProperty(0)
     pause_time_data = NumericProperty(0)
+    total_work_time = NumericProperty(0)
+    total_break_time = NumericProperty(0)
+    total_pause_time = NumericProperty(0)
     work_time_display = StringProperty()
     break_time_display = StringProperty()
     pause_time_display = StringProperty()
@@ -623,10 +632,22 @@ class StatsRecordLine(BoxLayout, Themeable):
             work = convert_seconds_to_dhm(self.work_time_data)
             brk = convert_seconds_to_dhm(self.break_time_data)
             pause = convert_seconds_to_dhm(self.pause_time_data)
+        else:
+            work = str(self.work_time_data / self.total_work_time * 100.0) + ' %'
+            brk = str(self.break_time_data / self.total_break_time * 100.0) + ' %'
+            pause = str(self.pause_time_data / self.total_pause_time * 100.0) + ' %'
 
         self.work_time_display = work
         self.break_time_display = brk
         self.pause_time_display = pause
+
+    def change_filter_type(self, type, total_work_time, total_break_time, total_paused_time):
+        self.filter_type = type
+        if type != 'dhm':
+            self.total_work_time = total_work_time
+            self.total_break_time = total_break_time
+            self.total_pause_time = total_paused_time
+        self.set_time_displays()
 
 
     def theme_update(self):
@@ -644,11 +665,12 @@ class StatsSummaryLine(BoxLayout, Themeable):
     break_time_display = StringProperty()
     pause_time_display = StringProperty()
 
+    filter_type = StringProperty('dhm')
+
     def __init__(self, **kwargs):
         super(StatsSummaryLine, self).__init__(**kwargs)
 
     def calc_totals(self, records, record_type):
-
         self.task_project_data = len(records)
         unit = ' task' if record_type == 'task_id' else ' project'
         unit += 's' if self.task_project_data != 1 else ''
@@ -664,9 +686,11 @@ class StatsSummaryLine(BoxLayout, Themeable):
             self.pause_time_data += record['PauseTime']
 
         self.task_project_display = str(self.task_project_data) + unit
-        self.work_time_display = convert_seconds_to_dhm(self.work_time_data)
-        self.break_time_display = convert_seconds_to_dhm(self.break_time_data)
-        self.pause_time_display = convert_seconds_to_dhm(self.pause_time_data)
+
+        if self.filter_type == 'dhm':
+            self.work_time_display = convert_seconds_to_dhm(self.work_time_data)
+            self.break_time_display = convert_seconds_to_dhm(self.break_time_data)
+            self.pause_time_display = convert_seconds_to_dhm(self.pause_time_data)
 
     def theme_update(self):
         pass

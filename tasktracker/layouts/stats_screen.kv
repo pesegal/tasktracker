@@ -35,12 +35,14 @@
                 id: view_label
                 text: "Summary"
                 size_hint_y: .2
-            StatsButton:
+            StatsButton: # TODO turn these into toggle buttons
                 text: "Time by Project"
                 size_hint_y: .2
+                on_release: root.set_filter_selection('project_id')
             StatsButton:
                 text: "Time by Task"
                 size_hint_y: .2
+                on_release: root.set_filter_selection('task_id')
             StatsButton:
                 text: "% By Project"
                 size_hint_y: .2
@@ -62,7 +64,7 @@
                     id: task_project_toggle_button
                     text: "Task/Project"
                     size_hint_x: .34
-                    on_release: root.toggle_filter_selection(self)
+                    on_release: root.toggle_filter_selection(self) # TODO switch this to filter by name / project
                 NoBevStatsButton:
                     id: working_time_sort_button
                     text: "Working Time"
@@ -156,6 +158,8 @@
     ProjectTaskDisplay:
         id: project_task_display
         size_hint_x: .34
+        size_hint_y: None
+        height: 40
 
     NoBevStatsButton:
         id: work_time
