@@ -38,17 +38,19 @@
             StatsButton: # TODO turn these into toggle buttons
                 text: "Time by Project"
                 size_hint_y: .2
-                on_release: root.set_filter_selection('project_id')
+                on_release: root.set_filter_selection('project_id', 'dhm')
             StatsButton:
                 text: "Time by Task"
                 size_hint_y: .2
-                on_release: root.set_filter_selection('task_id')
+                on_release: root.set_filter_selection('task_id', 'dhm')
             StatsButton:
                 text: "% By Project"
                 size_hint_y: .2
+                on_release: root.set_filter_selection('project_id', 'per')
             StatsButton:
                 text:  "% By Task"
                 size_hint_y: .2
+                on_release: root.set_filter_selection('task_id', 'per')
 
         BoxLayout:
             id: detail_container
