@@ -508,11 +508,6 @@ class ProjectTaskDisplay(StatsButton):
     project = ObjectProperty(None)
 
     def __init__(self, **kwargs):
-        """
-        :param name: The name of the task or project.
-        :param project_id:
-        :param kwargs:
-        """
         super().__init__(**kwargs)
         self.task = None
         self.label = Label()
@@ -552,11 +547,11 @@ class ProjectTaskDisplay(StatsButton):
     def _update_project_display(self, disp, project):
 
         if project is None:
-            self.project_color = themes.TRANSPARENT
-            self.project_shadow_color = themes.TRANSPARENT
+            self.project_color = self.theme.selected
+            self.project_shadow_color = themes.SHADOW_COLOR
         elif project.name == 'No Project':
-            self.project_color = themes.TRANSPARENT
-            self.project_shadow_color = themes.TRANSPARENT
+            self.project_color = self.theme.selected
+            self.project_shadow_color = themes.SHADOW_COLOR
         else:
             self.project = project
             self.project.register(self)
