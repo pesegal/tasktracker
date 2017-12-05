@@ -78,7 +78,7 @@ class TaskProjectStatsSummaryView(BoxLayout, DataContainer, Themeable):
     record_summary_line = ObjectProperty(None)
     filter_selection = StringProperty('project_id')
     filter_type = StringProperty('dhm')
-    sort_selection = NumericProperty(0)
+    sort_selection = StringProperty('')
 
     # Links to buttons
     task_project_toggle_button = ObjectProperty(None)
@@ -86,13 +86,13 @@ class TaskProjectStatsSummaryView(BoxLayout, DataContainer, Themeable):
     break_time_sort_button = ObjectProperty(None)
     paused_time_sort_button = ObjectProperty(None)
 
-
     def __init__(self, **kwargs):
         super(TaskProjectStatsSummaryView, self).__init__(**kwargs)
         self.stats_container = StatsDataController()
         self.bind(display_time_start=self._timeline_time_changed)
         self.bind(filter_selection=self._timeline_time_changed)
         self.bind(filter_type=self._timeline_time_changed)
+        self.bind(sort_selection=self._timeline_time_changed)
 
     def _timeline_time_changed(self, *args):
         # GET data list from StatsDataContoller
@@ -102,8 +102,11 @@ class TaskProjectStatsSummaryView(BoxLayout, DataContainer, Themeable):
                                                                      self.display_time_start,
                                                                      self.display_time_end
                                                                  ))
-        self.record_detail_grid_view.populate_records(summary_data, self.filter_selection, self.filter_type)
+        self.record_detail_grid_view.populate_records(summary_data, self.filter_selection,
+                                                      self.filter_type, self.sort_selection)
         self.record_summary_line.calc_totals(summary_data, self.filter_selection)
+
+
 
     def toggle_filter_selection(self, *args):
         print(args)
@@ -120,7 +123,28 @@ class TaskProjectStatsSummaryView(BoxLayout, DataContainer, Themeable):
         self.filter_selection = selection
         self.filter_type = display_format
 
-
+    def set_sort_selection(self, selection):
+        if selection == 'ptd':  # Project/Task Desc
+            pass
+        elif selection == 'pta': # Project/Task Asc
+            pass
+        elif selection == 'ptdp':  # Project/Task Desc By Project
+            pass
+        elif selection == 'ptap':  # Project/Task Asc By Project
+            pass
+        elif selection == 'wtd':  # Work Time Desc
+            pass
+        elif selection == 'wta':  # Work Time Asc
+            pass
+        elif selection == 'btd':  # Break Time Desc
+            pass
+        elif selection == 'bta':  # Break Time Asc
+            pass
+        elif selection == 'ptd':  # Pause Time Desc
+            pass
+        elif selection == 'pta':  # Pause Time Asc
+            pass
+        self.sort_selection = selection
 
     def update_timerange(self, start_datetime, end_datetime):
         pass
@@ -148,9 +172,28 @@ class RecordDetailGridView(GridLayout):
                                              'PauseTime': 10}),
                                         'project_id'))
 
-    def populate_records(self, record_data, summary_type, ft):
+    def populate_records(self, record_data, summary_type, ft, selection):
         self.clear_widgets()
-
+        if selection == 'ptd':  # Project/Task Desc
+            pass  # TODO Implemention task/project name lookup
+        elif selection == 'pta': # Project/Task Asc
+            pass
+        elif selection == 'ptdp':  # Project/Task Desc By Project
+            pass
+        elif selection == 'ptap':  # Project/Task Asc By Project
+            pass
+        elif selection == 'wtd':  # Work Time Desc
+            pass
+        elif selection == 'wta':  # Work Time Asc
+            pass
+        elif selection == 'btd':  # Break Time Desc
+            pass
+        elif selection == 'bta':  # Break Time Asc
+            pass
+        elif selection == 'ptd':  # Pause Time Desc
+            pass
+        elif selection == 'pta':  # Pause Time Asc
+            pass
         data_totals = None
         if ft != 'dhm':
             work = 0

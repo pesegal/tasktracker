@@ -66,11 +66,12 @@
                     id: task_project_toggle_button
                     text: "Task/Project"
                     size_hint_x: .34
-                    on_release: root.toggle_filter_selection(self) # TODO switch this to filter by name / project
+                    on_release: root.set_sort_selection('ptd') # TODO switch this to filter by name / project
                 NoBevStatsButton:
                     id: working_time_sort_button
                     text: "Working Time"
                     size_hint_x: .22
+
                 NoBevStatsButton:
                     id: break_time_sort_button
                     text: "Break Time"
