@@ -66,20 +66,24 @@
                     id: task_project_toggle_button
                     text: "Task/Project"
                     size_hint_x: .34
-                    on_release: root.set_sort_selection('ptd') # TODO switch this to filter by name / project
+                    on_release: root.toggle_sort_selection('project_task') # TODO switch this to filter by name / project
                 NoBevStatsButton:
                     id: working_time_sort_button
                     text: "Working Time"
                     size_hint_x: .22
+                    on_release: root.toggle_sort_selection('work')
 
                 NoBevStatsButton:
                     id: break_time_sort_button
                     text: "Break Time"
                     size_hint_x: .22
+                    on_release: root.toggle_sort_selection('break')
+
                 RightBevStatsButton:
                     id: paused_time_sort_button
                     text: "Paused Time"
                     size_hint_x: .22
+                    on_release: root.toggle_sort_selection('paused')
 
             ScrollView:
 

@@ -94,6 +94,12 @@ class TaskProjectStatsSummaryView(BoxLayout, DataContainer, Themeable):
         self.bind(filter_type=self._timeline_time_changed)
         self.bind(sort_selection=self._timeline_time_changed)
 
+        # Current sort selection counters
+        self.project_sort_counter = 0
+        self.work_sort_counter = 0
+        self.break_sort_counter = 0
+        self.pause_sort_counter = 0
+
     def _timeline_time_changed(self, *args):
         # GET data list from StatsDataContoller
         # for each record populate the
@@ -105,7 +111,6 @@ class TaskProjectStatsSummaryView(BoxLayout, DataContainer, Themeable):
         self.record_detail_grid_view.populate_records(summary_data, self.filter_selection,
                                                       self.filter_type, self.sort_selection)
         self.record_summary_line.calc_totals(summary_data, self.filter_selection)
-
 
 
     def toggle_filter_selection(self, *args):
@@ -123,28 +128,67 @@ class TaskProjectStatsSummaryView(BoxLayout, DataContainer, Themeable):
         self.filter_selection = selection
         self.filter_type = display_format
 
-    def set_sort_selection(self, selection):
-        if selection == 'ptd':  # Project/Task Desc
-            pass
-        elif selection == 'pta': # Project/Task Asc
-            pass
-        elif selection == 'ptdp':  # Project/Task Desc By Project
-            pass
-        elif selection == 'ptap':  # Project/Task Asc By Project
-            pass
-        elif selection == 'wtd':  # Work Time Desc
-            pass
-        elif selection == 'wta':  # Work Time Asc
-            pass
-        elif selection == 'btd':  # Break Time Desc
-            pass
-        elif selection == 'bta':  # Break Time Asc
-            pass
-        elif selection == 'ptd':  # Pause Time Desc
-            pass
-        elif selection == 'pta':  # Pause Time Asc
-            pass
-        self.sort_selection = selection
+    def toggle_sort_selection(self, toggle_type):
+        """ This function allows the multiple toggle and reset of other filter types.
+
+        :param toggle_type:
+        """
+
+        if toggle_type == 'project_task':
+            if self.project_sort_counter == 0:
+                self.sort_selection = 'ptd'  # Project/Task Desc
+            elif self.project_sort_counter == 1:
+                self.sort_selection = 'pta' # Project/Task Asc
+            elif self.project_sort_counter == 2:
+                self.sort_selection = 'ptdp'  # Project/Task Desc By Project
+            elif self.project_sort_counter == 3:
+                self.sort_selection = 'ptap'  # Project/Task Asc By Project
+
+            self.project_sort_counter += 1
+            self.project_sort_counter = 0 if self.project_sort_counter > 3 else self.project_sort_counter
+
+            self.work_sort_counter = 0
+            self.break_sort_counter = 0
+            self.pause_sort_counter = 0
+
+        if toggle_type == 'work':
+            if self.work_sort_counter == 0:
+                self.sort_selection = 'wtd'  # Work Time Desc
+            elif self.work_sort_counter == 1:
+                self.sort_selection = 'wta'  # Work Time Asc
+
+            self.work_sort_counter += 1
+            self.work_sort_counter = 0 if self.work_sort_counter > 1 else self.work_sort_counter
+
+            self.project_sort_counter = 0
+            self.break_sort_counter = 0
+            self.pause_sort_counter = 0
+
+        if toggle_type == 'break':
+            if self.break_sort_counter == 0:
+                self.sort_selection = 'btd'  # break time desc
+            elif self.break_sort_counter == 1:
+                self.sort_selection = 'bta'  # Break time Asc
+
+            self.break_sort_counter += 1
+            self.break_sort_counter = 0 if self.break_sort_counter > 1 else self.break_sort_counter
+
+            self.project_sort_counter = 0
+            self.work_sort_counter = 0
+            self.pause_sort_counter = 0
+
+        if toggle_type == 'paused':
+            if self.pause_sort_counter == 0:
+                self.sort_selection = 'ptd'  # Pause Time Desc
+            elif self.pause_sort_counter == 1:
+                self.sort_selection = 'pta'  # Pause Time Asc
+
+            self.pause_sort_counter += 1
+            self.pause_sort_counter = 0 if self.pause_sort_counter > 1 else self.pause_sort_counter
+
+            self.project_sort_counter = 0
+            self.break_sort_counter = 0
+            self.work_sort_counter = 0
 
     def update_timerange(self, start_datetime, end_datetime):
         pass
@@ -183,9 +227,10 @@ class RecordDetailGridView(GridLayout):
         elif selection == 'ptap':  # Project/Task Asc By Project
             pass
         elif selection == 'wtd':  # Work Time Desc
-            pass
+            record_data = sorted(record_data, key=lambda x: x.items()['WorkTime'])
+            # TODO: continue here
         elif selection == 'wta':  # Work Time Asc
-            pass
+            record_data = sorted(record_data, key=lambda x: x['WorkTime'], reverse=True)
         elif selection == 'btd':  # Break Time Desc
             pass
         elif selection == 'bta':  # Break Time Asc
