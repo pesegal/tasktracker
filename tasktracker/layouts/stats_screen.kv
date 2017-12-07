@@ -56,17 +56,20 @@
             id: detail_container
             orientation: 'vertical'
             size_hint_x: .8
+
             BoxLayout:
                 spacing: 2
                 padding: 2
                 id: detail_header
                 orientation: "horizontal"
                 size_hint_y: .2
+
                 LeftBevStatsButton:
                     id: task_project_toggle_button
                     text: "Task/Project"
                     size_hint_x: .34
                     on_release: root.toggle_sort_selection('project_task') # TODO switch this to filter by name / project
+
                 NoBevStatsButton:
                     id: working_time_sort_button
                     text: "Working Time"

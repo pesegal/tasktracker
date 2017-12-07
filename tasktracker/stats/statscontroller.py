@@ -190,6 +190,8 @@ class TaskProjectStatsSummaryView(BoxLayout, DataContainer, Themeable):
             self.break_sort_counter = 0
             self.work_sort_counter = 0
 
+        print(self.sort_selection)
+
     def update_timerange(self, start_datetime, end_datetime):
         pass
 
@@ -218,6 +220,7 @@ class RecordDetailGridView(GridLayout):
 
     def populate_records(self, record_data, summary_type, ft, selection):
         self.clear_widgets()
+        record_data_list = record_data.items()
         if selection == 'ptd':  # Project/Task Desc
             pass  # TODO Implemention task/project name lookup
         elif selection == 'pta': # Project/Task Asc
@@ -227,18 +230,17 @@ class RecordDetailGridView(GridLayout):
         elif selection == 'ptap':  # Project/Task Asc By Project
             pass
         elif selection == 'wtd':  # Work Time Desc
-            record_data = sorted(record_data, key=lambda x: x.items()['WorkTime'])
-            # TODO: continue here
+            record_data_list = sorted(record_data_list, key=lambda x: x[1]['WorkTime'], reverse=True)
         elif selection == 'wta':  # Work Time Asc
-            record_data = sorted(record_data, key=lambda x: x['WorkTime'], reverse=True)
+            record_data_list = sorted(record_data_list, key=lambda x: x[1]['WorkTime'])
         elif selection == 'btd':  # Break Time Desc
-            pass
+            record_data_list = sorted(record_data_list, key=lambda x: x[1]['BreakTime'], reverse=True)
         elif selection == 'bta':  # Break Time Asc
-            pass
+            record_data_list = sorted(record_data_list, key=lambda x: x[1]['BreakTime'])
         elif selection == 'ptd':  # Pause Time Desc
-            pass
+            record_data_list = sorted(record_data_list, key=lambda x: x[1]['PauseTime'], reverse=True)
         elif selection == 'pta':  # Pause Time Asc
-            pass
+            record_data_list = sorted(record_data_list, key=lambda x: x[1]['PauseTime'])
         data_totals = None
         if ft != 'dhm':
             work = 0
@@ -250,7 +252,7 @@ class RecordDetailGridView(GridLayout):
                 pause += record['PauseTime']
             data_totals = [work, brk, pause]
 
-        for record in record_data.items():
+        for record in record_data_list:
             self.add_widget(StatsRecordLine(record, summary_type, ft, data_totals))
 
     def sort_records(self, sort_param):
