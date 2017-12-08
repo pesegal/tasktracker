@@ -179,9 +179,9 @@ class TaskProjectStatsSummaryView(BoxLayout, DataContainer, Themeable):
 
         if toggle_type == 'paused':
             if self.pause_sort_counter == 0:
-                self.sort_selection = 'ptd'  # Pause Time Desc
+                self.sort_selection = 'patd'  # Pause Time Desc
             elif self.pause_sort_counter == 1:
-                self.sort_selection = 'pta'  # Pause Time Asc
+                self.sort_selection = 'pata'  # Pause Time Asc
 
             self.pause_sort_counter += 1
             self.pause_sort_counter = 0 if self.pause_sort_counter > 1 else self.pause_sort_counter
@@ -211,6 +211,10 @@ class RecordDetailGridView(GridLayout):
         self.bind(minimum_height=self.setter('height'))
         self._records = list()
 
+        # Hold The Sort Types
+        self.id_type = ''
+        self.select_type = ''
+
     def _add_record(self):
         # TODO: Remove this testing function and the button on_press that links to it
         self.add_widget(StatsRecordLine((2, {'WorkTime': 300,
@@ -218,17 +222,37 @@ class RecordDetailGridView(GridLayout):
                                              'PauseTime': 10}),
                                         'project_id'))
 
+    def _project_sort_helper(self, item):
+        if self.id_type == 'task_id':
+            task = ALL_TASKS.task_id_lookup(item[0])
+            project = PROJECT_LIST.return_project_by_id(task.project_id)
+        else:
+            task = None
+            project = PROJECT_LIST.return_project_by_id(item[0])
+
+        if self.select_type == 'ptd' or self.select_type == 'pta':
+            return task.tasktext.text if task else project.name
+        elif self.select_type == 'ptdp' or self.select_type == 'ptap':
+            if task:
+                return project.name + task.tasktext.text
+            else:
+                return str(project.db_id) + project.name
+        else:
+            return item[0]
+
     def populate_records(self, record_data, summary_type, ft, selection):
         self.clear_widgets()
         record_data_list = record_data.items()
+        self.select_type = selection
+        self.id_type = summary_type
         if selection == 'ptd':  # Project/Task Desc
-            pass  # TODO Implemention task/project name lookup
+            record_data_list = sorted(record_data_list, key=self._project_sort_helper)
         elif selection == 'pta': # Project/Task Asc
-            pass
+            record_data_list = sorted(record_data_list, key=self._project_sort_helper, reverse=True)
         elif selection == 'ptdp':  # Project/Task Desc By Project
-            pass
+            record_data_list = sorted(record_data_list, key=self._project_sort_helper)
         elif selection == 'ptap':  # Project/Task Asc By Project
-            pass
+            record_data_list = sorted(record_data_list, key=self._project_sort_helper, reverse=True)
         elif selection == 'wtd':  # Work Time Desc
             record_data_list = sorted(record_data_list, key=lambda x: x[1]['WorkTime'], reverse=True)
         elif selection == 'wta':  # Work Time Asc
@@ -237,10 +261,10 @@ class RecordDetailGridView(GridLayout):
             record_data_list = sorted(record_data_list, key=lambda x: x[1]['BreakTime'], reverse=True)
         elif selection == 'bta':  # Break Time Asc
             record_data_list = sorted(record_data_list, key=lambda x: x[1]['BreakTime'])
-        elif selection == 'ptd':  # Pause Time Desc
-            record_data_list = sorted(record_data_list, key=lambda x: x[1]['PauseTime'], reverse=True)
-        elif selection == 'pta':  # Pause Time Asc
-            record_data_list = sorted(record_data_list, key=lambda x: x[1]['PauseTime'])
+        elif selection == 'patd':  # Pause Time Desc
+            record_data_list = sorted(record_data_list, key=lambda x: int(x[1]['PauseTime']), reverse=True)
+        elif selection == 'pata':  # Pause Time Asc
+            record_data_list = sorted(record_data_list, key=lambda x: int(x[1]['PauseTime']))
         data_totals = None
         if ft != 'dhm':
             work = 0
