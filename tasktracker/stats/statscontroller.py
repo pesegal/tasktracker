@@ -285,7 +285,7 @@ class RecordDetailGridView(GridLayout):
 
 class TimelineContainer(RelativeLayout):
     """ TimelineContainer object contains all functionality related to the display and manipulation
-        of the timeline.7y
+        of the timeline.py
     """
 
     display_time_start = ObjectProperty(None)
