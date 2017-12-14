@@ -38,6 +38,11 @@ class SettingsSoundSelector(Spinner, Themeable):
     """ Contains all the dropdown functionality to allow users to select a different notification
     sound. Sound loading and control are contained in global object NOTIFICATION_SOUND in themes.py
     """
+    button_texture = StringProperty(themes.ALL_BEV_CORNERS)
+    shadow_texture = StringProperty(themes.SHADOW_TEXTURE)
+    shadow_color = ListProperty(themes.SHADOW_COLOR)
+    text_color = ListProperty([0, 0, 0, 0])
+    button_color = ListProperty([0, 0, 0, 0])
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -57,7 +62,10 @@ class SettingsSoundSelector(Spinner, Themeable):
             NOTIFICATION_SOUND.play()
 
     def theme_update(self):
-        pass
+        self.button_color = self.theme.tasks
+        self.text_color = self.theme.text
+        self.text_color[3] = .8
+        self.on_state(self, 0)
 
 
 class SettingsSoundVolumeSlider(Slider, Themeable):
@@ -235,19 +243,45 @@ class LoadResetDatabaseContainer(SettingsContainer):
 
 
 class SettingsButton(Button, Themeable):
+    button_texture = StringProperty(themes.ALL_BEV_CORNERS)
+    shadow_texture = StringProperty(themes.SHADOW_TEXTURE)
+    shadow_color = ListProperty(themes.SHADOW_COLOR)
+    text_color = ListProperty([0, 0, 0, 0])
+    button_color = ListProperty([0, 0, 0, 0])
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.button_color = self.theme.tasks
+        self.text_color = self.theme.text
+        self.text_color[3] == .8
+        self.shadow_color = themes.SHADOW_COLOR
 
     def theme_update(self):
-        pass
+        self.button_color = self.theme.tasks
+        self.text_color = self.theme.text
+        self.text_color[3] = .8
+        self.on_state(self, 0)
+
+    def on_state(self, widget, value):
+        if self.state == 'down':
+            self.button_color = self.theme.selected
+        else:
+            self.button_color = self.theme.tasks
 
 
 class SettingsToggleButton(ToggleButton, Themeable):
     button_texture = StringProperty(themes.ALL_BEV_CORNERS)
     shadow_texture = StringProperty(themes.SHADOW_TEXTURE)
-    text_color = ListProperty()
-    button_color = ListProperty()
-    shadow_color = ListProperty()
+    text_color = ListProperty([0, 0, 0, 0])
+    button_color = ListProperty([0, 0, 0, 0])
+    shadow_color = ListProperty([0, 0, 0, 0])
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.button_color = self.theme.tasks
+        self.text_color = self.theme.text
+        self.text_color[3] == .8
+        self.shadow_color = themes.SHADOW_COLOR
 
     def theme_update(self):
         self.button_color = self.theme.tasks

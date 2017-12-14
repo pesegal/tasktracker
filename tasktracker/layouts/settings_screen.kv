@@ -6,6 +6,7 @@
             id: setting_labels
             orientation: 'vertical'
             padding: 1
+            spacing:1
 
             ThemeSettingsContainer: # Dynamically populated in settingsscreen.py
 
@@ -44,6 +45,8 @@
 
             LoadResetDatabaseContainer:
                 id: database_load_reset_controller
+                spacing: 3
+
                 SettingsLabel:
                     text: 'Load / Reset Database:'
 
@@ -114,13 +117,56 @@
 
 <SettingsContainer>:
     padding: 0, 2, 0, 0
+    spacing: 2
     orientation: 'horizontal'
 
 <SettingsSoundSelector>:
+    border: [2, 2, 2, 2]
+    color: self.text_color
+    background_color: self.button_color
+    background_normal: self.button_texture
+    background_down: self.button_texture
+    canvas.before:
+        Color:
+            rgba: root.shadow_color
+        BorderImage:
+            source: root.shadow_texture
+            border: [1, 1, 1, 1]
+            pos: self.x - 3, self.y - 3
+            size: self.width + 3 , self.height + 3
 
 <SettingsSoundVolumeSlider>:
 
+
 <SettingsButton>:
+    border: [2, 2, 2, 2]
+    color: self.text_color
+    background_color: self.button_color
+    background_normal: self.button_texture
+    background_down: self.button_texture
+    canvas.before:
+        Color:
+            rgba: root.shadow_color
+        BorderImage:
+            source: root.shadow_texture
+            border: [1, 1, 1, 1]
+            pos: self.x - 3, self.y - 3
+            size: self.width + 3 , self.height + 3
+
+<SettingsToggleButton>:
+    border: [2, 2, 2, 2]
+    color: self.text_color
+    background_color: self.button_color
+    background_normal: self.button_texture
+    background_down: self.button_texture
+    canvas.before:
+        Color:
+            rgba: root.shadow_color
+        BorderImage:
+            source: root.shadow_texture
+            border: [1, 1, 1, 1]
+            pos: self.x - 3, self.y - 3
+            size: self.width + 3 , self.height + 3
 
 
 

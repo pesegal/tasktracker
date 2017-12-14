@@ -13,8 +13,6 @@ from kivy.metrics import dp
 
 from tasktracker.themes.themes import Themeable
 
-
-
 # from kivy.graphics import InstructionGroup, Mesh
 # from kivy.graphics.context_instructions import Color
 
