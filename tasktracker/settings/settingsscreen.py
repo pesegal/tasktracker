@@ -4,19 +4,18 @@ from tasktracker.themes.themes import Themeable, THEME_CONTROLLER, NOTIFICATION_
 from tasktracker.database.db_interface import DB
 from tasktracker.database import db_interface
 from tasktracker.settings.settingscontroller import APP_CONTROL
-
+from tasktracker.task.taskpopups import ThemedDropdown
 
 from kivy.uix.screenmanager import Screen
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
-from kivy.uix.spinner import Spinner
+from kivy.uix.spinner import Spinner, SpinnerOption
 from kivy.uix.togglebutton import ToggleButton, ToggleButtonBehavior
 from kivy.uix.button import Button
 from kivy.uix.slider import Slider
 from kivy.properties import StringProperty, ListProperty, ObjectProperty
 from kivy.factory import Factory
 from kivy.uix.popup import Popup
-from kivy.clock import Clock
 
 import os
 
@@ -49,8 +48,14 @@ class SettingsSoundSelector(Spinner, Themeable):
         self.sounds = NOTIFICATION_SOUND.loaded_sounds
         self.text = NOTIFICATION_SOUND.start_sound
         self.values = [s[0] for s in self.sounds]
+        self.dropdown_cls = ThemedDropdown
+        self.option_cls = SettingsSpinnerOption
 
         self.bind(text=self.select_new_sound)
+        self.text_color = self.theme.text
+        self.text_color[3] = .8
+        self.button_color = self.theme.tasks
+        self.shadow_color = themes.SHADOW_COLOR
 
     def select_new_sound(self, obj, text):
         sound_path_index = list(zip(*self.sounds))[0].index(text)  # gets the index of the full path
@@ -65,7 +70,34 @@ class SettingsSoundSelector(Spinner, Themeable):
         self.button_color = self.theme.tasks
         self.text_color = self.theme.text
         self.text_color[3] = .8
-        self.on_state(self, 0)
+
+
+class SettingsSpinnerOption(SpinnerOption, Themeable):
+    """ Themed Option Objects from spinner dropdown!
+    """
+    button_texture = StringProperty(themes.NO_BEV_CORNERS)
+    text_color = ListProperty()
+    selected_color = ListProperty()
+    button_color = ListProperty([0, 0, 0, 0])
+
+    def __init__(self, **kwargs):
+        super(SettingsSpinnerOption, self).__init__(**kwargs)
+
+        self.text_color = self.theme.text
+        self.text_color[3] = .9
+        self.button_color = self.theme.background
+        self.selected_color = self.theme.selected
+
+    def theme_update(self):
+        self.text_color = self.theme.text
+        self.text_color[3] = .9
+        self.button_color = self.theme.background
+
+    def on_state(self, widget, value):
+        if self.state == 'down':
+            self.button_color = self.theme.selected
+        else:
+            self.button_color = self.theme.background
 
 
 class SettingsSoundVolumeSlider(Slider, Themeable):
@@ -323,5 +355,4 @@ class SettingsLabel(Label, Themeable):
         text_c = self.theme.text
         text_c[3] = .8
         self.color = text_c
-
 

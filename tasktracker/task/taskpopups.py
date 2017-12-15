@@ -88,8 +88,7 @@ class ProjectList(DataContainer):
             print(project)
             self.project_list.append(Project(*project))
 
-
-            # TODO: DO THESE TWO LINES CAUSE AN ISSUE?
+        # TODO: DO THESE TWO LINES CAUSE AN ISSUE?
         self.default = self.project_list[0]
         self.selected_project = self.default
 
