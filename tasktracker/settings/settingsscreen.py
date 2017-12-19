@@ -204,7 +204,7 @@ class BackupSettingsContainer(SettingsContainer):
         else:
             self._backup_database(full_file_path)
 
-    def _backup_database(self, full_file_path):
+    def _popup_confirmation(self, full_file_path):
         DB.backup_database(self, full_file_path)
         DB.thread_status()
         self.file_chooser.dismiss_popup()
@@ -272,6 +272,43 @@ class LoadResetDatabaseContainer(SettingsContainer):
         )
         popup.content = content
         popup.open()
+
+
+class FlatDataExtractContainer(SettingsContainer):
+    """ Controller for all the flat file extract functionality
+    """
+    selected_path = StringProperty('/')
+
+    def __init__(self, **kwargs):
+        super(FlatDataExtractContainer, self).__init__(**kwargs)
+        self.file_chooser = Factory.FileSaveLoadController()
+        self.selected_path = os.path.expanduser('~')
+
+    def open_file_save_window(self):
+        self.file_chooser.show_save(callback=self._set_flat_file_extract_path_filename, start_path=self.selected_path)
+
+    def _set_flat_file_extract_path_filename(self, path, filename):
+        self.selected_path = path
+        full_file_path = os.path.join(path, filename)
+        print(filename)
+
+        # Do Duplicate filename check and open up confirmation window.
+        if os.path.isfile(full_file_path):
+            popup = SettingsPopup(title='File Exists')
+            content = ConfirmationNotification(
+                popup=popup,
+                message="Filename %s exists. Overwrite?" % os.path.basename(filename),
+                file_path=full_file_path,
+                controller=self
+            )
+            popup.content = content
+            popup.open()
+        else:
+            self._popup_confirmation(full_file_path)
+            # TODO: Implement Extract Logic
+
+    def _popup_confirmation(self, file_path):
+        print(file_path)
 
 
 class SettingsButton(Button, Themeable):

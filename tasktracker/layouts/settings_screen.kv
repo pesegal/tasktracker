@@ -62,8 +62,15 @@
                     text: 'Load Data Test'
                     on_release: database_load_reset_controller.app_control.load_app_data()
 
-            SettingsLabel:
-                text: 'Extract Data to flat file (.csv):'
+            FlatDataExtractContainer:
+                id: flat_file_extract_controller
+                spacing: 3
+                SettingsLabel:
+                    text: 'Extract Data to flat file (.csv):'
+                SettingsButton:
+                    text: 'Extract Task Actions'
+                    on_release: flat_file_extract_controller.open_file_save_window()
+
 
 
 <ConfirmationNotification>:
@@ -80,7 +87,7 @@
             SettingsButton:
                 id: confirmation_ok
                 text: 'Ok'
-                on_touch_down: root.controller._backup_database(root.file_path)
+                on_touch_down: root.controller._popup_confirmation(root.file_path)
             SettingsButton:
                 id: confirmation_cancel
                 text: 'Cancel'
