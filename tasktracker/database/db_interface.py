@@ -295,6 +295,29 @@ class Database:
                     callback=callback)
         )
 
+    def get_task_actions_for_flat_file(self, callback):
+        self.action_queue.put(
+            SqlTask(
+                """
+                    SELECT
+                        tasks.name AS "Task Name",
+                        projects.name AS "Project Name",
+                        action_type.action_description AS "Action Type",
+                        task_actions.creation_date AS "Action Start",
+                        task_actions.finish_date AS "Action End",
+                        strftime('%s', task_actions.finish_date) -
+                        strftime('%s', task_actions.creation_date) AS "Action Duration (sec)"
+                    FROM task_actions
+                    JOIN action_type ON action_type.id = task_actions.action_id
+                    JOIN tasks ON task_actions.task_id = tasks.id
+                    JOIN projects ON tasks.project_id = projects.id
+                    ORDER BY task_actions.creation_date;
+                """,
+                function='fetchall',
+                callback=callback
+            )
+        )
+
     def delete_project(self, project):
         pass
 

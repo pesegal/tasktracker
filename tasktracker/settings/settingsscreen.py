@@ -201,6 +201,7 @@ class BackupSettingsContainer(SettingsContainer):
             )
             popup.content = content
             popup.open()
+
         else:
             self._backup_database(full_file_path)
 
@@ -289,8 +290,8 @@ class FlatDataExtractContainer(SettingsContainer):
 
     def _set_flat_file_extract_path_filename(self, path, filename):
         self.selected_path = path
+        # TODO: If the filename is empty prompt with pop-up?
         full_file_path = os.path.join(path, filename)
-        print(filename)
 
         # Do Duplicate filename check and open up confirmation window.
         if os.path.isfile(full_file_path):
@@ -308,7 +309,16 @@ class FlatDataExtractContainer(SettingsContainer):
             # TODO: Implement Extract Logic
 
     def _popup_confirmation(self, file_path):
-        print(file_path)
+        self.selected_path = file_path
+        # TODO: Check to see if popup has actual path name and .csv if not add .csv to the end.
+        DB.get_task_actions_for_flat_file(self._write_csv_flat_file)
+
+    def _write_csv_flat_file(self, data, response_time):
+        print("Got them ", response_time)
+        for item in data:
+            print(item)
+
+
 
 
 class SettingsButton(Button, Themeable):
