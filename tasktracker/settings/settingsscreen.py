@@ -320,9 +320,7 @@ class FlatDataExtractContainer(SettingsContainer):
         self.selected_path = file_path
         DB.get_task_actions_for_flat_file(self._write_csv_flat_file)
 
-
     def _write_csv_flat_file(self, data, response_time):
-
         # Adding headers from DB require rework of DB interface
         flat_file_headers = (
             "Task Name",

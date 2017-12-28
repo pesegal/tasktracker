@@ -164,7 +164,7 @@ class TaskListRegistry:
 
 # Global Instance Init
 APP_CONTROL = AppController()
-PROJECT_COLORS = Colors('colors.conf')
+PROJECT_COLORS = Colors('../colors.conf')
 ALL_TASKS = TaskListRegistry()
 
 
