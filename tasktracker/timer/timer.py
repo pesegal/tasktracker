@@ -10,11 +10,11 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.togglebutton import ToggleButton, ToggleButtonBehavior
 from kivy.properties import NumericProperty, ObjectProperty, ListProperty, BooleanProperty, StringProperty
 
-from tasktracker.themes import themes
-from tasktracker.themes.themes import Themeable, NOTIFICATION_SOUND
-from tasktracker.task.task import Task
-from tasktracker.database.db_interface import DB
-from tasktracker.settings.settingscontroller import APP_CONTROL, DataContainer
+from themes import themes
+from themes.themes import Themeable, NOTIFICATION_SOUND
+from task.task import Task
+from database.db_interface import DB
+from settings.settingscontroller import APP_CONTROL, DataContainer
 
 # TODO: Break these out to the settings module
 

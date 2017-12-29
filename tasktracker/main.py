@@ -7,19 +7,18 @@ import os
 import sys
 from kivy.app import App
 from kivy.lang import Builder
-from tasktracker.screencontroller import ScreenClickDragWindow
+from screencontroller import ScreenClickDragWindow
 from kivy.config import Config
-from tasktracker.database.db_interface import DB
-from tasktracker.settings.settingscontroller import APP_CONTROL
-from tasktracker.themes import themes
+from database.db_interface import DB
+from settings.settingscontroller import APP_CONTROL
+from themes import themes
 from kivy.clock import Clock
-import tasktracker.fileloader
+import fileloader
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
 # Load in the .kv files
 layout_path = os.path.join(__location__, 'layouts')
-
 
 def exception_shutdown(exctype, value, tb):
     """Actions to take if the App encounters a runtime error."""
@@ -40,7 +39,7 @@ class TaskApp(App):
 
     def on_stop(self):
         """Actions to take before the program closes."""
-        themes.save_set_configuration()  # This saves config settings to tasktracker.conf
+        themes.save_set_configuration()  # This saves config settings to conf
         APP_CONTROL.timer_screen.timer_reset()
         DB.thread_shutdown()
 

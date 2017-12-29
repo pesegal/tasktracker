@@ -3,7 +3,7 @@
 
 
 -- This tables purpose is to hold the version number to check to makesure loaded files are correct.
-CREATE TABLE tasktracker (
+CREATE TABLE (
     version_number VARCHAR(10)
 );
 

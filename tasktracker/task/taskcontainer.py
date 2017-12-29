@@ -6,11 +6,11 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.scrollview import ScrollView
 from kivy.properties import ListProperty, StringProperty
-from tasktracker.themes.themes import Themeable
-from tasktracker.themes.themes import ALL_BEV_CORNERS
+from themes.themes import Themeable
+from themes.themes import ALL_BEV_CORNERS
 from kivy.animation import Animation
 
-from tasktracker.database.db_interface import DB
+from database.db_interface import DB
 
 
 class ListLabels(Label, Themeable):

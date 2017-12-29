@@ -8,17 +8,17 @@ from kivy.animation import Animation
 from kivy.clock import Clock
 
 
-from tasktracker.mixins import Broadcast
-from tasktracker.menubar import MenuBar
-from tasktracker.task.taskview import TaskListScreen
-from tasktracker.task.taskpopups import TaskEditScreen
-from tasktracker.timer.timer import TimerScreen
-from tasktracker.themes.themes import Themeable
-from tasktracker.task.clickdragcontrol import CLICK_DRAG_CONTROLLER
-from tasktracker.task.bubblemenu import TaskQuickMenu
-from tasktracker.stats.statscontroller import StatsScreen
-from tasktracker.settings.settingsscreen import SettingsScreen
-from tasktracker.settings.settingscontroller import APP_CONTROL
+from mixins import Broadcast
+from menubar import MenuBar
+from task.taskview import TaskListScreen
+from task.taskpopups import TaskEditScreen
+from timer.timer import TimerScreen
+from themes.themes import Themeable
+from task.clickdragcontrol import CLICK_DRAG_CONTROLLER
+from task.bubblemenu import TaskQuickMenu
+from stats.statscontroller import StatsScreen
+from settings.settingsscreen import SettingsScreen
+from settings.settingscontroller import APP_CONTROL
 
 
 class ScreenController(ScreenManager, Broadcast, Themeable):

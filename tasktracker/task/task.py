@@ -11,20 +11,20 @@
         Number of long breaks spent on task.
 
 """
+from copy import copy
+
+from kivy.clock import Clock
+from kivy.properties import ListProperty, StringProperty, ObjectProperty
 from kivy.uix.button import Button
 from kivy.uix.label import Label
-from kivy.properties import ListProperty, StringProperty, ObjectProperty
 from kivy.utils import get_color_from_hex
 
-from copy import copy
-from kivy.clock import Clock
-
-from tasktracker.themes import themes
-from tasktracker.themes.themes import Themeable
-from tasktracker.mixins import TapAndHold
-from tasktracker.task.clickdragcontrol import CLICK_DRAG_CONTROLLER
-from tasktracker.settings.settingscontroller import ALL_TASKS
-import tasktracker.task.taskpopups
+import task.taskpopups
+from mixins import TapAndHold
+from settings.settingscontroller import ALL_TASKS
+from task.clickdragcontrol import CLICK_DRAG_CONTROLLER
+from themes import themes
+from themes.themes import Themeable
 
 
 class Task(Button, TapAndHold, Themeable):
@@ -72,7 +72,7 @@ class Task(Button, TapAndHold, Themeable):
 
         self.project_id = project_id
         if project_id != 0:
-            self.project = tasktracker.task.taskpopups.PROJECT_LIST.return_project_by_id(project_id)
+            self.project = task.taskpopups.PROJECT_LIST.return_project_by_id(project_id)
         self._update_project_display(self, self.project)
         self.bind(project=self._update_project_display)
         self.notes = notes

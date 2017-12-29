@@ -4,7 +4,7 @@ from kivy.properties import ObjectProperty, StringProperty
 from kivy.uix.popup import Popup
 from kivy.uix.filechooser import FileChooserListView
 
-from tasktracker.themes.themes import CONFIG_PARSER
+from themes.themes import CONFIG_PARSER
 import os
 
 

@@ -6,7 +6,7 @@ import os
 import sqlite3
 from datetime import datetime
 from sqlite3 import OperationalError
-from tasktracker.database.db_interface import __database_version_number__
+from database.db_interface import __database_version_number__
 
 RESET_DATABASE = False
 
@@ -58,7 +58,7 @@ action_types = (
 for data in action_types:
     cursor.execute("INSERT INTO action_type(creation_date, action_description) VALUES (?,?)", (datetime.now(), data))
 
-cursor.execute("INSERT INTO tasktracker(version_number) VALUES (?)", (__database_version_number__,))
+cursor.execute("INSERT INTO version_number) VALUES (?)", (__database_version_number__,))
 cursor.execute("INSERT INTO projects(id, creation_date, name) VALUES (?,?,?)", (0, datetime.now(), 'No Project'))
 
 db.commit()

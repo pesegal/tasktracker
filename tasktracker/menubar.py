@@ -10,11 +10,11 @@ from kivy.uix.button import Button
 from kivy.utils import get_color_from_hex
 from kivy.properties import ObjectProperty, StringProperty, ListProperty
 
-from tasktracker.mixins import Broadcast
-from tasktracker.task.taskpopups import TaskCreationScreen
-from tasktracker.themes import themes
-from tasktracker.themes.themes import Themeable
-from tasktracker.settings.settingscontroller import APP_CONTROL
+from mixins import Broadcast
+from task.taskpopups import TaskCreationScreen
+from themes import themes
+from themes.themes import Themeable
+from settings.settingscontroller import APP_CONTROL
 
 
 class MenuBar(BoxLayout, Broadcast, Themeable):

@@ -9,9 +9,9 @@ from kivy.clock import Clock
 from kivy.animation import Animation
 
 
-from tasktracker.themes.themes import THEME_CONTROLLER, Themeable
-from tasktracker.settings.settingscontroller import to_local_time, timezone_local
-from tasktracker.themes import themes
+from themes.themes import THEME_CONTROLLER, Themeable
+from settings.settingscontroller import to_local_time, timezone_local
+from themes import themes
 
 from datetime import date, datetime, time, timedelta
 

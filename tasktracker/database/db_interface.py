@@ -7,20 +7,20 @@ import os.path
 import shutil
 import sqlite3
 from datetime import datetime, timezone
-from threading import Thread
-from queue import Queue
-from kivy.clock import Clock
 from functools import partial
+from queue import Queue
+from threading import Thread
 
+from kivy.clock import Clock
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
-# Note this number should be updated everytime the tasktracker db schema is changed
+# Note this number should be updated everytime the db schema is changed
 # it is used on database file load to make sure that the file is correctly formatted.
 __database_version_number__ = '00001'
 
 
 def load_file_check_version(loaded_file_path):
-    """ Takes the path of loaded db file and checks the tasktracker table
+    """ Takes the path of loaded db file and checks the table
         to make sure that it is of the correct version and format.
         :return True if file valid else False
     """
@@ -28,7 +28,7 @@ def load_file_check_version(loaded_file_path):
     try:
         con = sqlite3.connect(loaded_file_path)
         cur = con.cursor()
-        cur.execute("select version_number from tasktracker;")
+        cur.execute("select version_number from ")
         version_number = cur.fetchone()[0]
         con.close()
     except sqlite3.DatabaseError:

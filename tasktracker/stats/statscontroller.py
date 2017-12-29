@@ -10,15 +10,15 @@ from kivy.clock import Clock
 from kivy.uix.gridlayout import GridLayout
 
 from copy import copy
-from tasktracker.database.db_interface import DB
-from tasktracker.stats.timeline import TaskTimeLine, VisualTimeTick, PeriodDisplayTick, RecordPeriod
-from tasktracker.stats.datecontrols import StatsTimeSelectionMenu
-from tasktracker.settings.settingscontroller import DataContainer, to_datetime, to_local_time, ALL_TASKS
+from database.db_interface import DB
+from stats.timeline import TaskTimeLine, VisualTimeTick, PeriodDisplayTick, RecordPeriod
+from stats.datecontrols import StatsTimeSelectionMenu
+from settings.settingscontroller import DataContainer, to_datetime, to_local_time, ALL_TASKS
 from datetime import datetime, timezone, timedelta
-from tasktracker.task.taskpopups import PROJECT_LIST
-from tasktracker.themes.themes import THEME_CONTROLLER, Themeable
-from tasktracker.themes import themes
-from tasktracker.stats.datecontrols import ErrorNotificationPopup, SliderNotificationPopup
+from task.taskpopups import PROJECT_LIST
+from themes.themes import THEME_CONTROLLER, Themeable
+from themes import themes
+from stats.datecontrols import ErrorNotificationPopup, SliderNotificationPopup
 from functools import partial
 from collections import namedtuple, Counter
 

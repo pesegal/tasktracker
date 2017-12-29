@@ -5,13 +5,13 @@ to store that data once loaded from the database.
 
 from numbers import Number
 from datetime import timedelta
-from tasktracker.settings.settingscontroller import to_datetime, to_local_time
+from settings.settingscontroller import to_datetime, to_local_time
 
 from kivy.properties import ObjectProperty, ListProperty, NumericProperty
 from kivy.garden.timeline import Timeline, TimeTick, selected_time_ticks, round_time
 from kivy.metrics import dp
 
-from tasktracker.themes.themes import Themeable
+from themes.themes import Themeable
 
 # from kivy.graphics import InstructionGroup, Mesh
 # from kivy.graphics.context_instructions import Color

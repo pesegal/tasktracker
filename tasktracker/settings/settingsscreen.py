@@ -1,10 +1,10 @@
 
-from tasktracker.themes import themes
-from tasktracker.themes.themes import Themeable, THEME_CONTROLLER, NOTIFICATION_SOUND, CONFIG_PARSER
-from tasktracker.database.db_interface import DB
-from tasktracker.database import db_interface
-from tasktracker.settings.settingscontroller import APP_CONTROL
-from tasktracker.task.taskpopups import ThemedDropdown
+from themes import themes
+from themes.themes import Themeable, THEME_CONTROLLER, NOTIFICATION_SOUND, CONFIG_PARSER
+from database.db_interface import DB
+from database import db_interface
+from settings.settingscontroller import APP_CONTROL
+from task.taskpopups import ThemedDropdown
 
 from kivy.uix.screenmanager import Screen
 from kivy.uix.boxlayout import BoxLayout

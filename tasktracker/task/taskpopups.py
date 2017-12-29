@@ -15,11 +15,11 @@ from kivy.uix.button import Button
 from kivy.uix.togglebutton import ToggleButton
 from kivy.utils import get_color_from_hex, get_hex_from_color
 
-from tasktracker.database.db_interface import DB
-from tasktracker.settings.settingscontroller import PROJECT_COLORS, APP_CONTROL, DataContainer
-from tasktracker.task.task import Task
-from tasktracker.themes.themes import Themeable
-from tasktracker.themes import themes
+from database.db_interface import DB
+from settings.settingscontroller import PROJECT_COLORS, APP_CONTROL, DataContainer
+from task.task import Task
+from themes.themes import Themeable
+from themes import themes
 
 
 class Project:

@@ -2,10 +2,10 @@ from kivy.uix.button import Button
 from kivy.uix.bubble import Bubble, BubbleButton
 from kivy.properties import ListProperty, StringProperty
 
-from tasktracker.task.taskpopups import TaskEditScreen
-from tasktracker.themes.themes import Themeable
-from tasktracker.themes import themes
-from tasktracker.settings.settingscontroller import APP_CONTROL
+from task.taskpopups import TaskEditScreen
+from themes.themes import Themeable
+from themes import themes
+from settings.settingscontroller import APP_CONTROL
 
 
 class TaskQuickMenu(Bubble, Themeable):
