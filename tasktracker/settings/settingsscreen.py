@@ -245,7 +245,6 @@ class LoadResetDatabaseContainer(SettingsContainer):
 
     def _check_selected_db_file(self, path):
         if os.path.isfile(path):
-            # TODO: Raise Error that selected was a directory.
             with open(path, 'rb') as f:
                 header = f.read(100)
 
@@ -254,7 +253,6 @@ class LoadResetDatabaseContainer(SettingsContainer):
                     # When load_file_check_version returns true. Clear the program memory and then reload database.
                 else:
                     self.error_popup(path + "\nInvalid backup file.")
-                    # TODO: Raise error that the file selected wasn't the correct datatype.
 
         else:
             self.error_popup(path + "\nDirectory not a file.")
