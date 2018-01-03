@@ -204,10 +204,10 @@ class BackupSettingsContainer(SettingsContainer):
             popup.open()
 
         else:
-            self._backup_database(full_file_path)
+            self._popup_confirmation(full_file_path)
 
     def _popup_confirmation(self, full_file_path):
-        DB.backup_database(self, full_file_path)
+        DB.backup_database(self, create_backup_path=full_file_path)
         DB.thread_status()
         self.file_chooser.dismiss_popup()
 
@@ -249,13 +249,29 @@ class LoadResetDatabaseContainer(SettingsContainer):
                 header = f.read(100)
 
                 if header.startswith(b'SQLite format 3'):
-                    print(db_interface.load_file_check_version(path))
+                    if db_interface.load_file_check_version(path):
+                        self.app_control.clear_app_data()
+                        popup = SettingsPopup(title='Overwrite current data?')
+                        content = ConfirmationNotification(
+                            popup=popup,
+                            message="Filename %s exists. Overwrite?",
+                            controller=self
+                        )
+                        popup.content = content
+                        popup.open()
+                    else:
+                        self.error_popup(path + "\n backup version mismatch.")
+
                     # When load_file_check_version returns true. Clear the program memory and then reload database.
                 else:
                     self.error_popup(path + "\nInvalid backup file.")
 
         else:
             self.error_popup(path + "\nDirectory not a file.")
+
+    def _popup_confirmation(self, file_path):  # Note file_path not used here.
+        pass
+        # TODO: Continue here with backup file loading
 
     def _trigger_program_mem_clear(self):
         pass

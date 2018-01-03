@@ -28,7 +28,7 @@ def load_file_check_version(loaded_file_path):
     try:
         con = sqlite3.connect(loaded_file_path)
         cur = con.cursor()
-        cur.execute("select version_number from ")
+        cur.execute("select version_number from tasktracker")
         version_number = cur.fetchone()[0]
         con.close()
     except sqlite3.DatabaseError:
@@ -103,28 +103,36 @@ class Database:
         if item.callback and item.statement == 'shutdown':  # If shutdown callback passed.
             Clock.schedule_once(partial(item.callback, item.args))
 
-    def backup_database(self, controller, dst_path):
+    def backup_database(self, controller, create_backup_path=None, load_backup_path=None):
         """ This function creates a backup of the sqlite database by copying the
             dbfile. This shuts down the db thread and restarts the db thread after copying
-            to avoid file corruption
+            to avoid file corruption.
+
+            If create backup path is populated this set the source path to the current database path
+            in self._database_backup function, if load_backup_path is populated then the destination
+            path in self._database_backup will be set to self.path.
+
             :param controller - reference to the object calling db_backup. For error notifications.
-            :param dst_path - full path and filename for the db backup.
+            :param create_backup_path - full path and filename for the db backup.
+            :param load_backup_path - used when loading from backup (the backup file)
 
         """
         if self.db_thread.is_alive():
             self.action_queue.put(
                 SqlTask(statement='shutdown',
                         callback=self._database_backup,
-                        args=(controller, dst_path)
+                        args=(controller, create_backup_path, load_backup_path)
                         )
             )
 
     def _database_backup(self, arguments, dt):
         """ Callback to do the database copy once the thread has shutdown """
         obj = arguments[0]
-        path = arguments[1]
+        destination_path = arguments[1] if arguments[1] is not None else self.path
+        source_path = arguments[2] if arguments[2] is not None else self.path
+
         try:
-            shutil.copyfile(self.path, path)
+            shutil.copyfile(source_path, destination_path)
 
         except OSError as os_err:
             # Write permissions don't exist.
