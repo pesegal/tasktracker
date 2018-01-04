@@ -254,7 +254,7 @@ class LoadResetDatabaseContainer(SettingsContainer):
                         popup = SettingsPopup(title='Overwrite current data?')
                         content = ConfirmationNotification(
                             popup=popup,
-                            message="Filename %s exists. Overwrite?",
+                            message="This will overwrite the current data file, are you sure?",
                             controller=self
                         )
                         popup.content = content
