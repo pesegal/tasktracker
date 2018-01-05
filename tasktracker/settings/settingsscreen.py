@@ -208,7 +208,7 @@ class BackupSettingsContainer(SettingsContainer):
 
     def _popup_confirmation(self, full_file_path):
         DB.backup_database(self, create_backup_path=full_file_path)
-        DB.thread_status()
+        DB.thread_status()  # TODO: remove this line when testing complete
         self.file_chooser.dismiss_popup()
 
     def error_popup(self, error):
@@ -255,6 +255,7 @@ class LoadResetDatabaseContainer(SettingsContainer):
                         content = ConfirmationNotification(
                             popup=popup,
                             message="This will overwrite the current data file, are you sure?",
+                            file_path=path,
                             controller=self
                         )
                         popup.content = content
@@ -269,9 +270,11 @@ class LoadResetDatabaseContainer(SettingsContainer):
         else:
             self.error_popup(path + "\nDirectory not a file.")
 
-    def _popup_confirmation(self, file_path):  # Note file_path not used here.
-        pass
-        # TODO: Continue here with backup file loading
+    def _popup_confirmation(self, full_file_path):  # Note file_path not used here.
+        DB.backup_database(self, load_backup_path=full_file_path)
+        DB.thread_status()  # TODO: Remove this line when testing complete
+        self.file_chooser.dismiss_popup()
+        print('Done')
 
     def _trigger_program_mem_clear(self):
         pass
