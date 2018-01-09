@@ -273,6 +273,7 @@ class LoadResetDatabaseContainer(SettingsContainer):
     def _popup_confirmation(self, full_file_path):  # Note file_path not used here.
         DB.backup_database(self, load_backup_path=full_file_path)
         DB.thread_status()  # TODO: Remove this line when testing complete
+        self.app_control.load_app_data()
         self.file_chooser.dismiss_popup()
         print('Done')
 

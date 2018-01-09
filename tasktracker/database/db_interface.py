@@ -172,7 +172,7 @@ class Database:
                     function='fetchall',
                     callback=callback)
             )
-        self.action_queue.join()
+        # self.action_queue.join() # TODO: This was causing the softlock WHY? IS THIS REQUIRED?
 
     def update_task_list_index(self, index, task_id):
         self.action_queue.put(
