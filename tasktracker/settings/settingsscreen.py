@@ -143,13 +143,15 @@ class ConfirmationNotification(SettingsContainer):
     controller = ObjectProperty(None)
     notification_message = StringProperty("Notification")
     file_path = StringProperty('/')
+    func_type = StringProperty('')
 
-    def __init__(self, popup, message, controller=None, file_path='', **kwargs):
+    def __init__(self, popup, message, controller=None, file_path='', func_type='', **kwargs):
         super().__init__(**kwargs)
         self.popup = popup
         self.notification_message = message
         self.file_path = file_path
         self.controller = controller
+        self.func_type = func_type
 
 
 class ErrorNotification(SettingsContainer):
@@ -204,9 +206,9 @@ class BackupSettingsContainer(SettingsContainer):
             popup.open()
 
         else:
-            self._popup_confirmation(full_file_path)
+            self._popup_confirmation(full_file_path, None)
 
-    def _popup_confirmation(self, full_file_path):
+    def _popup_confirmation(self, full_file_path, func_type):
         DB.backup_database(self, create_backup_path=full_file_path)
         DB.thread_status()  # TODO: remove this line when testing complete
         self.file_chooser.dismiss_popup()
@@ -237,7 +239,6 @@ class LoadResetDatabaseContainer(SettingsContainer):
        self.file_chooser.show_load(start_path=self.selected_path, callback=self._load_database_backup)
 
     def _load_database_backup(self, path, full_path):
-        print("_load_database_backup", path, full_path)
         # Pass either the selected directory or the full path of the file.
         selected_file = full_path[0] if full_path else path
 
@@ -250,7 +251,6 @@ class LoadResetDatabaseContainer(SettingsContainer):
 
                 if header.startswith(b'SQLite format 3'):
                     if db_interface.load_file_check_version(path):
-                        self.app_control.clear_app_data()
                         popup = SettingsPopup(title='Overwrite current data?')
                         content = ConfirmationNotification(
                             popup=popup,
@@ -270,12 +270,29 @@ class LoadResetDatabaseContainer(SettingsContainer):
         else:
             self.error_popup(path + "\nDirectory not a file.")
 
-    def _popup_confirmation(self, full_file_path):  # Note file_path not used here.
-        DB.backup_database(self, load_backup_path=full_file_path)
-        DB.thread_status()  # TODO: Remove this line when testing complete
-        self.app_control.load_app_data()
-        self.file_chooser.dismiss_popup()
-        print('Done')
+    def reset_database_file(self):
+        popup = SettingsPopup(title='Reset Data?')
+        content = ConfirmationNotification(
+            popup=popup,
+            message="This will overwrite the current data file, are you sure?",
+            file_path='',
+            func_type="Reset",
+            controller=self
+        )
+        popup.content = content
+        popup.open()
+
+    def _popup_confirmation(self, full_file_path, func_type):  # Note file_path not used here.
+        self.app_control.clear_app_data()
+        if func_type == "Reset":
+            DB.thread_status()
+            DB.reset_database()
+        else:
+            DB.backup_database(self, load_backup_path=full_file_path)
+            DB.thread_status()  # TODO: Remove this line when testing complete
+            self.app_control.load_app_data()
+            self.file_chooser.dismiss_popup()
+            print('Done')
 
     def _trigger_program_mem_clear(self):
         pass
@@ -330,9 +347,9 @@ class FlatDataExtractContainer(SettingsContainer):
             popup.content = content
             popup.open()
         else:
-            self._popup_confirmation(full_file_path)
+            self._popup_confirmation(full_file_path, None)
 
-    def _popup_confirmation(self, file_path):
+    def _popup_confirmation(self, file_path, func_type):
         if file_path[-4:] != '.csv':
             file_path += '.csv'
         self.selected_path = file_path

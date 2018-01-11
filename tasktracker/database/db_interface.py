@@ -12,11 +12,13 @@ from queue import Queue
 from threading import Thread
 
 from kivy.clock import Clock
+from database.model import create_tasktracker_database
+from database.model import __database_file_name__, __database_version_number__
+
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 # Note this number should be updated everytime the db schema is changed
 # it is used on database file load to make sure that the file is correctly formatted.
-__database_version_number__ = '00001'
 
 
 def load_file_check_version(loaded_file_path):
@@ -65,7 +67,7 @@ class Database:
         self.path = path
 
         if not os.path.isfile(self.path):
-            raise FileExistsError("File not found.", self.path)
+            create_tasktracker_database(False)
         elif not os.access(self.path, os.R_OK):
             raise PermissionError("File not readable.", self.path)
 
@@ -102,6 +104,19 @@ class Database:
         connection.close()
         if item.callback and item.statement == 'shutdown':  # If shutdown callback passed.
             Clock.schedule_once(partial(item.callback, item.args))
+
+    def reset_database(self):
+        if self.db_thread.is_alive():
+            self.action_queue.put(
+                SqlTask(statement='shutdown',
+                        callback=self._database_reset
+                        )
+            )
+
+    def _database_reset(self, *args):
+        self.thread_status()
+        create_tasktracker_database(True)
+        self.thread_startup()
 
     def backup_database(self, controller, create_backup_path=None, load_backup_path=None):
         """ This function creates a backup of the sqlite database by copying the
@@ -329,4 +344,4 @@ class Database:
     def delete_project(self, project):
         pass
 
-DB = Database(os.path.join(__location__, 'tt_dev.db'))
+DB = Database(os.path.join(__location__, __database_file_name__))

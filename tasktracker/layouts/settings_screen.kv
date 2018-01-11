@@ -55,12 +55,8 @@
                     on_release: database_load_reset_controller.open_load_window()
 
                 SettingsButton:
-                    text: 'Clear Data Test'
-                    on_release: database_load_reset_controller.app_control.clear_app_data()
-
-                SettingsButton:
-                    text: 'Load Data Test'
-                    on_release: database_load_reset_controller.app_control.load_app_data()
+                    text: 'Reset Database File'
+                    on_release: database_load_reset_controller.reset_database_file()
 
             FlatDataExtractContainer:
                 id: flat_file_extract_controller
@@ -84,10 +80,11 @@
             text: root.notification_message
         BoxLayout:
             orientation: 'horizontal'
+            spacing: 3
             SettingsButton:
                 id: confirmation_ok
                 text: 'Ok'
-                on_touch_down: root.controller._popup_confirmation(root.file_path)
+                on_touch_down: root.controller._popup_confirmation(root.file_path, root.func_type)
             SettingsButton:
                 id: confirmation_cancel
                 text: 'Cancel'
