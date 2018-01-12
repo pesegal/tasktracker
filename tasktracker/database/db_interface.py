@@ -187,14 +187,13 @@ class Database:
                     function='fetchall',
                     callback=callback)
             )
-        # self.action_queue.join() # TODO: This was causing the softlock WHY? IS THIS REQUIRED?
+        # self.action_queue.join() # This might be needed?
 
     def update_task_list_index(self, index, task_id):
         self.action_queue.put(
             SqlTask('UPDATE tasks SET list_pos = ? WHERE id = ?;',
                     args=(index, task_id))
         )
-        # Uncomment this to see the advantage of multi-threading!
 
     def task_switch(self, task_id, list_id):
         list_id += 1
