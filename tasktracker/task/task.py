@@ -71,8 +71,11 @@ class Task(Button, TapAndHold, Themeable):
         self.list_id = list_id
 
         self.project_id = project_id
-        if project_id != 0:
+        if project_id != 0 and task.taskpopups.PROJECT_LIST.projects_loaded:
             self.project = task.taskpopups.PROJECT_LIST.return_project_by_id(project_id)
+        else:
+            task.taskpopups.PROJECT_LIST.objects_to_update.append((self, project_id))
+
         self._update_project_display(self, self.project)
         self.bind(project=self._update_project_display)
         self.notes = notes
@@ -80,6 +83,9 @@ class Task(Button, TapAndHold, Themeable):
         # Click Drag Variables
         self.x_off = self.x
         self.y_off = self.y
+
+    def set_project(self, project):
+        self.project = project
 
     def theme_update(self):
         self.tasktext.color = self.theme.text

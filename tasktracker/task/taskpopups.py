@@ -68,7 +68,9 @@ class ProjectList(DataContainer):
     def __init__(self):
         super(ProjectList, self).__init__()
         self.project_list = list()
+        self.projects_loaded = False
         self.load_all_projects()
+        self.objects_to_update = []  # Use this to update all projects that need project object on load.
 
     def __call__(self):
         return self.project_list
@@ -89,6 +91,8 @@ class ProjectList(DataContainer):
             self.project_list.append(Project(*project))
         self.default = self.project_list[0]
         self.selected_project = self.default
+        self.projects_loaded = True
+        self.update_all_widgets_with_projects()
 
     def change_project_by_id(self, project_id):
         self.selected_project = self.return_project_by_id(project_id)
@@ -105,6 +109,13 @@ class ProjectList(DataContainer):
         for project in self.project_list:
             if name == project.name:
                 return project
+
+    def update_all_widgets_with_projects(self):
+        for widget, id in self.objects_to_update:
+            if type(id) is int:
+                widget.set_project(self.return_project_by_id(id))
+            elif type(id) is str:
+                widget.set_project(self.return_project_by_name(id))
 
 # SPINNER WIDGET WIDGETS!
 
@@ -135,10 +146,12 @@ class ProjectSpinnerOption(SpinnerOption, Themeable):
 
     def __init__(self, **kwargs):
         super(ProjectSpinnerOption, self).__init__(**kwargs)
-        if self.text != 'No Project':
+        if self.text != 'No Project' and PROJECT_LIST.projects_loaded:
             self.project_object = PROJECT_LIST.return_project_by_name(self.text)
             self.project_object.register(self)
             self.set_project_color(get_color_from_hex(self.project_object.color))
+        elif self.text != 'No Project' and not PROJECT_LIST.projects_loaded:
+            PROJECT_LIST.objects_to_update.append((self, self.text))
         else:
             # kivy default: [47 / 255., 167 / 255., 212 / 255., 1.]
             self.set_project_color(self.theme.selected)
@@ -147,6 +160,11 @@ class ProjectSpinnerOption(SpinnerOption, Themeable):
         self.text_color[3] = .9
         self.button_color = self.theme.background
         self.selected_color = self.theme.selected
+
+    def set_project(self, project):
+        self.project_object = project
+        self.project_object.register(self)
+        self.set_project_color(get_color_from_hex(self.project_object.color))
 
     def theme_update(self):
         self.text_color = self.theme.text
