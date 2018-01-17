@@ -8,7 +8,7 @@ from datetime import timedelta
 from settings.settingscontroller import to_datetime, to_local_time
 
 from kivy.properties import ObjectProperty, ListProperty, NumericProperty
-from kivy.garden.timeline import Timeline, TimeTick, selected_time_ticks, round_time
+from kivy.garden import Timeline, TimeTick, selected_time_ticks, round_time
 from kivy.metrics import dp
 
 from themes.themes import Themeable

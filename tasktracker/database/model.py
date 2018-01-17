@@ -2,7 +2,7 @@
     This file contains the code that models the database layout. Test database setup will be done in SQLite
 """
 
-import os
+import sys, os
 import sqlite3
 from datetime import datetime
 from sqlite3 import OperationalError
@@ -11,12 +11,26 @@ from sqlite3 import OperationalError
 __database_file_name__ = "taskdata.db"
 __database_version_number__ = '00001'
 
+frozen = 'not'
+if getattr(sys, 'frozen', False):
+        # we are running in a bundle
+        frozen = 'ever so'
+        bundle_dir = sys._MEIPASS
+else:
+        # we are running in a normal Python environment
+        bundle_dir = os.path.dirname(os.path.abspath(__file__))
+
 
 def create_tasktracker_database(reset_database=False):
     print(sqlite3.sqlite_version)
 
+    print(os.getcwd())
+
+    full_path = bundle_dir + '/database/'
+    print(full_path)
+
     if reset_database:
-        os.remove('database/' + __database_file_name__)
+        os.remove(full_path + __database_file_name__)
 
     def execute_scripts_from_file(filename):
         fd = open(filename, 'r')
@@ -31,10 +45,10 @@ def create_tasktracker_database(reset_database=False):
             except OperationalError as msg:
                 print('Command Skipped: ', msg)
 
-    db = sqlite3.connect('database/' + __database_file_name__)
+    db = sqlite3.connect(full_path + __database_file_name__)
     cursor = db.cursor()
 
-    execute_scripts_from_file('database/tt_schema.sql')
+    execute_scripts_from_file(full_path + 'tt_schema.sql')
     # Insert Defaults
 
     columns = (
