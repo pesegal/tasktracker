@@ -15,7 +15,12 @@ from themes import themes
 from kivy.clock import Clock
 import fileloader
 
-__location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+if getattr(sys, 'frozen', False):
+        # we are running in a bundle
+        __location__ = sys._MEIPASS
+else:
+        # we are running in a normal Python environment
+        __location__ = os.path.dirname(os.path.abspath(__file__))
 
 # Load in the .kv files
 layout_path = os.path.join(__location__, 'layouts')

@@ -11,10 +11,8 @@ from sqlite3 import OperationalError
 __database_file_name__ = "taskdata.db"
 __database_version_number__ = '00001'
 
-frozen = 'not'
 if getattr(sys, 'frozen', False):
         # we are running in a bundle
-        frozen = 'ever so'
         bundle_dir = sys._MEIPASS
 else:
         # we are running in a normal Python environment
