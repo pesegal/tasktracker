@@ -24,6 +24,7 @@ else:
 
 # Load in the .kv files
 layout_path = os.path.join(__location__, 'layouts')
+icon_path = os.path.join(__location__, 'tasktracker.ico')
 
 
 def exception_shutdown(exctype, value, tb):
@@ -39,6 +40,7 @@ def exception_shutdown(exctype, value, tb):
 class TaskApp(App):
     def build(self):
         self.title = 'TaskTracker++'
+        self.icon = icon_path
         self.minimum_width = 150
         self.minimum_height = 300
         return ScreenClickDragWindow()
@@ -57,4 +59,6 @@ if __name__ == '__main__':
     # Load configurations
     # Disable Multi-touch for mouse
     Config.set('input', 'mouse', 'mouse,disable_multitouch')
+    Config.set('kivy', 'window_icon', icon_path)
+
     TaskApp().run()
