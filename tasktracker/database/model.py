@@ -24,11 +24,11 @@ def create_tasktracker_database(reset_database=False):
 
     print(os.getcwd())
 
-    full_path = bundle_dir + '/database/'
+    full_path = bundle_dir
     print(full_path)
 
     if reset_database:
-        os.remove(full_path + __database_file_name__)
+        os.remove(os.path.join(full_path, __database_file_name__))
 
     def execute_scripts_from_file(filename):
         fd = open(filename, 'r')
@@ -43,10 +43,10 @@ def create_tasktracker_database(reset_database=False):
             except OperationalError as msg:
                 print('Command Skipped: ', msg)
 
-    db = sqlite3.connect(full_path + __database_file_name__)
+    db = sqlite3.connect(os.path.join(full_path, __database_file_name__))
     cursor = db.cursor()
 
-    execute_scripts_from_file(full_path + 'tt_schema.sql')
+    execute_scripts_from_file(os.path.join(full_path, 'tt_schema.sql'))
     # Insert Defaults
 
     columns = (

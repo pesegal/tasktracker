@@ -7,12 +7,14 @@ import os
 import sys
 from kivy.app import App
 from kivy.lang import Builder
+from kivy.utils import platform
 from screencontroller import ScreenClickDragWindow
 from kivy.config import Config
 from database.db_interface import DB
 from settings.settingscontroller import APP_CONTROL
 from themes import themes
 from kivy.clock import Clock
+from kivy.core.window import Window
 import fileloader
 
 if getattr(sys, 'frozen', False):
@@ -43,7 +45,10 @@ class TaskApp(App):
         self.icon = icon_path
         self.minimum_width = 150
         self.minimum_height = 300
-        return ScreenClickDragWindow()
+        self.root = ScreenClickDragWindow()
+
+        print(Window.height)
+        return self.root
 
     def on_stop(self):
         """Actions to take before the program closes."""

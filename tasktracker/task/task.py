@@ -14,7 +14,7 @@
 from copy import copy
 
 from kivy.clock import Clock
-from kivy.properties import ListProperty, StringProperty, ObjectProperty
+from kivy.properties import ListProperty, StringProperty, ObjectProperty, NumericProperty
 from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.utils import get_color_from_hex
@@ -25,6 +25,7 @@ from settings.settingscontroller import ALL_TASKS
 from task.clickdragcontrol import CLICK_DRAG_CONTROLLER
 from themes import themes
 from themes.themes import Themeable
+from dynamicsizes import TASK_HEIGHT
 
 
 class Task(Button, TapAndHold, Themeable):
@@ -42,6 +43,8 @@ class Task(Button, TapAndHold, Themeable):
     task_texture = StringProperty(themes.LEFT_BEV_CORNERS)
     shadow_texture = StringProperty(themes.SHADOW_TEXTURE)
     project_indicator = StringProperty(themes.LEFT_BEV_CORNERS)
+    task_height = NumericProperty(TASK_HEIGHT)
+
 
     project = ObjectProperty()
 
@@ -53,7 +56,7 @@ class Task(Button, TapAndHold, Themeable):
 
         # Tap Hold Length (Seconds)
         self._hold_length = .3
-        self.task_height_limit = 60
+        self.task_height_limit = self.task_height
 
         # Init self.tasktext
         self.tasktext = Label()

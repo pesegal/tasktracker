@@ -20,6 +20,8 @@ from stats.statscontroller import StatsScreen
 from settings.settingsscreen import SettingsScreen
 from settings.settingscontroller import APP_CONTROL
 
+from dynamicsizes import SCREEN_0, SCREEN_1, SCREEN_2, SCREEN_3
+
 
 class ScreenController(ScreenManager, Broadcast, Themeable):
     def __init__(self, **kwargs):
@@ -67,15 +69,15 @@ class ScreenMenuAndDisplay(BoxLayout, Broadcast):
         self.broadcast_window_resize()
 
     def screen_width_state(self, *args):
-        if self.size[0] < 360:  # Small width screens where text needs to be icons
+        if self.size[0] < SCREEN_0:  # Small width screens where text needs to be icons
             self.screen_size = 0
-        elif 360 < self.size[0] < 640:  # Single list
+        elif SCREEN_0 < self.size[0] < SCREEN_1:  # Single list
             self.screen_size = 1
-        elif 640 < self.size[0] < 960:
+        elif SCREEN_1 < self.size[0] < SCREEN_2:
             self.screen_size = 2
-        elif 960 < self.size[0] < 1280:
+        elif SCREEN_2 < self.size[0] < SCREEN_3:
             self.screen_size = 3
-        elif 1280 < self.size[0]:
+        elif SCREEN_3 < self.size[0]:
             self.screen_size = 4
 
     def broadcast_window_resize(self, *args):
