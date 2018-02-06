@@ -15,6 +15,7 @@ from themes.themes import Themeable, NOTIFICATION_SOUND
 from task.task import Task
 from database.db_interface import DB
 from settings.settingscontroller import APP_CONTROL, DataContainer
+from dynamicsizes import TASK_HEIGHT
 
 # TODO: Break these out to the settings module
 
@@ -53,6 +54,7 @@ class TimerScreen(Screen, Themeable):
     timer_active = BooleanProperty(False)  # True flags the timer as currently active
     timer_in_progress = BooleanProperty(False)  # True flags the timer as currently in one full state (paused/active)
     timer_type_selection = NumericProperty(0)
+    task_height = NumericProperty(TASK_HEIGHT)
 
     def __init__(self, **kwargs):
         super(Screen, self).__init__(**kwargs)

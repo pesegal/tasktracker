@@ -3,7 +3,7 @@
         orientation: "vertical"
         BoxLayout:
             size_hint_y: None
-            height: 80
+            height: root.task_height
             padding: 20, 10
             spacing: 4
             orientation: 'horizontal'
@@ -26,7 +26,7 @@
             size_hint_y: None
             size_hint_x: .5
             pos_hint: {'center_x': .5, 'top': .5}
-            height: 60
+            height: root.task_height
 
         Label:
             id: timer
@@ -37,7 +37,7 @@
 
         BoxLayout:
             size_hint_y: None
-            height: 80
+            height: root.task_height
             padding: 20, 10
             spacing: 4
             orientation: "horizontal"
