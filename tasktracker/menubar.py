@@ -8,18 +8,20 @@
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.utils import get_color_from_hex
-from kivy.properties import ObjectProperty, StringProperty, ListProperty
+from kivy.properties import ObjectProperty, StringProperty, ListProperty, NumericProperty
 
 from mixins import Broadcast
 from task.taskpopups import TaskCreationScreen
 from themes import themes
 from themes.themes import Themeable
 from settings.settingscontroller import APP_CONTROL
+from dynamicsizes import MENU_HEIGHT
 
 
 class MenuBar(BoxLayout, Broadcast, Themeable):
     current_screen = StringProperty('tasks')
     menu_bar_bg_color = ListProperty()
+    menu_bar_height = NumericProperty(MENU_HEIGHT)
 
     def __init__(self, **kwargs):
         super(MenuBar, self).__init__(**kwargs)

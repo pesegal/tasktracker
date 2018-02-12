@@ -3,7 +3,7 @@
     orientation: 'horizontal'
     size_hint_y: None
     padding: 0
-    height: 30
+    height: root.menu_bar_height
 
     canvas.before:
         Color:
@@ -36,6 +36,7 @@
 
 <MenuButton>:
     bold: True
+    font_size: '15sp'
     font_kerning: True
     color: self.text_color
     border: [2, 2, 2, 2]

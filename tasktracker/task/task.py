@@ -18,6 +18,7 @@ from kivy.properties import ListProperty, StringProperty, ObjectProperty, Numeri
 from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.utils import get_color_from_hex
+from kivy.metrics import sp
 
 import task.taskpopups
 from mixins import TapAndHold
@@ -93,7 +94,7 @@ class Task(Button, TapAndHold, Themeable):
     def theme_update(self):
         self.tasktext.color = self.theme.text
         # self.tasktext.disabled_color = [0, 0, 0, .38] # Figure out how I want to utilize this
-        # self.tasktext.font_size = 17
+        self.tasktext.font_size = sp(16)
         self.task_color = self.theme.tasks
 
     def set_text(self, text):
