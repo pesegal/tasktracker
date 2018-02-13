@@ -6,7 +6,7 @@ from kivy.uix.screenmanager import FallOutTransition, SlideTransition,\
     SwapTransition, FadeTransition, WipeTransition, RiseInTransition
 from kivy.animation import Animation
 from kivy.clock import Clock
-
+from kivy.metrics import dp
 
 from mixins import Broadcast
 from menubar import MenuBar
@@ -182,7 +182,7 @@ class ScreenClickDragWindow(FloatLayout, Broadcast):
     def show_quick_menu(self, task, pos):
         self.quick_menu = TaskQuickMenu(task)
         self.quick_menu.pos = pos[0] + 15, pos[1]
-        qm_animation = Animation(size=(self.quick_menu.task.width - 30, 45),
+        qm_animation = Animation(size=(self.quick_menu.task.width - 30, dp(45)),
                                  pos=(pos[0] + 15, pos[1]),
                                  duration=.6,
                                  t='out_elastic')

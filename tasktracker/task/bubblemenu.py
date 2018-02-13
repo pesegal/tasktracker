@@ -1,6 +1,7 @@
 from kivy.uix.button import Button
 from kivy.uix.bubble import Bubble, BubbleButton
 from kivy.properties import ListProperty, StringProperty
+from kivy.metrics import dp
 
 from task.taskpopups import TaskEditScreen
 from themes.themes import Themeable
@@ -16,7 +17,7 @@ class TaskQuickMenu(Bubble, Themeable):
     def __init__(self, task, **kwargs):
         super().__init__(**kwargs)
         self.task = task
-        self.size = (self.task.width - 30, 10)
+        self.size = (self.task.width - 30, dp(10))
         self.bg_color = self.theme.status
         self.content.padding = 2
         self.content.spacing = 2
