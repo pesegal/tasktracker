@@ -5,8 +5,8 @@
         Color:
             rgba: root.scroll_bg_color
         Rectangle:
-            size: root.width - 4, root.height
-            pos: root.x + 1, root.y
+            size: root.width - dp(4), root.height
+            pos: root.x + dp(1), root.y
 
 <ListNameLabelDisplay>:
     size_hint_y: None
@@ -16,8 +16,8 @@
     pos_hint: {'top': 1}
     size_hint_y: None
     cols: 1
-    padding: 6, 3, 3, 0
-    spacing: 3
+    padding: dp(4), dp(2), dp(2), dp(0)
+    spacing: dp(1)
 
 <ListLabels>:
     font_size: sp(12)
@@ -33,7 +33,7 @@
             rgba: root.shadow_color
         BorderImage:
             source: root.shadow_texture
-            border: [2,2,2,2]
+            border: [dp(2),dp(2),dp(2),dp(2)]
             pos: self.x, self.y
             size: self.width, self.height
 
@@ -42,7 +42,7 @@
     title: 'Task Screen'
     size_hint: None, None
     size: app.root.width/1.1, app.root.height/1.1
-    separator_height: 4
+    separator_height: dp(4)
     auto_dismiss: False
 
     background_color: self.bg_shade_color
@@ -55,14 +55,14 @@
             rgba: [0, 0, 0, .9]
         BorderImage:
             source: root.shadow_texture
-            border: [3, 3, 3, 3]
-            pos: self.x - 4, self.y - 4
-            size: self.width + 8, self.height + 8
+            border: [dp(3), dp(3), dp(3), dp(3)]
+            pos: self.x - dp(4), self.y - dp(4)
+            size: self.width + dp(8), self.height + dp(8)
         Color:
             rgba: root.bg_popup_color
         BorderImage:
             source: root.popup_texture
-            border: [3, 3, 3, 3]
+            border: [dp(3), dp(3), dp(3), dp(3)]
             pos: root.pos
             size: root.size
 
@@ -78,7 +78,7 @@
 
     GridLayout:
         cols: 1
-        padding: 0, 6, 0, 0
+        padding: dp(0), dp(2), dp(0), dp(0)
 
         TaskTitle:
             id: task_title
@@ -86,9 +86,9 @@
         BoxLayout:
             orientation: 'horizontal'
             size_hint_y: None
-            height: 40
-            spacing: 4
-            padding: 0, 3
+            height: dp(40)
+            spacing: dp(2)
+            padding: dp(0), dp(2), dp(0), dp(0)
             TaskListSelectionButton:
                 text: 'Today'
                 state: 'down'
@@ -111,9 +111,9 @@
         BoxLayout:
             orientation: 'horizontal'
             size_hint_y: None
-            height: 50
-            spacing: 4
-            padding: 0, 3
+            height: dp(50)
+            spacing: dp(3)
+            padding: dp(0), dp(2)
             ThemedButton:
                 text: 'Cancel'
                 on_press: root.dismiss() if not project_selection_section.ids.selector.is_open else None
@@ -132,7 +132,7 @@
 
     GridLayout:
         cols: 1
-        padding: 0, 6, 0, 0
+        padding: dp(0), dp(3), dp(0), dp(0)
 
         TaskTitle:
             id: task_title
@@ -140,9 +140,9 @@
         BoxLayout:
             orientation: 'horizontal'
             size_hint_y: None
-            height: 40
-            padding: 0, 3
-            spacing: 4
+            height: dp(40)
+            padding: dp(0), dp(2), dp(0), dp(0)
+            spacing: dp(2)
 
             TaskListSelectionButton:
                 id: today_button
@@ -173,9 +173,9 @@
         BoxLayout:
             orientation: 'horizontal'
             size_hint_y: None
-            height: 50
-            padding: 0, 3
-            spacing: 4
+            height: dp(50)
+            padding: dp(0), dp(2)
+            spacing: dp(3)
 
             ThemedButton:
                 text: 'Cancel'
@@ -198,13 +198,13 @@
         BorderImage:
             source: root.shadow_texture
             border: [3, 3, 3, 3]
-            pos: self.x - 2, self.y - 2
+            pos: self.x - dp(2), self.y - dp(2)
             size: self.width, self.height
 
 
 <TaskListSelectionButton>:
     size_hint_x: .33
-    height: 40
+    height: dp(30)
     group:'task_list_selection'
     border: [2, 2, 2, 2]
     color: self.text_color
@@ -230,7 +230,7 @@
 <TaskTitle@ThemedTextInput>:
     multiline: False
     size_hint_y: None
-    height: 30
+    height: dp(30)
     hint_text: '//Task Title'
     # Do styling here
 
@@ -239,9 +239,9 @@
     # Layout information for the project selection section!
     orientation: 'horizontal'
     size_hint_y: None
-    height: 35
-    padding: 0, 4, 0, 4
-    spacing: 4
+    height: dp(35)
+    padding: 0, 0, 0, sp(2)
+    spacing: dp(1)
     ProjectSelector:
         id: selector
         selection_section: self
@@ -252,12 +252,12 @@
         text: '+'
         size_hint_x: .1
         size_hint_y: None
-        height: 30
+        height: dp(30)
         on_press: root.open_project_screen()
 
 
 <ProjectSelector>:
-    height: 30
+    height: dp(30)
     color: self.text_color
     border: [2, 2, 2, 2]
     color: self.text_color
@@ -284,7 +284,7 @@
             size: self.width, self.height
 
 <ProjectSpinnerOption>:
-    height: 40
+    height: dp(40)
     color: self.text_color
     background_normal: self.button_texture
     background_down: self.button_texture
@@ -296,4 +296,4 @@
             source: root.project_texture
             border: [3, 3, 3, 3]
             pos: self.x + 3, self.y + 2
-            size: self.width / 30 - 3, self.height - 4
+            size: self.width / dp(30) - 3, self.height - 4

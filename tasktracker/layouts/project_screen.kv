@@ -3,7 +3,7 @@
     title: 'Projects'
     size_hint: None, None
     size: app.root.width/1.1, app.root.height/1.1
-    separator_height: 4
+    separator_height: dp(4)
 
     background_color: self.bg_shade_color
     background: self.transparent_texture
@@ -15,8 +15,8 @@
         BorderImage:
             source: root.shadow_texture
             border: [3, 3, 3, 3]
-            pos: self.x - 4, self.y - 4
-            size: self.width + 8, self.height + 8
+            pos: self.x - dp(4), self.y - dp(4)
+            size: self.width + dp(8), self.height + dp(8)
         Color:
             rgba: root.bg_popup_color
         BorderImage:
@@ -28,19 +28,19 @@
     BoxLayout:
         orientation: 'vertical'
         pos_hint_y: 1
-        padding: 0, 3, 0, 0
-        spacing: 4
+        padding: 0, dp(3), 0, 0
+        spacing: dp(4)
 
         ProjectPopupSelector:
             id: popup_selector
             popup: root
             size_hint_y: None
-            height: 30
+            height: dp(30)
 
         ThemedTextInput:
             id: project_title
             size_hint_y: None
-            height: 30
+            height: dp(30)
             hint_text: '// Project Title'
 
         ColorSelectionWindow:
@@ -52,9 +52,9 @@
         BoxLayout:
             orientation: 'horizontal'
             size_hint_y:  None
-            height: 50
+            height: dp(50)
             pos_hint_y: 0
-            spacing: 4
+            spacing: dp(4)
 
             ThemedButton:
                 id: cancel_button

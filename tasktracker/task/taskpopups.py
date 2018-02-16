@@ -14,6 +14,7 @@ from kivy.uix.textinput import TextInput
 from kivy.uix.button import Button
 from kivy.uix.togglebutton import ToggleButton
 from kivy.utils import get_color_from_hex, get_hex_from_color
+from kivy.metrics import dp
 
 from database.db_interface import DB
 from settings.settingscontroller import PROJECT_COLORS, APP_CONTROL, DataContainer
@@ -244,7 +245,7 @@ class ProjectPopupSelector(ProjectSelector):
         super(ProjectPopupSelector, self).__init__(**kwargs)
         self.set_project(PROJECT_LIST.selected_project)
         self.load_projects(PROJECT_LIST())
-        self.height_offset = 150
+        self.height_offset = dp(150)
 
     def project_change(self, spinner, text):
         PROJECT_LIST.change_project(text)
@@ -458,9 +459,9 @@ class TaskScreen(Popup, Themeable):
 
     def _set_max_height(self, this, height):
         if self.project_open:
-            offset = 145  # Drop down stops at bottom of text input
+            offset = dp(145)  # Drop down stops at bottom of text input
         else:
-            offset = 215  # Drop down stops at bottom of color buttons
+            offset = dp(215)  # Drop down stops at bottom of color buttons
         self.ids.project_selection_section.ids.selector.set_drop_down_height(height, offset)
 
 
